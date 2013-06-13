@@ -1,0 +1,6 @@
+Recent Activity
+==================
+
+Shows recent activity timeline: Added comments, Added entities, Changed States of User Stories, Tasks and Bugs.
+
+![Recent Activity](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/RecentActivity\RecentActivity.png)
