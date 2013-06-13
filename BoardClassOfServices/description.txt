@@ -1,0 +1,2 @@
+Colors cards on the board according to the tags. For example, stories or bugs tagged urgent can be colored red and all stories and bugs tagged sup are colored yellow.
+Colors and tags are customizable in the 'BoardClassOfServices.js' file.
