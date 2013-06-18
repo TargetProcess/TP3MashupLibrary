@@ -1,1 +1,1 @@
-Shows recent activity timeline: Added comments, Added entities, Changed States of User Stories, Tasks and Bugs.
+Shows recent activity timeline: new comments, new entities, status updates for User Stories, Tasks and Bugs.

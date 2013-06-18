@@ -1,1 +1,1 @@
-Colors cards on the board according to the tags. For example, stories or bugs tagged urgent can be colored red.
+Sets card background color based on tags, e.g. story or bug cards tagged "urgent" can be colored in red.
