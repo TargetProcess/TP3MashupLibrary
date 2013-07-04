@@ -1,0 +1,16 @@
+No new boards
+==================
+
+Disables creation of new Boards for some of the users. List of users can be defined. 
+
+
+Installing the Mashup with TargetProcess
+----------------------------------------
+
+1. Install Mashup with Mashup Manager 
+2. Click the Mashup name to access it's code
+3. List roles or ID's of users to apply mashup in code.
+I.e.: roles: ['Developer'] - apply Mashup to all developers,
+ids: [20, 25] - to apply Mashup to users with IDs 20 and 25.
+  
+
