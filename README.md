@@ -22,3 +22,8 @@ Shows recent activity timeline: new comments, new entities, status updates for U
 
 Sets card background color based on tags, e.g. story or bug cards tagged "urgent" can be colored in red.
 Colors and tags are customizable in the 'BoardClassOfServices.js' file.
+
+
+[**No New Boards**] (https://github.com/TargetProcess/TP3MashupLibrary/tree/master/NoNewBoards)
+
+Disables creation of new Boards for some of the users. List of users can be defined. 
