@@ -12,5 +12,7 @@ Installing the Mashup with TargetProcess
 3. List roles or ID's of users to apply mashup in code.
 I.e.: roles: ['Developer'] - apply Mashup to all developers,
 ids: [20, 25] - to apply Mashup to users with IDs 20 and 25.
+
+![NoNewBoards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/NoNewBoards/NoNewBoards.png)
   
 
