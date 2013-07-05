@@ -1,0 +1,6 @@
+{
+	"ShortDescription": "Sets card background color based on tags, e.g. story or bug cards tagged \"urgent\" can be colored in red.",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.4"
+	}		
+}

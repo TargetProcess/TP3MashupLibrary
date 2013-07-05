@@ -1,0 +1,6 @@
+{
+	"ShortDescription": "Disables creation of new Boards for some of the users. List of users can be defined.",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.4"
+	}		
+}
