@@ -1,5 +1,5 @@
 {
-	"ShortDescription": "This mashup colorizes cards into different colours based on tags.",
+	"ShortDescription": "This mashup will set a color for a card based on it's tag.",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.4"
 	}		
