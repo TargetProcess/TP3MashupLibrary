@@ -1,7 +1,7 @@
 Board Class Of Services
 ==================
 
-The Board Class of Services mashup will set a color for a card based on tags. 
+The Board Class of Services mashup will set a color for a card based on Tags, States or Business Values (Priorities). 
 
 For example, all the urgent bugs, user stories or other entity cards marked by the tag "urgent" will be highlighted in red on the boards. In the same fashion, all the entities with the ".net" tag can be highlighted in blue.  
 
@@ -19,4 +19,12 @@ To use this mashup please:
             };
 ```
 
-This section specifies which html colors codes should be used for your tags. For example: ```'urgent':'background: #fdfadb'``` will set red color for entities with tag urgent.
+This section specifies which html colors codes should be used for your Tags, States or Business Values.
+
+For example: 
+
+```'Urgent':'background: #fdfadb'``` will set red color for entities with tag "Urgent"
+
+```'In Progress':'background: #fdfadb'``` will set red color for entities in State "In Progress"
+
+```'Must Have':'background: #fdfadb'``` will set red color for entities with Busines Value "Must Have"
