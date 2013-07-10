@@ -57,7 +57,7 @@ tau.mashups
 					whereIdsStr = '0';
 				}
 
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=TagObjects.Count('+whereTagStr+')>0 or (id in ['+whereIdsStr+'] and EntityState.isFinal==false)&select={id,Tags,EntityState.Name as state}&acid=' + acid;
+                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=TagObjects.Count('+whereTagStr+')>0 or (id in ['+whereIdsStr+'] and EntityState.isFinal==false)&select={id,Tags,EntityState.Name as state,Priority.Name as priority}&acid=' + acid;
                 $.ajax({
                     url: requestUrl,
                     context: this
@@ -66,7 +66,8 @@ tau.mashups
                         for(var i = 0; i < data.items.length; i++) {
                             var id = data.items[i].id;
                             var tags = data.items[i].tags.split(',');
-							tags.push(data.items[i].state)
+							tags.push(data.items[i].state);
+							tags.push(data.items[i].priority);
                             $.each(tags, function(i, v) { tags[i] = $.trim(tags[i].toLowerCase()); })
                             this.taggedCards[id] = tags;
                         }
