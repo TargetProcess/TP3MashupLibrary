@@ -3,9 +3,9 @@ Board Class Of Services
 
 The Board Class of Services mashup will set a color for a card based on tags. 
 
-For example, all the urgent bugs, user stories or other entity cards marked by the tag *urgent* will be highlighted in red on the boards. In the same fashion, all the entities with the *.net* tag can be highlighted in blue.  
+For example, all the urgent bugs, user stories or other entity cards marked by the tag "urgent" will be highlighted in red on the boards. In the same fashion, all the entities with the ".net" tag can be highlighted in blue.  
 
-![BoardClassOfServices](https://github.com/TargetProcess/TP3MashupLibrary/blob/master/BoardClassOfServices/BoardClassOfServices.png?raw=true)
+![BoardClassOfServices](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/BoardClassOfServices/BoardClassOfServices.png)
 
 To use this mashup please:
 
