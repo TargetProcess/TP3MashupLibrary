@@ -1,0 +1,17 @@
+Done Entities by Projects and by Months this Year
+=======================
+
+This mashup shows in a visual way how many stories, bugs, issues or features were completed or closed last year by months.
+
+![Kanban Board](https://github.com/TargetProcess/MashupsLibrary/raw/master/DoneEntitiesByMonthReport/screenshot.png)
+
+
+Installing the Mashup with TargetProcess
+----------------------------------------
+
+1. In your TP site, navigate to ```Settings > (System Settings) > Mashups```
+2. Click "Add New Mashup"
+3. In the "Name" field, enter a name unique to this Mashup - for example "Done Entities By Month Report"
+4. In the "Placeholders" field, enter ```Project_Reports_Reports,Project_Reports_Report```
+5. Copy and paste the contents of the [DoneEntitiesByMonthReport.js](https://raw.github.com/TargetProcess/MashupsLibrary/master/DoneEntitiesByMonthReport/DoneEntitiesByMonthReport.js) file in the "Code" box.
+6. Click Save
