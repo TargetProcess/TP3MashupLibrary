@@ -1,1 +1,1 @@
-Sets card background color based on tags, e.g. story or bug cards tagged "urgent" can be colored in red.
+This mashup colorizes cards into different colours based on tags.
