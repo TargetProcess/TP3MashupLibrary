@@ -1,5 +1,5 @@
 {
-	"ShortDescription": "This mashup will set a color for a card based on it's tag.",
+	"ShortDescription": "This mashup will set a color for a card based on Tags, States or Business Values (Priorities).",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.4"
 	}		
