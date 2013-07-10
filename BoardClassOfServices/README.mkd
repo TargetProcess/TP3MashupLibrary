@@ -10,4 +10,13 @@ For example, all the urgent bugs, user stories or other entity cards marked by t
 To use this mashup please:
 
 1. Install the mashup from the TargetProcess Mashups Library
-2. Edit the ```this.tagMapping``` section in the mashup code. This section specifies which html colors codes should be used for your tags. For example: ```'urgent':'background: #fdfadb'``` will set red color for entities with tag urgent.
+2. Edit the ```this.tagMapping``` section in the mashup code.
+
+```javascript
+    this.tagMapping = {
+            'urgent':'background: #f9d9d1',
+            '.net':'background: #d2e0ef;'
+            };
+```
+
+This section specifies which html colors codes should be used for your tags. For example: ```'urgent':'background: #fdfadb'``` will set red color for entities with tag urgent.
