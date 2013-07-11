@@ -5,7 +5,7 @@ tau.mashups
     .addDependency('tp3/mashups/storage')
     .addDependency('URLCustomFieldTab.config')
     .addCSS('URLCustomFieldTab.css')
-    .addMashup(function ($, _, entityView, Storage, urlCustomFieldTabConfig) {
+    .addMashup(function ($, _, generalView, Storage, urlCustomFieldTabConfig) {
         var URLCustomFieldTab = function () {
             _.forEach(urlCustomFieldTabConfig.tabs, _.bind(this._addTab, this));
         };
@@ -26,7 +26,15 @@ tau.mashups
             $FRAME_TEMPLATE: '<iframe class="url-custom-field-tab-frame" src="${url}"></iframe>',
 
             _addTab: function (tabConfig) {
-                entityView.addTab(tabConfig.customFieldName, _.bind(this._tabContentIsRenderedHandler, this, tabConfig));
+                generalView.addTab(tabConfig.customFieldName,
+                    _.bind(this._tabContentIsRenderedHandler, this, tabConfig),
+                    $.noop,
+                    {
+                        viewIsSuitableCallback: _.bind(this._isViewSuitableForTab, this, tabConfig)
+                    });
+            },
+            _isViewSuitableForTab: function(tabConfig, viewContext){
+                return tabConfig.entityTypeName && tabConfig.entityTypeName.toLowerCase() === viewContext.entity.entityType.name.toLowerCase();
             },
             _tabContentIsRenderedHandler: function (tabConfig, contentElement, context) {
                 (new Storage())
