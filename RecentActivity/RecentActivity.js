@@ -3,6 +3,7 @@ tau.mashups.addDependency('jQuery')
   .addDependency('tp3/mashups/topmenu')
   .addDependency('tp3/mashups/popup')
   .addDependency('tp3/mashups/context')
+
   .addMashup(function($, _, topmenu, popup, context) {
 
   // add new link to the top header  
@@ -186,18 +187,40 @@ tau.mashups.addDependency('jQuery')
           var html = '<div id="ac_filter" style="font-size: 12px"><input type="checkbox" ' + isEventChecked("add") + ' class="ac_event_filter" value="add"> Add <input type="checkbox"  ' + isEventChecked("comment") + '  class="ac_event_filter" value="comment"> Comment <input class="ac_event_filter"  ' + isEventChecked("state") + '  type="checkbox" value="state"> State Change</div>';
 
           html += "<div id='ac_main' style='height: 100%; overflow: scroll'><table style='font-size: 11px !important'>";
-          var template = "<tr><td><img width='16' height='16' src='{3}/avatar.ashx?size=16&UserId={9}'> <b>{0}</b></td><td>{1}</td><td><span class='delimeter'>—</span> <span style='background:{7}'>{8}</span> {2} <a href='{3}/View.aspx?id={4}'>{5}</a> by {6}</td></tr>";
+          
+          var tmpl = ["<tr><td><img width='16' height='16' src='<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>'>",
+           " <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>",
+           "<td><span class='delimeter'>—</span> <span style='background:<%= this.color %>'><%= this.projectAbr %></span>",
+           " <%= this.entityType %> <a href='<%= this.path %>/entity/<%= this.entityId %>'><%= this.entityName %></a>",
+           " by <%= this.user %></td></tr>"].join("");
 
-
-          _.each(groupedActivity, function(val, key) {
+          
+          _.each(groupedActivity, function(val, key) {            
             html += "<tr><td colspan='3'><h2>" + key + "</h2></td></tr>";
             _.each(val, function(item) {
-              html += template.format(moment(item.EventDate).format('HH:mm'), item.State, item.EntityType.toString(), appPath, item.Id, item.EntityName, item.User, item.Color, item.ProjectAbbreviation, item.UserId)
+              //console.log(item);
+              html += $.jqote(
+                tmpl,
+                 {
+                  path: appPath, 
+                  date: moment(item.EventDate).format('HH:mm'),
+                  state: item.State,
+                  entityType: item.EntityType.toString(),
+                  entityId: item.Id,
+                  entityName: item.EntityName,
+                  projectAbr: item.ProjectAbbreviation,
+                  color: item.Color,
+                  userId: item.UserId,
+                  user: item.User,
+                  doneStyle: (item.State == "Done" || item.State == "Closed") ? "style='text-decoration: line-through;'" : ""
+                }
+                                
+              )
             })
-          })
-
-          html += "</table></div>";
+          });
+          
           $container.append(html);
+          $container.append("</table></div>");
           
           activityPopup.hideLoading();
           
