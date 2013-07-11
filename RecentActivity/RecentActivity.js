@@ -190,7 +190,7 @@ tau.mashups.addDependency('jQuery')
 
 
           _.each(groupedActivity, function(val, key) {
-            html += "<tr><td colspan='3'><h2>Day " + key + "</h2></td></tr>";
+            html += "<tr><td colspan='3'><h2>" + key + "</h2></td></tr>";
             _.each(val, function(item) {
               html += template.format(moment(item.EventDate).format('HH:mm'), item.State, item.EntityType.toString(), appPath, item.Id, item.EntityName, item.User, item.Color, item.ProjectAbbreviation, item.UserId)
             })
