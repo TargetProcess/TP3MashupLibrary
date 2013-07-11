@@ -1,0 +1,13 @@
+Board Class Of Services
+==================
+
+This mashup allows to mark the request as unanswered (leave the request in Queue List) when adding a comment.
+
+For example, you have a board named Queue that displays Requests and is filtered by answered field. On addind a comment a popup is displays that allows to mark it as unanswered or answered. Normally on adding a comment to request it is automatically marked as answered and is removed from Queue board.
+
+
+![Leave Request In Queue](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Leave Request In Queue/Leave Request In Queue.png)
+
+To use this mashup please:
+
+1. Install the mashup from the TargetProcess Mashups Library
