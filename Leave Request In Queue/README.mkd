@@ -1,5 +1,5 @@
-Board Class Of Services
-==================
+Leave Request In Queue
+======================
 
 This mashup allows to mark the request as unanswered (leave the request in Queue List) when adding a comment.
 
