@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "Select several cards on board and create inner board that drills deeper. For example, select User Stoties and see a Task Board with these stories and their tasks.",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.4"
+	}		
+}

@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "Quickly create reate new entities (User Stories, Tasks, Bugs, etc.) from the list of names in a .txt file",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.4"
+	}		
+}
