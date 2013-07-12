@@ -1,10 +1,12 @@
 People Allocations on Projects Timeline by Months
 =======================
 
-This mashup works from __v.2.23.1__. Make sure that you fill Start and End dates for people in project Teams ```Settings > (Project Settings) > Teams```. Allocation for project will not be visible if there is no End Date specified for a person.
-
-Navigate to ```Reports > (People) > People\Projects Timeline``` to see the report.
-
-This mashup shows in a visual way what projects people are working on, when they started and when they are going to leave projects. Future allocations are shown as well.
+This mashup will give a visual overview of people's allocations: who's working on what, when did they start and when will they leave projects. The future allocations are shown as well. 
 
 ![Allocation Timeline](https://github.com/TargetProcess/MashupsLibrary/raw/master/Allocation%20Timeline/AllocationTimeline.png)
+
+Note the color codes: red means someone is overloaded, gray means the workload is fine, yellow - there's no workload at all.
+
+Make sure that you fill Start and End dates for people in project Teams ```Settings > (Project Settings) > Teams```. Allocation for project will not be visible if there is no End Date specified for a person.
+
+Navigate to ```Reports > Other Reports > (People) > People\Projects Timeline``` to see the report.
