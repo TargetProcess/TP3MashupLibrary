@@ -1,5 +1,5 @@
 {
-  "ShortDescription": "Adds fullscreen button into the Board's Toolbar",
+  "ShortDescription": "This mashup will let you see the current board in the fullscreen mode (no Boards panel on the left, and no Settings panel).",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.4"
 	}		
