@@ -3,4 +3,4 @@ Inner Boards
 
 Select several cards on board and create inner board that drills deeper. For example, select User Stoties and see a Task Board with these stories and their tasks.
 
-![ScreenShot](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Built-In%20Boards/BuiltInBoards.png)
+![ScreenShot](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Nested%20Boards/NestedBoards.png)

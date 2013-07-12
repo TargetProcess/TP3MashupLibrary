@@ -78,7 +78,7 @@ tau.mashups
 	}
 
 	function buildReport() {
-		$("#entities-by-month-rep").html("<img src='https://github.com/TargetProcess/MashupsLibrary/raw/master/DoneEntitiesByMonthReport/totoro.gif'> Small Totoro is collecting the data...").fadeIn('slow');
+		$("#entities-by-month-rep").html("<img src='https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Done%20Entities%20By%20Month%20Report/totoro.gif'> Small Totoro is collecting the data...").fadeIn('slow');
 		initEmptyMatrix();
 		loadData();
 	}

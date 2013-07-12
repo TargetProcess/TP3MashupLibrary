@@ -10,9 +10,9 @@ How To Install and Use the Mashup
 
 1. In your OnDemand site, navigate to ```Settings > (System Settings) > Mashups```
 2. Click "Add New Mashup"
-3. In the "Name" field, enter a name unique to this Mashup - for example "Comment Signatures"
+3. In the "Name" field, enter a name unique to this Mashup - for example "Signed Comment"
 4. In the "Placeholders" field, enter ```footerPlaceholder```
-5. Copy and paste the contents of the [Comment Signatures.js](https://raw.github.com/TargetProcess/MashupsLibrary/master/Comment%20Signatures/Comment%20Signatures.js) file in the "Code" box.
+5. Copy and paste the contents of the [SignedComment.js](https://raw.github.com/TargetProcess/TP3MashupLibrary/master/Signed%20Comment/SignedComment.js) file in the "Code" box.
 6. Click Save and go to Settings.
 7. Go to your Personal Settings to set up your signature.
 8. ???
