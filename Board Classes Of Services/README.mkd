@@ -1,4 +1,4 @@
-Board Class Of Services
+Board Classes Of Services
 ==================
 
 The Board Class of Services mashup will set a color for a card based on Tags, States or Business Values (Priorities). 
