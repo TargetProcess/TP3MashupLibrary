@@ -11,17 +11,22 @@ tau.mashups
         };
 
         URLCustomFieldTab.prototype = {
-            URL_CUSTOM_FIELD_TYPES: {
+            URL_CF_TYPES: {
                 URL: 'url',
                 TEMPLATED_URL: 'templatedurl'
             },
-            FIELDS_FOR_REQUEST: ['customFields', {
+            REQUEST_FIELDS_FOR_ENTITY: ['customFields', {
                 project: [{
                     process: [{
                         customFields: ['name', 'value', {
                             entityType: ['name']}]
                     }]
                 }]
+            }],
+            REQUEST_FIELDS_FOR_DEFAULT_PROCESS: [{
+                        customFields: ['name', 'value', {
+                            entityType: ['name']
+                         }]
             }],
             $FRAME_TEMPLATE: '<iframe class="url-custom-field-tab-frame" src="${url}"></iframe>',
 
@@ -37,21 +42,46 @@ tau.mashups
                 return tabConfig.entityTypeName && tabConfig.entityTypeName.toLowerCase() === viewContext.entity.entityType.name.toLowerCase();
             },
             _tabContentIsRenderedHandler: function (tabConfig, contentElement, context) {
+                this._getContextEntityPromise(context).done(_.bind(function(entity){
+                        this._getCFDefinitionsPromise(entity).done(
+                            _.bind(this._buildTab, this, tabConfig, contentElement, entity)
+                        )
+                    }, this)
+                );
+            },
+            _getContextEntityPromise: function(context){
+                var contextEntityDeferred = $.Deferred();
                 (new Storage())
                     .getEntity()
                         .ofType(context.entity.type)
                         .withId(context.entity.id)
-                        .withFieldSetRestrictedTo(this.FIELDS_FOR_REQUEST)
-                        .withCallOnDone(_.bind(this._processTab, this, tabConfig, contentElement))
+                        .withFieldSetRestrictedTo(this.REQUEST_FIELDS_FOR_ENTITY)
+                        .withCallOnDone(contextEntityDeferred.resolve)
                     .execute();
+                return contextEntityDeferred.promise();
             },
-            _processTab: function (tabConfig, contentElement, entity) {
+            _getCFDefinitionsPromise: function(entity){
+                var cfDefinitionsDeferred = $.Deferred();
+                if (entity.project){
+                    cfDefinitionsDeferred.resolve(entity.project.process.customFields);
+                } else {
+                    (new Storage())
+                        .getEntities()
+                            .ofType('process')
+                            .filteredBy({isDefault: 'true'})
+                            .withFieldSetRestrictedTo(this.REQUEST_FIELDS_FOR_DEFAULT_PROCESS)
+                            .withCallOnDone(function(process){ cfDefinitionsDeferred.resolve(process.customFields);})
+                        .execute();
+                }
+                return cfDefinitionsDeferred.promise();
+            },
+            _buildTab: function (tabConfig, contentElement, entity, cfDefinitions) {
                 var tabCustomField = this._getRequiredCustomFieldByName(tabConfig, entity.customFields);
                 if (!tabCustomField || !tabCustomField.value) {
                     return;
                 }
-                var entityCustomFieldDefinitions = this._getEntityCustomFieldDefinitions(tabConfig, entity.project.process.customFields);
-                var tabFrameUrl = this._getUrl(tabCustomField, entityCustomFieldDefinitions);
+                var entityCFDefinitions = this._getEntityCFDefinitions(tabConfig, cfDefinitions);
+                var tabFrameUrl = this._getUrl(tabCustomField, entityCFDefinitions);
                 if (!tabFrameUrl) {
                     return;
                 }
@@ -60,22 +90,22 @@ tau.mashups
             _getRequiredCustomFieldByName: function(tabConfig, customFields){
                 return _.find(customFields, _.bind(function (customField) {
                     return customField.name.toLowerCase() === tabConfig.customFieldName.toLowerCase()
-                        && _.contains(_.values(this.URL_CUSTOM_FIELD_TYPES), customField.type.toLowerCase());
+                        && _.contains(_.values(this.URL_CF_TYPES), customField.type.toLowerCase());
                 }, this));
             },
-            _getEntityCustomFieldDefinitions: function(tabConfig, customFieldDefinitions){
-                return _.filter(customFieldDefinitions, function(customFieldDefinition){
+            _getEntityCFDefinitions: function(tabConfig, CFDefinitions){
+                return _.filter(CFDefinitions, function(customFieldDefinition){
                     return customFieldDefinition.entityType.name.toLowerCase() === tabConfig.entityTypeName.toLowerCase();
                 });
             },
-            _getUrl: function(tabCustomField, entityCustomFieldDefinitions){
+            _getUrl: function(tabCustomField, entityCFDefinitions){
                 var tabFrameUrl;
                 switch (tabCustomField.type.toLowerCase()) {
-                    case this.URL_CUSTOM_FIELD_TYPES.URL:
+                    case this.URL_CF_TYPES.URL:
                         tabFrameUrl = tabCustomField.value.url;
                         break;
-                    case this.URL_CUSTOM_FIELD_TYPES.TEMPLATED_URL:
-                        var customFieldDefinition = _.find(entityCustomFieldDefinitions, function (entityCustomFieldDefinition) {
+                    case this.URL_CF_TYPES.TEMPLATED_URL:
+                        var customFieldDefinition = _.find(entityCFDefinitions, function (entityCustomFieldDefinition) {
                             return entityCustomFieldDefinition.name.toLowerCase() === tabCustomField.name.toLowerCase()
                         });
                         if (!customFieldDefinition){
