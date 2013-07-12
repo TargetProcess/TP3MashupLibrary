@@ -3,7 +3,7 @@ No New Boards
 
 This mashup will disable the Create Board function for certain users and/or roles.
 
-![NoNewBoards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/NoNewBoards/NoNewBoards.png)
+![NoNewBoards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/No%20New%20Boards/NoNewBoards.png)
  
 How to activate it:
 

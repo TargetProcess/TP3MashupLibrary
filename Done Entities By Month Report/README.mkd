@@ -5,5 +5,5 @@ A Report that shows in a visual way how many stories, bugs, issues or features w
 
 After installation you can find it in Reports &rarr; Other Reports... section.
 
-![Done Entities by Projects and by Months this Year](https://github.com/TargetProcess/MashupsLibrary/raw/master/DoneEntitiesByMonthReport/screenshot.png)
+![Done Entities by Projects and by Months this Year](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Done%20Entities%20By%20Month%20Report/DoneEntitiesByMonthReport.png)
 

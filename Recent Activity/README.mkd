@@ -3,4 +3,4 @@ Recent Activity
 
 Shows recent activity timeline: new comments, new entities, status updates for User Stories, Tasks, Bugs and Requests for the 3 last days. 
 
-![Recent Activity](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/RecentActivity/RecentActivity.png)
+![Recent Activity](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Recent%20Activity/RecentActivity.png)

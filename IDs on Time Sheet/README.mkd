@@ -5,10 +5,7 @@ The Extra Time Sheet Info Mashup is a simple Mashup for [TargetProcess](http://w
 that adds more information to the listings in your time sheet.  Currently, the Mashup only adds the entity 
 ID to the row, but can be easily expanded to display more information, such as custom fields.
 
-![Extra Time Sheet Info](https://github.com/TargetProcess/MashupsLibrary/raw/master/Extra%20Time%20Sheet%20Info/screenshot.png)
-
-
-[Download the Mashup's ZIP Archive](https://github.com/downloads/TargetProcess/MashupsLibrary/Extra%20Time%20Sheet%20Info.zip)
+![Extra Time Sheet Info](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/IDs%20on%20Time%20Sheet/IDsonTimeSheet.png)
 
 
 Installing the Mashup with TargetProcess
@@ -18,7 +15,7 @@ Installing the Mashup with TargetProcess
 2. Click "Add New Mashup"
 3. In the "Name" field, enter a name unique to this Mashup - for example "Link Scrubber"
 4. In the "Placeholders" field, enter ```Default_TimeSheet```
-5. Copy and paste the contents of the [Extra Time Sheet Info.js](https://github.com/TargetProcess/MashupsLibrary/raw/master/Extra%20Time%20Sheet%20Info/Extra%20Time%20Sheet%20Info.js) file in the "Code" box.
+5. Copy and paste the contents of the [Extra Time Sheet Info.js](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/IDs%20on%20Time%20Sheet/IDsonTimeSheet.js) file in the "Code" box.
 6. Click Save
 
 
