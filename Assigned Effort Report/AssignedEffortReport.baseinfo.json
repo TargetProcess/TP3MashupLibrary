@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "The Assigned Effort Report is a simple report that shows the total amount of open effort assigned to users across all projects and all roles.",
+  "CompatibleTpVersion": {
+		"Minimum": "2.23.0"
+	}		
+}
