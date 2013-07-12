@@ -1,1 +1,0 @@
-This mashup colorizes cards into different colours based on tags or Business Value of the item.
