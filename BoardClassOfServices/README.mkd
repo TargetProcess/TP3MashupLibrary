@@ -7,7 +7,7 @@ For example, all the urgent bugs, user stories or other entity cards marked by t
 
 ![BoardClassOfServices](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/BoardClassOfServices/BoardClassOfServices.png)
 
-To use this mashup please:
+How to activate it:
 
 1. Install the mashup from the TargetProcess Mashups Library
 2. Edit the ```this.tagMapping``` section in the mashup code.
