@@ -3,7 +3,7 @@ Fullscreen Mode
 
 Adds fullscreen button into board toolbar
 
-![ScreenShot](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Board%20Full%20Screen%20Mode/BoardFullScreenMode.png)
+![ScreenShot](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Board%20FullScreen%20Mode/BoardFullScreenMode.png)
 
 Installing the Mashup with TargetProcess
 ----------------------------------------
