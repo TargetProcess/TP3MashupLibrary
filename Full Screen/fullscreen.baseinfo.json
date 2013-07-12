@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "Adds fullscreen button into the Board's Toolbar",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.4"
+	}		
+}
