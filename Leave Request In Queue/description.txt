@@ -1,0 +1,1 @@
+This mashup allows to mark the request as unanswered (leave the request in Queue) when adding a comment. Normally on adding a comment to request it is marked as answered and is removed from Queue list.

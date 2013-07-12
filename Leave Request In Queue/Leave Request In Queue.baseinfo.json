@@ -1,0 +1,6 @@
+{
+	"ShortDescription": "This mashup allows to mark the request as unanswered (leave the request in Queue) on adding comment.",
+	"CompatibleTpVersion": {
+		"Minimum": "2.23.0"
+	}		
+}
