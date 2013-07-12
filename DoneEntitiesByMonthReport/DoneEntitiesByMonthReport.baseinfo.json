@@ -1,0 +1,6 @@
+{
+	"ShortDescription": "A Report that shows in a visual way how many stories, bugs, issues or features were completed or closed this year by months.",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.0"
+	}		
+}
