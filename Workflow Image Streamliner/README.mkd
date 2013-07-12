@@ -1,0 +1,13 @@
+Workflow Image Streamliner
+==================
+
+This mashup will streamline the graphical image of your workflows. 
+
+Compare: No Workflow Streamliner mashup
+
+![WorkflowImageStreamliner2](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Workflow%20Image%20Streamliner/WorkflowImageStreamliner2.png)
+
+
+Workflow Streamliner mashup activated
+
+![WorkflowImageStreamliner](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Workflow%20Image%20Streamliner/WorkflowImageStreamliner.png)
