@@ -1,18 +1,28 @@
-No new boards
+No New Boards
 ==================
 
-Disables creation of new Boards for some of the users. List of users can be defined. 
-
-
-Installing the Mashup with TargetProcess
-----------------------------------------
-
-1. Install Mashup with Mashup Manager 
-2. Click the Mashup name to access it's code
-3. List roles or ID's of users to apply mashup in code.
-I.e.: roles: ['Developer'] - apply Mashup to all developers,
-ids: [20, 25] - to apply Mashup to users with IDs 20 and 25.
+This mashup will disable the Create Board function for certain users and/or roles.
 
 ![NoNewBoards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/NoNewBoards/NoNewBoards.png)
-  
+ 
+To use this mashup please:
+
+1. Install the mashup from the TargetProcess Mashups Library
+2. Edit ```varlistAccessDenied``` section in the mashup code.
+
+```javascript
+    varlistAccessDenied = {
+    roles: ["Developer","Qa"],
+    ids: [1,2,3]
+};
+```
+Please note that the text is case sensitive.
+
+This section specifies which which roles and/or users will no be able to create new boards in TargetProcess.
+
+For example: 
+
+``` roles: ["Developer","QA"]``` applies mashup to all Developers and QAs
+
+```ids: [1,2,3]``` applies mashup to users with IDs = 1,2,3
 
