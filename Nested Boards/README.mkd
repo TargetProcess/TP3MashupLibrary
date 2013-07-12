@@ -1,6 +1,6 @@
-Inner Boards
+Nested Boards
 ==================
 
-Select several cards on board and create inner board that drills deeper. For example, select User Stoties and see a Task Board with these stories and their tasks.
+This mashup will show nested boards for the lower-level entities based on the selection of parent entities. For example, when you select several User Stories, you will see the nested Task Board with those stories and their tasks.
 
 ![ScreenShot](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Nested%20Boards/NestedBoards.png)
