@@ -1,6 +1,0 @@
-{
-  "ShortDescription": "This mashup allows to represent entities workflows in a view as a graph.",
-	"CompatibleTpVersion": {
-		"Minimum": "2.24.4"
-	}		
-}
