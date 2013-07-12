@@ -43,7 +43,7 @@ tau.mashups
 
 	//initialize matrix
 	var matrix = [];
-	var year = '2011';
+	var year = '2013';
 	function getUrl(entityType) {
 		 return {
 			Project:  "/api/v1/projects?take=1000&where=IsActive eq 'true'&format=json&callback=?",
