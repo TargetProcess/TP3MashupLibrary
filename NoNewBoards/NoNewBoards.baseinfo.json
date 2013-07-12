@@ -1,5 +1,5 @@
 {
-	"ShortDescription": "Disables creation of new Boards for some of the users. List of users can be defined.",
+	"ShortDescription": "This mashup will disable the Create Board function for certain users and/or roles.",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.4"
 	}		
