@@ -6,4 +6,4 @@ a list of the assignments and their associated effort values and roles.
 
 ![Assigned Effort Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Assigned%20Effort%20Report/AssignedEffortReport.png)
 
-Navigate to ```Reports > Other Reports (People) > Assigned Effort Report``` to see the report.
+Navigate to ```Reports > Other Reports > (People) > Assigned Effort Report``` to see the report.
