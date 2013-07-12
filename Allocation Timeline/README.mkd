@@ -1,4 +1,4 @@
-People Allocations on Projects Timeline by Months
+Allocation Timeline
 =======================
 
 This mashup will give a visual overview of people's allocations: who's working on what, when did they start and when will they leave projects. The future allocations are shown as well. 
