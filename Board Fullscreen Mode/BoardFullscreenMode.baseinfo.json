@@ -1,5 +1,5 @@
 {
-  "ShortDescription": "This mashup will let you see the current board in the fullscreen mode (no Boards panel on the left, and no Settings panel).",
+  "ShortDescription": "This mashup will let you see the current board in the fullscreen mode.",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.4"
 	}		
