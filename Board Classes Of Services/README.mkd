@@ -28,3 +28,7 @@ For example:
 ```'In Progress':'background: #fdfadb'``` will set red color for entities in State "In Progress"
 
 ```'Must Have':'background: #fdfadb'``` will set red color for entities with Busines Value "Must Have"
+
+
+
+__Notes__: please always use lower-case letters for States, Priorities and Tags. Otherwise, the mashup won't work.
