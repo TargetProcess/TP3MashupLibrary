@@ -27,6 +27,7 @@ tau.mashups.addDependency('jQuery')
 
             release: [
                 { type: 'bug', name: 'Release Bugs' },
+                { type: 'feature', name: 'Release Features' },
                 { type: 'userstory', name: 'Release Stories' }
             ],
 
