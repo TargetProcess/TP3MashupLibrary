@@ -174,7 +174,7 @@ tau.mashups.addDependency('jQuery')
                         var cardsData = [];
 
                         if ($(buttonSelector, data).length === 0) {
-                            var $title = $('.tau-boardclipboard__title', data);
+                            var $title = $('.tau-select-block', data);
                             var $button = $('<button class="tau-btn ' + buttonClass + '">' + innerBoard.name + '</button>');
                             $button.appendTo($title);
                             $button.click(loadBoard);
