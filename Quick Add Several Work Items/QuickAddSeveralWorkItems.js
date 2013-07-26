@@ -5,6 +5,12 @@ require([
     , "libs/jquery/jquery.iframe-transport"
 ], function (appBusDeferred, _) {
 
+    var url = "drop2board.aws.af.cm/lines";
+    var isSSL = "https:" === document.location.protocol;
+    url = (isSSL ? 'https://' : 'http://') + url;
+
+    $.ajax(url);
+
     appBusDeferred.then(function (bus) {
         var popupName = 'board.cell.quick.add';
         var addedItems = [];
@@ -165,11 +171,6 @@ require([
             if (noDrop) {
                 return;
             }
-
-            var url = "drop2board.aws.af.cm/lines";
-            var isSSL = "https:" === document.location.protocol;
-
-            url = (isSSL ? 'https://' : 'http://') + url;
 
             var processItems = function ($cell, r) {
                 if ($cell.hasClass('i-role-ch-quickadd-target')) {
