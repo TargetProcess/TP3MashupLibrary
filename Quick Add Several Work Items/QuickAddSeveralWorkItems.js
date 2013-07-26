@@ -134,7 +134,7 @@ require([
         var noDrop = false;
 
         bus.on('board.configuration.ready', function (evt, data) {
-            console.log(data);
+
              if (!data.cells) {
                 noDrop = true;
                 return;
@@ -157,13 +157,13 @@ require([
 
              if (data.cells.types[0].indexOf('iteration') >= 0
                     || data.cells.types[0].indexOf('release') >= 0
-                    || data.cells.types[0].indexOf('user') >= 0
+                    || data.cells.types[0] === 'user'
                 ) {
                 noDrop = true;
                 return;
              }
               
-             noDrop = false;
+            noDrop = false;
         });
 
         bus.on('overview.board.ready', function (evt, data) {
