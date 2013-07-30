@@ -1,0 +1,36 @@
+Embedded Pages
+==================
+
+The Embedded Pages mashup allows to see the pages by links you've provided in a URL and Template URL custom field as an additional tab on an entity view, so that you can work with the external pages and documents straight in TargetProcess.  
+
+For example, if Google Docs application is used to keep documentation related to User Stories, you can create a custom field "Google Doc" and specify there links to appropriate google documents for each User Story. This document will be reflected as a new tab on a User Story view.
+
+![Embedded Pages](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Embedded%20Pages/EmbeddedPages.jpg)
+
+How to activate it:
+
+1. Install the mashup from the TargetProcess Mashups Library
+2. Create URL or Template URL custom fields in ```Settings -> Processes -> your process -> Custom Fields tab```
+3. Change a mashup config (in the mashups list) to specify which custom fields you'd like to see as an embedded page on a User Story view:
+
+```
+tau.mashups
+    .addModule('EmbeddedPages.config', function() {
+        var EmbeddedPagesConfig = {
+            tabs: [{
+                entityTypeName: 'userStory',
+                customFieldName: 'Google Doc',
+                processName: 'Scrum'
+            }]
+        };
+
+        return EmbeddedPagesConfig;
+    });
+```
+
+Now when you put a URL into a 'Google Doc' custom field for a User Story, it will be reflected as a new tab and an embedded page on that User Story view.
+
+__Notes__: 
+
+1. Refresh of the screen is required to see the embedded page details. 
+2. You can show as tabs any number of URL and Template URL custom fields for different processes and entity types.
