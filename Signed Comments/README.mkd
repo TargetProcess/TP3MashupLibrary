@@ -6,8 +6,8 @@ and tasks.
 
 How to activate it:
 
-1. Install the mashup from the TargetProcess Mashups Library
+1. Install the mashup from the Targetprocess Mashups Library
 2. Go to your ```Settings > Personal Setting``` to set up your signature.
 
-![SignedComments](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Signed%20Comments/SignedComments.png)
+![Signed Comments](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Signed%20Comments/SignedComments.png)
 

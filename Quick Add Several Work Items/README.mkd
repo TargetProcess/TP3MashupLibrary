@@ -3,5 +3,5 @@ Quick Add Several Work Items
 
 This mashup will create new entities (User Stories, Tasks, Bugs, etc.) from the list of names in a .txt file.
 
-![ScreenShot](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Quick%20Add%20Several%20Work%20Items/QuickAddSeveralWorkItems.png)
+![Quick Add Several Work Items](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Quick%20Add%20Several%20Work%20Items/QuickAddSeveralWorkItems.png)
 

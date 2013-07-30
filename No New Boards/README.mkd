@@ -3,11 +3,11 @@ No New Boards
 
 This mashup will disable the Create Board function for certain users and/or roles.
 
-![NoNewBoards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/No%20New%20Boards/NoNewBoards.png)
+![No New Boards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/No%20New%20Boards/NoNewBoards.png)
  
 How to activate it:
 
-1. Install the mashup from the TargetProcess Mashups Library
+1. Install the mashup from the Targetprocess Mashups Library
 2. Edit the ```varlistAccessDenied``` section in the mashup code.
 
 ```javascript
@@ -19,7 +19,7 @@ How to activate it:
 
 Please note that the code is case-sensitive.
 
-In this section you specify which roles and/or users will not be able to create new boards in TargetProcess.
+In this section you specify which roles and/or users will not be able to create new boards in Targetprocess.
 
 For example: 
 
