@@ -1,5 +1,5 @@
 Targetprocess 3 Mashup Library
-=============================M
+=============================
 
 Mashups allow you to quickly extend Targetprocess 3 UI with almost any functionality you want. You can use existing mashups or create your own and share them with other Targetprocess users via Targetprocess Mashup Library.
 
