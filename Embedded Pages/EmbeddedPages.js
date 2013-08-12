@@ -15,7 +15,14 @@ tau.mashups
                 URL: 'url',
                 TEMPLATED_URL: 'templatedurl'
             },
-            REQUEST_FIELDS_FOR_ENTITY: ['customFields', {
+            CF_HOLDER_ENTITY_TYPES: ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'],
+            REQUEST_FIELDS_FOR_PROJECT: ['customFields', {
+                process: ['name', {
+                    customFields: ['name', 'value', {
+                        entityType: ['name']}]
+                }]
+            }],
+            REQUEST_FIELDS_FOR_CF_HOLDER: ['customFields', {
                 project: [{
                     process: ['name', {
                         customFields: ['name', 'value', {
@@ -30,7 +37,6 @@ tau.mashups
             }],
             $FRAME_TEMPLATE: '<iframe class="embedded-pages-tab-frame" src="${url}"></iframe>',
             $EMPTY_TEMPLATE: '<span class="embedded-pages-tab-empty">Nothing to display in the Tab: the value of the \'${customFieldName}\' Custom Field is empty</span>',
-
             _addTab: function (tabConfig) {
                 generalView.addTab(
                     tabConfig.customFieldName,
@@ -50,15 +56,21 @@ tau.mashups
             },
             _getContextEntityPromise: function(context){
                 var contextEntityDeferred = $.Deferred();
+                var entityTypeName = context.entity.type || context.entity.entityType.name;
                 (new Storage())
                     .getEntity()
-                        .ofType(context.entity.type || context.entity.entityType.name)
+                        .ofType(entityTypeName)
                         .withId(context.entity.id)
-                        .withFieldSetRestrictedTo(this.REQUEST_FIELDS_FOR_ENTITY)
+                        .withFieldSetRestrictedTo(this._getFieldSetRequiredByEntityType(entityTypeName))
                         .withCallOnDone(contextEntityDeferred.resolve)
                         .withCallOnFail(contextEntityDeferred.reject)
                     .execute();
                 return contextEntityDeferred.promise();
+            },
+            _getFieldSetRequiredByEntityType: function(entityTypeName){
+                return entityTypeName.toLowerCase() === 'project'
+                ? this.REQUEST_FIELDS_FOR_PROJECT
+                : this.REQUEST_FIELDS_FOR_CF_HOLDER;
             },
             _getProcessWithCFDefinitionsPromise: function(entity){
                 var cfDefinitionsDeferred = $.Deferred();
@@ -134,7 +146,6 @@ tau.mashups
                 var viewIsSuitableDeferred = $.Deferred();
                 if (!this._isViewSuitableByEntity(tabConfig, viewContext.entity)){
                     viewIsSuitableDeferred.resolve(false);
-
                 } else {
                     this._getContextEntityPromise(viewContext)
                         .done(_.bind(function(entity){
@@ -155,8 +166,10 @@ tau.mashups
                 return viewIsSuitableDeferred.promise();
             },
             _isViewSuitableByEntity: function(tabConfig, entity){
+                var entityTypeNameLowered = entity.entityType.name.toLowerCase();
                 return tabConfig.entityTypeName
-                    && tabConfig.entityTypeName.toLowerCase() === entity.entityType.name.toLowerCase();
+                    && tabConfig.entityTypeName.toLowerCase() === entityTypeNameLowered
+                    && _.contains(this.CF_HOLDER_ENTITY_TYPES, entityTypeNameLowered);
             },
             _isViewSuitableByProcess: function(tabConfig, process){
                 return !tabConfig.processName
