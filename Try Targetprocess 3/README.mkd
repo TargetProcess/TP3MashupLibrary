@@ -12,10 +12,10 @@ As soon as you install it from Targetprocess Mashups Library, you'll see Try Tar
 How to activate it:
 
 1. Install the mashup from the Targetprocess Mashups Library
-2. Specify your Targetprocess URL istead of 'localhost' in the following line of the mashup code:
+2. Specify your Targetprocess URL istead of 'localhost' in mashup code:
 
 ```
-  $('ul.user-sub').append('<li style="padding-top: 0px"><a href="http://localhost/restui/board.aspx"...
+   var url = 'http://localhost';
 ```
 
 To do that please select the installed mashup in the mashups list, edit the code and save the changes.
