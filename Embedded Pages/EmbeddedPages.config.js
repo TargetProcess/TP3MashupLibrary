@@ -10,6 +10,11 @@ tau.mashups
                 /*Sample embedded page of the 'CustomPageUrl' Custom Field of a Bug of any Project*/
                 entityTypeName: 'Bug',
                 customFieldName: 'CustomPageUrl'				
+            },{
+                /*Sample embedded page of the 'CustomEmbeddedVideoUrl' Custom Field with the overridden template of the tab frame*/
+                entityTypeName: 'Project',
+                customFieldName: 'CustomEmbeddedVideoUrl',
+                frameTemplate: '<iframe src="${url}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
             }]
         };
 

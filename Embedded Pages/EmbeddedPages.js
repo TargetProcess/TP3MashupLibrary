@@ -35,7 +35,7 @@ tau.mashups
                             entityType: ['name']
                          }]
             }],
-            $FRAME_TEMPLATE: '<iframe class="embedded-pages-tab-frame" src="${url}"></iframe>',
+            $FRAME_TEMPLATE: '<iframe class="embedded-pages-tab-frame" src="${url}" frameborder="0"></iframe>',
             $EMPTY_TEMPLATE: '<span class="embedded-pages-tab-empty">Nothing to display in the Tab: the value of the \'${customFieldName}\' Custom Field is empty</span>',
             _addTab: function (tabConfig) {
                 generalView.addTab(
@@ -106,7 +106,7 @@ tau.mashups
                 if (!tabFrameUrl) {
                     return;
                 }
-                this._appendFrameToTabContent($(contentElement), tabFrameUrl);
+                this._appendFrameToTabContent(tabConfig, $(contentElement), tabFrameUrl);
             },
             _getTabCF: function(tabConfig, customFields){
                 return _.find(customFields, _.bind(function (cf) {
@@ -136,8 +136,8 @@ tau.mashups
 
                 return tabFrameUrl;
             },
-            _appendFrameToTabContent: function($contentElement, tabFrameUrl){
-                $.tmpl(this.$FRAME_TEMPLATE, {url: tabFrameUrl}).appendTo($contentElement);
+            _appendFrameToTabContent: function(tabConfig, $contentElement, tabFrameUrl){
+                $.tmpl(tabConfig.frameTemplate || this.$FRAME_TEMPLATE, {url: tabFrameUrl}).appendTo($contentElement);
             },
             _appendEmptyToTabContent: function($contentElement, customFieldName){
                 $.tmpl(this.$EMPTY_TEMPLATE, {customFieldName: customFieldName}).appendTo($contentElement);
