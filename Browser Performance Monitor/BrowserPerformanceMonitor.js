@@ -4,7 +4,7 @@ if (window.self !== window.top) {
 
 tau.mashups
   .addDependency('libs/jquery/jquery')
-  .addDependency('https://raw.github.com/bestiejs/xstats.js/master/xstats.js')
+  .addDependency('libs/xstats')
   .addMashup(function ($, dummy, config) {
     var stats = new xStats();
     $.extend(stats.element.style, {position: 'fixed', left: '0', top: '0', 'zIndex': 1000});
