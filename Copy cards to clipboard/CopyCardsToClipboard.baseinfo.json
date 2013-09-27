@@ -1,0 +1,6 @@
+{
+	"ShortDescription": "This mashup will allow to quickly copy the selected cards short links into a clipboard via Ctrl+C",
+	"CompatibleTpVersion": {
+		"Minimum": "2.24.8"
+	}		
+}
