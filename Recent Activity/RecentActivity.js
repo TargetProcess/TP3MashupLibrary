@@ -3,10 +3,10 @@ tau.mashups.addDependency('jQuery')
   .addDependency('tp3/mashups/topmenu')
   .addDependency('tp3/mashups/popup')
   .addDependency('tp3/mashups/context')
+  .addDependency("tau/utils/utils.date")
+  .addMashup(function($, _, topmenu, popup, context, du) {
 
-  .addMashup(function($, _, topmenu, popup, context) {
-
-  // add new link to the top header  
+  // add new link to the top header
   var link = topmenu.addItem({
     title: 'Activity'
   });
@@ -25,7 +25,7 @@ tau.mashups.addDependency('jQuery')
     var acid = "";
     var selectedProjects = [];
 
-    context.onChange(function(ctx) { 
+    context.onChange(function(ctx) {
       acid = ctx.acid;
       selectedProjects = ctx.selectedProjects;
     });
@@ -36,11 +36,11 @@ tau.mashups.addDependency('jQuery')
       activityPopup.show();
       activityPopup.showLoading();
       var $container = activityPopup.$container;
-      
+
       $.when(context.getApplicationPath(), context.getAcid()).then(
 
       function(appPath, tempAcid) {
-       
+
         // appPath like "http://plan.tpondemand.com";
 
         var DAY_AGO = 2;
@@ -48,7 +48,7 @@ tau.mashups.addDependency('jQuery')
         var eventTypes = ["add", "comment", "state"];
         var activity = [];
         var callsCount = 0;
-       
+
         var stateQuery = appPath + "/api/v1/{0}Histories?where={1}and({0}.{2})&orderbyDesc=Date&include=[Date,EntityState[Name,EntityType],{0}[Name,Project[Color,Abbreviation]],Modifier]&format=json&take=100&callback=?";
 
         var addQuery = appPath + "/api/v1/Generals?where={0}&acid={1}&include=[Name,Owner,EntityType[Name],CreateDate,Project[Color,Abbreviation]]&format=json&take=300&callback=?";
@@ -56,7 +56,7 @@ tau.mashups.addDependency('jQuery')
         var commentQuery = appPath + "/api/v1/Comments?where={0}and(General.{1})&include=[Description,Owner,CreateDate,General[EntityType,Project[Color,Abbreviation],Name]]&format=json&take=100&callback=?";
 
 
-       
+
         var projectFilter = getProjectFilter();
 
         var entities = ["UserStory", "Bug", "Task"];
@@ -187,22 +187,22 @@ tau.mashups.addDependency('jQuery')
           var html = '<div id="ac_filter" style="font-size: 12px"><input type="checkbox" ' + isEventChecked("add") + ' class="ac_event_filter" value="add"> Add <input type="checkbox"  ' + isEventChecked("comment") + '  class="ac_event_filter" value="comment"> Comment <input class="ac_event_filter"  ' + isEventChecked("state") + '  type="checkbox" value="state"> State Change</div>';
 
           html += "<div id='ac_main' style='height: 100%; overflow: scroll'><table style='font-size: 11px !important'>";
-          
+
           var tmpl = ["<tr><td><img width='16' height='16' src='<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>'>",
            " <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>",
            "<td><span class='delimeter'>—</span> <span style='background:<%= this.color %>'><%= this.projectAbr %></span>",
            " <%= this.entityType %> <a href='<%= this.path %>/entity/<%= this.entityId %>'><%= this.entityName %></a>",
            " by <%= this.user %></td></tr>"].join("");
 
-          
-          _.each(groupedActivity, function(val, key) {            
+
+          _.each(groupedActivity, function(val, key) {
             html += "<tr><td colspan='3'><h2>" + key + "</h2></td></tr>";
             _.each(val, function(item) {
-              //console.log(item);
+
               html += $.jqote(
                 tmpl,
                  {
-                  path: appPath, 
+                  path: appPath,
                   date: moment(item.EventDate).format('HH:mm'),
                   state: item.State,
                   entityType: item.EntityType.toString(),
@@ -214,21 +214,21 @@ tau.mashups.addDependency('jQuery')
                   user: item.User,
                   doneStyle: (item.State == "Done" || item.State == "Closed") ? "style='text-decoration: line-through;'" : ""
                 }
-                                
+
               )
             })
           });
-          
+
           $container.append(html);
           $container.append("</table></div>");
-          
+
           activityPopup.hideLoading();
-          
+
         });
 
 
         $('.ac_event_filter').live("change", function() {
-          
+
           eventTypes.length = 0;
 
           // do your staff here. It will fire any checkbox change
@@ -244,13 +244,13 @@ tau.mashups.addDependency('jQuery')
         }
 
         function extractDate(date) {
-          return new Date(parseInt(date.substr(6)));
+            return du.convertToTimezone(du.parse(date));
         }
 
         function getProjectFilter() {
           var ids = "(<%_.each(p, function(project) { %>'<%= project.id %>',<%});%>";
           var projectIds = _.template(ids, {p: selectedProjects});
-          projectIds = projectIds.slice(0, -1); 
+          projectIds = projectIds.slice(0, -1);
           projectIds += ")";
           return "Project.Id%20in%20{0}".format(projectIds);
         }
