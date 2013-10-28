@@ -82,7 +82,6 @@ tau.mashups
 
             this.colorCard = function(currentCard) {
                 var color = this.getCardColor(_.find(currentCard.CustomFields, function(field) { return field.Name === "Due Date"; }).Value);
-				console.log(color);
                 if (color) {
                     $('div.tau-card[data-entity-id="' + currentCard.Id + '"] .tau-card-header-container').css('background', color);
                     $('div.tau-card[data-entity-id="' + currentCard.Id + '"] .tau-card-header-container a.tau-id').css('cssText', "color: #000000 !important");
