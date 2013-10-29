@@ -1,7 +1,7 @@
 Request Classes Of Service Colorer
 ==================
 
-The Request Classes Of Service Colorer mashup will set a color for a Request card based on Creation Date and Last Comment Date and Kind of a User who posted a last comment. 
+The Request Classes Of Service Colorer mashup will set a color for Request cards based on the Creation Date, Last Comment Date and Kind of a User who posted the last comment. 
 
 For example, all the fresh Requests cards will be highlighted in green on the boards. In the same fashion, all the Requests that have not been answered by Support people within a time specified in a Service-level agreement (e.g. 24 hours) can be highlighted in red.  
 
@@ -15,15 +15,15 @@ How to activate it:
 	this.colors = ['#d8ffa0', '', '#fffdb0', '#ffb090'];
 ```
 
-This section specifies which html colors codes should be used for which delay period in hours.
+This section specifies which html color codes should be used for each delay period in hours.
 
 For example: 
 
-```'#d8ffa0'``` will set green color for Requests created within last hour or commented by a customer within last hour. If they are answered quickly by Support people that can make a wow-effect for a Customer and impress him as a really quick and responsive service.
+```'#d8ffa0'``` will set green color for Requests created within last hour or commented by a customer within last hour. If they are answered quickly by Support people this can make a wow-effect for Customers and impress them with really quick and responsive service.
 
-```'#fffdb0'``` will set yellow color for Requests non-answered within more that last 18 hours but less then last 24 hours. They are close to the SLA time edge so require attention of Support people.
+```'#fffdb0'``` will set yellow color for Requests not answered within the last 18 to 24 hours. These are close to the SLA time edge so require attention of Support people.
 
-```'#ffb090'``` will set red color for Requests that haven't been answered for more than 24 hours. That means Service-level agreement was broken by Support people.
+```'#ffb090'``` will set red color for Requests that haven't been answered for more than 24 hours. This means Service-level agreement was broken by Support people.
 
 You can add as many hour limits as you need. You can remove several limits as well. Every hour limit should have corresponding color code or a blank string to leave the cards color untouched.
 
