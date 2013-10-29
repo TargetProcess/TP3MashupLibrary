@@ -58,7 +58,7 @@ tau.mashups
 
             // get cards
             this.getCards = function() {
-                var ajaxUrl = configurator.getApplicationPath() + '/api/v1/Tasks?format=json&include=[StartDate,Id]&where=(StartDate is not null) and (EntityState.Name eq "In Progress")';
+                var ajaxUrl = configurator.getApplicationPath() + '/api/v1/Tasks?format=json&include=[StartDate,Id]&where=(StartDate is not null) and (EntityState.Name eq "In Progress")&take=1000';
 
                 $.ajax({
                     url: ajaxUrl,
