@@ -1,0 +1,32 @@
+Request Classes Of Service Colorer
+==================
+
+The Request Classes Of Service Colorer mashup will set a color for a Request card based on Creation Date and Last Comment Date and Kind of a User who posted a last comment. 
+
+For example, all the fresh Requests cards will be highlighted in green on the boards. In the same fashion, all the Requests that have not been answered by Support people within a time specified in a Service-level agreement (e.g. 24 hours) can be highlighted in red.  
+
+How to activate it:
+
+1. Install the mashup from the Targetprocess Mashups Library
+2. Edit the ```this.hourLimits``` and ```this.colors``` sections in the mashup code.
+
+```javascript
+	this.hourLimits = [0, 1, 18, 24];
+	this.colors = ['#d8ffa0', '', '#fffdb0', '#ffb090'];
+```
+
+This section specifies which html colors codes should be used for which delay period in hours.
+
+For example: 
+
+```'#d8ffa0'``` will set green color for Requests created within last hour or commented by a customer within last hour. If they are answered quickly by Support people that can make a wow-effect for a Customer and impress him as a really quick and responsive service.
+
+```'#fffdb0'``` will set yellow color for Requests non-answered within more that last 18 hours but less then last 24 hours. They are close to the SLA time edge so require attention of Support people.
+
+```'#ffb090'``` will set red color for Requests that haven't been answered for more than 24 hours. That means Service-level agreement was broken by Support people.
+
+You can add as many hour limits as you need. You can remove several limits as well. Every hour limit should have corresponding color code or a blank string to leave the cards color untouched.
+
+3. By default, this Mashup only affects Requests of type 'Issue' and 'Question'. Modify the ```this.includeIdeas``` section and set it to 1 if cards for Requests of type 'Idea' should also be affected by this Mashup.
+
+4. By default, this Mashup works with Requests that are in the first workflow state only. If you require all states to be processed, modify ```this.includeInitialStateOnly``` section and set it to 0 in the mashup code.
