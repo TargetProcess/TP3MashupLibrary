@@ -1,5 +1,5 @@
 {
-        "ShortDescription": "This mashup will set a color for a Request card based on Creation Date and Last Comment Date and Kind of a User who posted a last comment.",
+        "ShortDescription": "This mashup will set a color for a Request card based on the Creation Date, Last Comment Date and Kind of a User who posted the last comment.",
         "CompatibleTpVersion": {
                 "Minimum": "3.0.2"
         }                
