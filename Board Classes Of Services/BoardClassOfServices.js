@@ -57,7 +57,7 @@ tau.mashups
 					whereIdsStr = '0';
 				}
 
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=TagObjects.Count('+whereTagStr+')>0 or (id in ['+whereIdsStr+'] and EntityState.isFinal==false)&select={id,Tags,EntityState.Name as state,Priority.Name as priority}&acid=' + acid;
+                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=TagObjects.Count('+whereTagStr+')>0 and (id in ['+whereIdsStr+'] and EntityState.isFinal==false)&select={id,Tags,EntityState.Name as state,Priority.Name as priority}&acid=' + acid;
                 $.ajax({
                     url: requestUrl,
                     context: this
