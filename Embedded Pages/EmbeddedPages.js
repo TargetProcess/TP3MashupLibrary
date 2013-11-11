@@ -18,20 +18,20 @@ tau.mashups
             CF_HOLDER_ENTITY_TYPES: ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'],
             REQUEST_FIELDS_FOR_PROJECT: ['customFields', {
                 process: ['name', {
-                    customFields: ['name', 'value', {
+                    customFields: ['name', 'value', 'fieldType', {
                         entityType: ['name']}]
                 }]
             }],
             REQUEST_FIELDS_FOR_CF_HOLDER: ['customFields', {
                 project: [{
                     process: ['name', {
-                        customFields: ['name', 'value', {
+                        customFields: ['name', 'value', 'fieldType', {
                             entityType: ['name']}]
                     }]
                 }]
             }],
             REQUEST_FIELDS_FOR_DEFAULT_PROCESS: ['name', {
-                        customFields: ['name', 'value', {
+                        customFields: ['name', 'value', 'fieldType', {
                             entityType: ['name']
                          }]
             }],
@@ -98,7 +98,7 @@ tau.mashups
                     return;
                 }
                 if (!tabCF.value){
-                    this._appendEmptyToTabContent($(contentElement), tabConfig.customFieldName)
+                    this._appendEmptyToTabContent($(contentElement), tabConfig.customFieldName);
                     return;
                 }
                 var entityCFDefinition = this._getEntityCFDefinition(tabConfig, cfDefinitions);
@@ -108,11 +108,11 @@ tau.mashups
                 }
                 this._appendFrameToTabContent(tabConfig, $(contentElement), tabFrameUrl);
             },
-            _getTabCF: function(tabConfig, customFields){
-                return _.find(customFields, _.bind(function (cf) {
+            _getTabCF: function(tabConfig, cfs){
+                return _.find(cfs, function (cf) {
                     return tabConfig.customFieldName.toLowerCase() === cf.name.toLowerCase()
-                        && _.contains(_.values(this.URL_CF_TYPES), cf.type.toLowerCase());
-                }, this));
+                        && this._isSuitableCFType(cf, 'type');
+                }, this);
             },
             _getEntityCFDefinition: function(tabConfig, cfDefinitions){
                 return _.find(cfDefinitions, function(cfDefinition){
@@ -139,8 +139,8 @@ tau.mashups
             _appendFrameToTabContent: function(tabConfig, $contentElement, tabFrameUrl){
                 $.tmpl(tabConfig.frameTemplate || this.$FRAME_TEMPLATE, {url: tabFrameUrl}).appendTo($contentElement);
             },
-            _appendEmptyToTabContent: function($contentElement, customFieldName){
-                $.tmpl(this.$EMPTY_TEMPLATE, {customFieldName: customFieldName}).appendTo($contentElement);
+            _appendEmptyToTabContent: function($contentElement, cfName){
+                $.tmpl(this.$EMPTY_TEMPLATE, {customFieldName: cfName}).appendTo($contentElement);
             },
             _getViewIsSuitablePromise: function(tabConfig, viewContext){
                 var viewIsSuitableDeferred = $.Deferred();
@@ -148,20 +148,14 @@ tau.mashups
                     viewIsSuitableDeferred.resolve(false);
                 } else {
                     this._getContextEntityPromise(viewContext)
-                        .done(_.bind(function(entity){
-                            this._getProcessWithCFDefinitionsPromise(entity)
-                                .done(_.bind(function(process){
-                                    var viewIsSuitable = this._isViewSuitableByProcess(tabConfig, process);
-                                    viewIsSuitableDeferred.resolve(viewIsSuitable);
-                                }, this))
-                                .fail(function(failData){
-                                    viewIsSuitableDeferred.reject(failData)
-                                });
-
-                        }, this))
-                        .fail(function(failData){
-                            viewIsSuitableDeferred.reject(failData)
-                        });
+                        .then(_.bind(this._getProcessWithCFDefinitionsPromise, this), viewIsSuitableDeferred.reject)
+                        .then(_.bind(function(process){
+                                var viewIsSuitable = this._isViewSuitableByProcess(tabConfig, process)
+                                    && this._isViewSuitableByProcessCFs(tabConfig, process.customFields);
+                                viewIsSuitableDeferred.resolve(viewIsSuitable);
+                            }, this),
+                            viewIsSuitableDeferred.reject
+                        );
                 }
                 return viewIsSuitableDeferred.promise();
             },
@@ -173,13 +167,17 @@ tau.mashups
             },
             _isViewSuitableByProcess: function(tabConfig, process){
                 return !tabConfig.processName
-                    || (process
-                        && tabConfig.processName.toLowerCase() === process.name.toLowerCase()
-                        && _.find(process.customFields, function (cfDefinition) {
-                            return tabConfig.customFieldName.toLowerCase() === cfDefinition.name.toLowerCase()
-                                && tabConfig.entityTypeName.toLowerCase() === cfDefinition.entityType.name.toLowerCase();
-                        })
-                    );
+                    || (process && tabConfig.processName.toLowerCase() === process.name.toLowerCase());
+            },
+            _isViewSuitableByProcessCFs: function(tabConfig, cfDefinitions){
+                return _.some(cfDefinitions, function (cfDefinition) {
+                    return tabConfig.customFieldName.toLowerCase() === cfDefinition.name.toLowerCase()
+                        && tabConfig.entityTypeName.toLowerCase() === cfDefinition.entityType.name.toLowerCase()
+                        && (this._isSuitableCFType(cfDefinition, 'fieldType'));
+                }, this);
+            },
+            _isSuitableCFType: function(cf, fieldTypeKey){
+                return _.contains(_.values(this.URL_CF_TYPES), cf[fieldTypeKey].toLowerCase());
             }
         };
 
