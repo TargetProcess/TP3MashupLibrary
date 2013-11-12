@@ -1,11 +1,10 @@
 tau.mashups
     .addDependency('tp/mashups')
     .addDependency('jQuery')
-    .addDependency('tp3/mashups/context')
     .addDependency('Underscore')
     .addDependency('tau/core/bus.reg')
     .addDependency('tau/configurator')
-    .addMashup(function(m, $, context, _, busRegistry, configurator) {
+    .addMashup(function(m, $, _, busRegistry, configurator) {
 
         /* the number of days a card is allowed to "rot" before we throw feedback and the color of the card*/
         var rottingDaysAllowed = 2;
@@ -29,58 +28,62 @@ tau.mashups
 
                 var self = this;
 
-                context.onChange(function(ctx) {
-                    self.setContext(ctx);
-                    self.refresh(ctx);
-                });
-
                 busRegistry.on('create', function(eventName, sender) {
                     if (sender.bus.name == 'board_plus') {
                         sender.bus.on('start.lifecycle', _.bind(function() {
                             this.cards = [];
+                            this.taskCards = [];
+                            this.taskCards.isResolved = false;
                         }, self));
                         sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
+                        sender.bus.on('cardsFullyLoaded', _.bind(self.refreshDebounced, self));
                     }
                 });
 
             };
 
             this.cards = [];
-
-            this._ctx = {};
-            this.setContext = function(ctx) {
-                this._ctx = ctx;
-            };
+            this.taskCards = [];
+            this.taskCards.isResolved = false;
 
             this.refresh = function() {
-                this.getCards();
+                this.getCards().done(function(taskCards) {
+                    _.each(taskCards,this.colorCard,this);
+                }.bind(this));
             };
 
             // get cards
             this.getCards = function() {
                 var ajaxUrl = configurator.getApplicationPath() + '/api/v1/Tasks?format=json&include=[StartDate,Id]&where=(StartDate is not null) and (EntityState.Name eq "In Progress")&take=1000';
+                var result = $.Deferred();
 
-                $.ajax({
-                    url: ajaxUrl,
-                    context: this
-                }).done(_.bind(function(data) {
-                        for (var i = 0; i < data.Items.length; i++) {
-                            this.colorCard(data.Items[i]);
-                        }
-                    }, this));
+                if (this.taskCards.isResolved) {
+                    result.resolve(this.taskCards);
+                } else {
+                    result = $.ajax({
+                        url: ajaxUrl,
+                        context: this
+                    }).then(function(data) {
+                            this.taskCards = data.Items;
+                            this.taskCards.isResolved = true;
+                            return this.taskCards;
+                        }.bind(this));
+
+                }
+                return result;
             };
 
             this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
             this.cardAdded = function(eventName, sender) {
                 this.cards.push(sender.element);
-                this.refreshDebounced(this._ctx);
+                this.refreshDebounced();
             };
 
             this.colorCard = function(currentCard) {
                 var startDate;
                 try {
-                     startDate = new Date(Number(currentCard.StartDate.match(/Date\((\d+)[-\+](\d+)\)/)[1]));
+                    startDate = new Date(Number(currentCard.StartDate.match(/Date\((\d+)[-\+](\d+)\)/)[1]));
                 } catch (e) {
                     return;
                 }
