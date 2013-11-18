@@ -50,14 +50,13 @@ tau.mashups
 			this.refresh = function(ctx) {
 
 				var acid = ctx.acid;
-                var whereTagStr = this.getFilter(this.tagMapping);
 				var whereIdsStr = this.cards.map($.proxy(function(c){ return this._getCardId(c); }, this)).join(',');
 
 				if (whereIdsStr == '') {
 					whereIdsStr = '0';
 				}
 
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=TagObjects.Count('+whereTagStr+')>0 and (id in ['+whereIdsStr+'] and EntityState.isFinal==false)&select={id,Tags,EntityState.Name as state,Priority.Name as priority}&acid=' + acid;
+                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=(id in ['+whereIdsStr+'] and EntityState.isFinal==false)&select={id,Tags,EntityState.Name as state,Priority.Name as priority}&acid=' + acid;
                 $.ajax({
                     url: requestUrl,
                     context: this
@@ -105,14 +104,6 @@ tau.mashups
                 $.each(this.cards, function(index, card) {
                     self.renderCard(card);
                 });
-            };
-
-            this.getFilter = function(mapping){
-                var where = [];
-                $.each(mapping, function(tag, color){
-                    where.push('Name=="'+ tag +'"');
-                });
-                return where.join(" or ");
             };
         }
 
