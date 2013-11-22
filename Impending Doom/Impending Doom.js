@@ -53,7 +53,7 @@ tau.mashups
             // get cards
             this.getCards = function() {
 				_.each(this.getCardTypes(), function(cardType) {
-					var ajaxUrl = configurator.getApplicationPath() + '/api/v1/' + this.apiCalls[cardType] + '?format=json&include=[CustomFields,Id]&where=("CustomFields.Due Date" is not null) and (EntityState.IsFinal eq "false")';
+					var ajaxUrl = configurator.getApplicationPath() + '/api/v1/' + this.apiCalls[cardType] + '?format=json&include=[PlannedEndDate,Id]&where=(PlannedEndDate is not null) and (EntityState.IsFinal eq "false")';
 
 	                $.ajax({
 	                    url: ajaxUrl,
@@ -81,7 +81,7 @@ tau.mashups
             };
 
             this.colorCard = function(currentCard) {
-                var color = this.getCardColor(_.find(currentCard.CustomFields, function(field) { return field.Name === "Due Date"; }).Value);
+                var color = this.getCardColor(currentCard.PlannedEndDate);
                 if (color) {
                     $('div.tau-card[data-entity-id="' + currentCard.Id + '"] .tau-card-header-container').css('background', color);
                     $('div.tau-card[data-entity-id="' + currentCard.Id + '"] .tau-card-header-container a.tau-id').css('cssText', "color: #000000 !important");
