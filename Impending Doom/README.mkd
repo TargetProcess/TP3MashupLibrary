@@ -1,7 +1,7 @@
 Impending Doom
 ==============
 
-The Kanban Board Impending Doom is an advanced Mashup for TargetProcess that colors cards on the Kanban board according 
+Impending Doom is an advanced Mashup for Targetprocess that colors cards on the board according 
 to your planned end date. The Mashup colors cards Green, Yellow, Orange and Red depending on the amount 
 of time remaining for the card.
 
