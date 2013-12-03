@@ -83,10 +83,7 @@ tau.mashups
             this.colorCard = function(currentCard) {
                 var color = this.getCardColor(currentCard.PlannedEndDate);
                 if (color) {
-                    $('div.tau-card[data-entity-id="' + currentCard.Id + '"] .tau-card-header-container').css('background', color);
-                    $('div.tau-card[data-entity-id="' + currentCard.Id + '"] .tau-card-header-container a.tau-id').css('cssText', "color: #000000 !important");
-
-                    $('div.tau-card-v2[data-entity-id="' + currentCard.Id + '"] .tau-card-v2__section:first').css('background', color);
+                    $('div[data-entity-id='+currentCard.Id+']').attr('style', 'background: '+color+';');
                 }
             };
 
@@ -103,20 +100,20 @@ tau.mashups
 				dueDate = this.convertDate(dueDate);
                 var diff = dueDate.getTime() - (new Date()).getTime();
 				if (diff < 0) {
-					return '#FF0000';
+					return '#F26C4F';
 				} else {
 					/* Convert ms to days
 					* 86400000 = 1000ms/sec * 60sec/min * 60min/hr * 24hr/day */
 					var daysToGo = (diff / 86400000);
 					if (daysToGo > 2) {
 						/* We're not due for at least 2 days */
-						return '#00FF00';
+						return '#3BB878';
 					} else if (daysToGo > 1) {
 						/* We're due tomorrow */
-						return '#ffff00';
+						return '#FFF467';
 					} else {
 						/* We're due today */
-						return '#FF6666';
+						return '#FBAF5C';
 					}
 				}
 				return false;
