@@ -12,7 +12,10 @@ require([
     $.ajax(url);
 
     appBusDeferred.then(function (bus) {
-        var popupName = 'board.cell.quick.add';
+
+        var isQuickAddEvent = function(evt) {
+            return ['board.cell.quick.add', 'board plus quick add cells'].indexOf(evt.caller.name.toLowerCase()) >= 0;
+        };
         var addedItems = [];
         var queue = [];
         var $quickAdd = null;
@@ -22,7 +25,7 @@ require([
         $("<style type='text/css'> .file-added-cell { background-color: #2ca02c; opacity: 0.2; } </style>").appendTo("head");
 
         bus.on('model.data.item.did.add', function (evt, data) {
-            if (evt.caller.name != popupName) {
+            if (!isQuickAddEvent(evt)) {
                 return;
             }
 
@@ -39,7 +42,7 @@ require([
         });
 
         bus.on('model.data.item.did.fail.add', function (evt, data) {
-            if (evt.caller.name != popupName) {
+            if (!isQuickAddEvent(evt)) {
                 return;
             }
 
@@ -49,7 +52,7 @@ require([
         });
 
         bus.on('blur', function (evt, data) {
-            if (evt.caller.name != popupName) {
+            if (!isQuickAddEvent(evt)) {
                 return;
             }
 
@@ -59,14 +62,14 @@ require([
         });
 
         bus.on('afterRender', function (evt, data) {
-            if (evt.caller.name != popupName) {
+            if (!isQuickAddEvent(evt)) {
                 return;
             }
 
             $quickAdd = data.element;
 
             if (addedItems.length > 0) {
-
+                
                 $('.tau-entity-fields', $quickAdd).each(function () {
                     var $form = $(this);
 
