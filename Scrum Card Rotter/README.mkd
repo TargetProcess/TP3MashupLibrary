@@ -6,4 +6,4 @@ The Scrum Card Rotter will "rot" task cards that have been in the state "In Prog
  a medium warning and the full panic state. The default configuration is 2 days are ok, 5 days are kind of critical and
  after 8 days we really should finish this task.
 
-![Scrum Card Rotter](scrumcardrotter.png)
+![Scrum Card Rotter](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Scrum%20Card%20Rotter/scrumcardrotter.png)
