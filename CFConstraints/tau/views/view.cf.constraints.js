@@ -41,21 +41,8 @@ define([
             this.container.on('afterInit', this['container afterInit'], this);
             this.container.on('afterRender', this['container afterRender'], this);
             this.container.on('componentsCreated', this['container componentsCreated'], this);
-            this.container.on('destroy', this['container destroy'], this, {entityDeferred: configService.entityDeferred});
 
             this.container.initialize(containerConfig);
-        },
-
-        'container destroy': function(evtArgs) {
-            var entityDeferred = evtArgs.listenerData.entityDeferred;
-            if (entityDeferred.state() == 'pending') {
-                entityDeferred.reject({
-                    response: {
-                        Message: "You need to specify required custom fields to perform action"
-                    },
-                    status: 400
-                });
-            }
         },
 
         "container afterInit": function() {

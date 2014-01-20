@@ -1,6 +1,6 @@
 define([
     'tau/components/component.creator'
-    , 'tau/cf.constraints/models/model.cf.constraints.header'
+    , 'tau/cf.constraints/models/model.cf.constraints'
     , 'tau/cf.constraints/ui/templates/ui.template.cf.constraints.header'
 ], function(ComponentCreator, Model, Template) {
     return {

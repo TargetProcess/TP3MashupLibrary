@@ -6,8 +6,8 @@ define([
     , 'tau/services/service.applicationContext'
     , 'tau/components/component.application.generic'
     , 'tau/ui/extensions/application.generic/ui.extension.application.generic.placeholder'
-    , 'tau/cf.constraints/ui/extensions/application.generic/ui.extension.application.generic.popupCloseDisabler'
-], function($, _, ServiceContainer, ServiceNavigator, ServiceApplicationContext, ApplicationGeneric, ExtensionPlaceholder, ExtensionPopupCloseDisabler) {
+    , 'tau/cf.constraints/ui/extensions/application.generic/ui.extension.application.generic.cf.constraints'
+], function($, _, ServiceContainer, ServiceNavigator, ServiceApplicationContext, ApplicationGeneric, ExtensionPlaceholder, ExtensionApplicationCfConstraints) {
 
     var routes = [
         {
@@ -57,7 +57,8 @@ define([
                     placeholder: placeholder,
                     integration: {
                         showInPopup: true,
-                        cssClass: 'cf-constraints-popup'
+                        cssClass: 'cf-constraints-popup',
+                        keepAlive: false
                     }
                 },
                 routes: routes,
@@ -66,7 +67,7 @@ define([
                 },
                 extensions: [
                     ExtensionPlaceholder,
-                    ExtensionPopupCloseDisabler
+                    ExtensionApplicationCfConstraints
                 ]
             };
 

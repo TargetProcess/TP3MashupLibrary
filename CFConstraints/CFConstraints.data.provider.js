@@ -17,7 +17,12 @@ tau.mashups
                     .filteredBy({id: {$in: entitiesIds}})
                     .withFieldSetRestrictedTo(this._getEntitiesDetailsFilter(entityType))
                     .withCallOnDone(function(entitiesDetailed) {
-                        getEntitiesDetailsDeferred.resolve(entitiesDetailed);
+                        getEntitiesDetailsDeferred.resolve(_.map(entitiesDetailed, _.bind(function(entityDetailed){
+                            if (entityDetailed && entityDetailed.entityType){
+                                entityDetailed.type = entityDetailed.entityType.name;
+                            }
+                            return entityDetailed;
+                        }, this)));
                     })
                     .execute();
                 return getEntitiesDetailsDeferred.promise();
