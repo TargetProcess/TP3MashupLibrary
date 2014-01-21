@@ -1,7 +1,7 @@
 Signed Comments
 ==================
 
-The users will be able to set their personal signatures for the comments they're addding to bugs, stories, requests
+The users will be able to set their personal signatures for the comments they're adding to bugs, stories, requests
 and tasks.
 
 How to activate it:
