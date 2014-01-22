@@ -8,8 +8,8 @@ The Custom Field Constraints mashup allows a custom field to be required in eith
 
 After the mashup has been installed, it will need to be configured. Click the Custom Field Constraints mashup in the list of mashups and perform the following changes in it’s code:
 
-_Step 1._ Specify a _Process ID_, which the custom field belongs to, as a ```‘processId:’``` value.
-_Step 2._ Specify an _Entity Type_, which the custom field was created for, as a ```‘constraints:’``` value.
+1. Specify a _Process ID_, which the custom field belongs to, as a ```‘processId:’``` value.
+2. Specify an _Entity Type_, which the custom field was created for, as a ```‘constraints:’``` value.
 
 ![Assigned Effort Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/CFConstraints/code.png)
 
