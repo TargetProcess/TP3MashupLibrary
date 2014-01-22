@@ -38,4 +38,4 @@ _Note: In case you need to make a custom field required, when any value except t
 After the Custom Field Constraints mashup has been configured and one of actions has been triggered you will see a popup to provide the a value for required custom field:
 
 
-![Assigned Effort Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Assigned%20Effort%20Report/AssignedEffortReport.png)
+![Assigned Effort Report](https://github.com/smazurk/TP3MashupLibrary/blob/master/CFConstraints/code.png)
