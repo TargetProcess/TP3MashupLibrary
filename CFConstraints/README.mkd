@@ -11,7 +11,7 @@ After the mashup has been installed, it will need to be configured. Click the Cu
 1. Specify a _Process ID_, which the custom field belongs to, as a ```‘processId:’``` value
 2. Specify an _Entity Type_, which the custom field was created for, as a ```‘constraints:’``` value
 
-![Assigned Effort Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Assigned%20Effort%20Report/AssignedEffortReport.png)
+![Assigned Effort Report](https://github.com/smazurk/TP3MashupLibrary/blob/master/CFConstraints/code.png)
 
 
 
