@@ -11,17 +11,15 @@ After the mashup has been installed, it will need to be configured. Click the Cu
 1. Specify a _Process ID_, which the custom field belongs to, as a ```‘processId:’``` value
 2. Specify an _Entity Type_, which the custom field was created for, as a ```‘constraints:’``` value
 
-
 ![Assigned Effort Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Assigned%20Effort%20Report/AssignedEffortReport.png)
 
 
 
 __To configure Entity State Constraints__
 
+
 3. Specify an _Entity State_, when moving to this state in the workflow the custom field will be required, as a ```‘name:’``` in an ```‘entityStates:’``` section.
-4. Specify a _Name_ of a Custom Field, which will be required, as a ```‘requiredCustomFields:’``` in an ```‘entityStates:’``` section.
-
-
+4. Specify a _Name_ of a Custom Field, which will be required, as a ```‘requiredCustomFields:’``` in an ```‘entityStates:’``` section. 
 
 __Note__: In the case where multiple custom fields are required, provide a comma separated list of custom fields.
 
@@ -30,7 +28,7 @@ __Note__: In the case where multiple custom fields are required, provide a comma
 __To configure Custom Field Constraints__
 
 5. Specify the _Name_ of a Custom Field, which contains the constrained value, as a ```‘name:’```  in a ```‘customFields:’``` section
-6. Specify the _Constrained value_, which makes a dependent Custom Field required, as a ``‘valueIn:’``` in a ```‘customFields:’``` section
+6. Specify the _Constrained value_, which makes a dependent Custom Field required, as a ```‘valueIn:’``` in a ```‘customFields:’``` section
 
 
 __Note__: In case you need to make a custom field required, when any value except the specified one, is provided, use ```‘valueNotIn’``` instead of ```‘valueIn’``` operator.
