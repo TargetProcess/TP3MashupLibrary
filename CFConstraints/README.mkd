@@ -7,29 +7,27 @@ The Custom Field Constraints mashup allows a custom field to be required in eith
 
 After the mashup has been installed, it will need to be configured. Click the Custom Field Constraints mashup in the list of mashups and perform the following changes in it’s code:
 
-1. Specify a Process ID, which the custom field belongs to, as a ‘processId:’ value
-2. Specify an Entity Type, which the custom field was created for, as a ‘constraints:’ value
+1. Specify a Process ID, which the custom field belongs to, as a ```‘processId:’``` value
+2. Specify an Entity Type, which the custom field was created for, as a ```‘constraints:’``` value
 
 
 
 
 ![Assigned Effort Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Assigned%20Effort%20Report/AssignedEffortReport.png)
 
-Navigate to ```Reports > Other Reports > (People) > Assigned Effort Report``` to see the report.
-
 
 
 __To configure Entity State Constraints__
 
-3. Specify an Entity State, when moving to this state in the workflow the custom field will be required, as a ‘name:’ in an ‘entityStates:’ section.
-4. Specify the Name of a Custom Field, which will be required, as a ‘requiredCustomFields:’ in an ‘entityStates:’ section.
+3. Specify an __Entity State__, when moving to this state in the workflow the custom field will be required, as a ```‘name:’``` in an ```‘entityStates:’``` section.
+4. Specify the Name of a _Custom Field_, which will be required, as a ```‘requiredCustomFields:’``` in an ```‘entityStates:’``` section.
 
 Note: In the case where multiple custom fields are required, provide a comma separated list of custom fields.
 
 __To configure Custom Field Constraints__
 
-5. Specify a Custom Field Name, which contains the constrained value, as a ‘name:’  in a ```customFields:``` section
-6. Specify the constrained value, which makes a dependent Custom Field required, as a ‘valueIn’ in a ```customFields:``` section
+5. Specify a Custom Field Name, which contains the constrained value, as a ```‘name:’```  in a ```‘customFields:’``` section
+6. Specify the constrained value, which makes a dependent Custom Field required, as a ``‘valueIn:’``` in a ```‘customFields:’``` section
 
 Note: In case you need to make a custom field required, when any value except the specified one, is provided, use ‘valueNotIn’ instead of ‘valueIn’ operator.
 
