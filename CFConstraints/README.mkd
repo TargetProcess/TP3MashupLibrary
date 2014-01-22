@@ -2,6 +2,7 @@ Custom Field Constraints
 ======================
 
 The Custom Field Constraints mashup allows a custom field to be required in either of the following cases:
+
 1. When an entity is moved to a specific state (Entity State Constraints)
 2. When a specific value is selected in another custom field (Custom Field Constraints)
 
