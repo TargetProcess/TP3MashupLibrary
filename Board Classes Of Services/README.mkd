@@ -30,7 +30,7 @@ For example:
 
 ```'Must Have':'#fdfadb'``` will set red color for entities with Busines Value "Must Have"
 
-3. If you want to disable multi-color highlighting, you can do it here:
+If you want to disable multi-color highlighting, you can do it here:
 
 ```javascript
 this.showSeveralTags = true;
