@@ -17,7 +17,7 @@ How to activate it:
 ```javascript
     var colorMapping = {
             'urgent':'#f9d9d1',
-            '.net':'#d2e0ef;'
+            '.net':'#d2e0ef'
             };
 ```
 This section specifies which html colors codes should be used for your Tags, States or Business Values.
