@@ -1,7 +1,7 @@
 (function() {
     require.config({
         paths: {
-            'tau/cf.constraints': '../../Mashups/CFConstraints/tau'
+            'tau/cf.constraints': '../../Mashups/Custom Field Constraints/tau'
         }
     })
 })();
