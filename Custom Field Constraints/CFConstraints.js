@@ -1,11 +1,3 @@
-(function() {
-    require.config({
-        paths: {
-            'tau/cf.constraints': '../../Mashups/Custom Field Constraints/tau'
-        }
-    })
-})();
-
 tau.mashups
     .addDependency('Underscore')
     .addDependency('CFConstraints.data.provider')
