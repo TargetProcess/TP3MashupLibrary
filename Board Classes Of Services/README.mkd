@@ -7,7 +7,7 @@ For example, all the urgent bugs, user stories or other entity cards marked by t
 
 The mashup can use several colors on card if there is several tags configured to be highlited.
 
-![Board Class Of Services](BoardClassOfServices.png)
+![Board Class Of Services](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Board%20Classes%20Of%20Services/BoardClassOfServices.png)
 
 How to activate it:
 
@@ -36,4 +36,3 @@ For example:
 var showSeveralTags = true;
 ```
 
-__Notes__: please always use lower-case letters for States, Priorities and Tags. Otherwise, the mashup won't work.
