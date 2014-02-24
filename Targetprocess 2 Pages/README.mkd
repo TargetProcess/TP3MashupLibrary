@@ -1,0 +1,18 @@
+TP2 Pages
+=======================
+
+This mashup - when it's turned on - replaces the current behaviour of the TP2 link and provides another one. Namely it restricts an access to TP2, but allows to set up a set of TP2 pages, which will be available for a user. Moreover all these pages will be shown within TP3 in an additional pop-up dialog with a turned off navigation.
+
+Navigate to ```TP2 > Popup Dialog > TP2 Page``` to open a TP2 page withing TP3.
+
+![TP2 Pages](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Targetprocess%202%20Pages/TP2Pages.png)
+
+Configuration:<br>
+![TP2 Pages Configuration](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Targetprocess%202%20Pages/TP2PagesConfiguration.png)
+
+1. A menu item name has to be specified here. In case if it contains special symbols then it should be enclosed in single quotes.
+2. It's a place for a TP2 URI enclosed in single quotes.
+
+Note: the mash-up has one predifined item. It's a link to TP2 home page.
+
+
