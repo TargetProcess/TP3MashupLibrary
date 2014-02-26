@@ -1,0 +1,6 @@
+{
+	"ShortDescription": "This mashup allows to restrict a user access to TP2 by the means of providing only a sub-set of TP2 pages.",
+	"CompatibleTpVersion": {
+			"Minimum": "3.0.11"
+	}
+}
