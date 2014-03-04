@@ -3,8 +3,9 @@ tau.mashups.addDependency('jQuery')
   .addDependency('tp3/mashups/topmenu')
   .addDependency('tp3/mashups/popup')
   .addDependency('tp3/mashups/context')
-  .addDependency("tau/utils/utils.date")
-  .addMashup(function($, _, topmenu, popup, context, du) {
+  .addDependency('tau/utils/utils.date')
+  .addDependency('https://rawgithub.com/moment/moment/2.0.0/min/moment.min.js')
+  .addMashup(function($, _, topmenu, Popup, context, du) {
 
   // add new link to the top header
   var link = topmenu.addItem({
@@ -20,7 +21,6 @@ tau.mashups.addDependency('jQuery')
     };
   }
 
-  require(['https://raw.github.com/timrwood/moment/2.0.0/min/moment.min.js'], function() {
 
     var acid = "";
     var selectedProjects = [];
@@ -32,7 +32,7 @@ tau.mashups.addDependency('jQuery')
 
     link.onClick(function() {
 
-      var activityPopup = new popup();
+      var activityPopup = new Popup();
       activityPopup.show();
       activityPopup.showLoading();
       var $container = activityPopup.$container;
@@ -67,25 +67,25 @@ tau.mashups.addDependency('jQuery')
             callsCount++;
             $.getJSON(stateQuery.toString().format(entity, getDateFilter("Date"), projectFilter), buildStateChangesData);
           });
-        }
+        };
         requests["comment"] = function() {
           callsCount++;
           $.getJSON(commentQuery.toString().format(getDateFilter("CreateDate"), projectFilter), buildCommentsData);
-        }
+        };
         requests["add"] = function() {
           callsCount++;
           $.getJSON(addQuery.toString().format(getDateFilter("CreateDate"), acid), buildAddedData);
-        }
+        };
 
         function fireRequests() {
           callsCount = 0;
           // reset activity array
           activity.length = 0;
 
-          // fire required requests based on selected chedkboxes
+          // fire required requests based on selected checkboxes
           _.each(eventTypes, function(e) {
             requests[e]();
-          })
+          });
         }
 
         fireRequests();
@@ -94,7 +94,7 @@ tau.mashups.addDependency('jQuery')
 
         function buildStateChangesData(data) {
           //debugger;
-          for (i = 0; i < data.Items.length; i++) {
+          for (var i = 0; i < data.Items.length; i++) {
             if (data.Items[i]) {
 
               var history = data.Items[i];
@@ -119,7 +119,7 @@ tau.mashups.addDependency('jQuery')
 
         function buildCommentsData(data) {
           //debugger;
-          for (i = 0; i < data.Items.length; i++) {
+          for (var i = 0; i < data.Items.length; i++) {
             if (data.Items[i]) {
 
               var comment = data.Items[i];
@@ -143,7 +143,7 @@ tau.mashups.addDependency('jQuery')
 
         function buildAddedData(data) {
           //debugger;
-          for (i = 0; i < data.Items.length; i++) {
+          for (var i = 0; i < data.Items.length; i++) {
             if (data.Items[i]) {
 
               var general = data.Items[i];
@@ -176,7 +176,7 @@ tau.mashups.addDependency('jQuery')
           activity.reverse();
 
           var groupedActivity = _.groupBy(activity, function(item) {
-            return moment(item.EventDate).format('MMM-DD')
+            return moment(item.EventDate).format('MMM-DD');
           });
 
           //$container.html("");
@@ -215,27 +215,25 @@ tau.mashups.addDependency('jQuery')
                   doneStyle: (item.State == "Done" || item.State == "Closed") ? "style='text-decoration: line-through;'" : ""
                 }
 
-              )
-            })
+              );
+            });
           });
 
           $container.append(html);
           $container.append("</table></div>");
 
           activityPopup.hideLoading();
-
         });
 
 
         $('.ac_event_filter').live("change", function() {
-
           eventTypes.length = 0;
 
           // do your staff here. It will fire any checkbox change
           var boxes = $(".ac_event_filter:checked");
           _.each(boxes, function(box) {
             eventTypes.push(box.value);
-          })
+          });
           fireRequests();
         });
 
@@ -255,7 +253,7 @@ tau.mashups.addDependency('jQuery')
           return "Project.Id%20in%20{0}".format(projectIds);
         }
 
-         function getDateFilter(fieldName) {
+        function getDateFilter(fieldName) {
           var daysAgo = moment().subtract('days', DAY_AGO).format("YYYY-MM-DD");
           var today = moment().format("YYYY-MM-DD");
           return "({0}%20gte%20'{1}')and({0}%20lte%20'{2}')".format(fieldName, daysAgo, today);
@@ -270,10 +268,9 @@ tau.mashups.addDependency('jQuery')
           if (user.LastName) {
             userName += " " + user.LastName;
           }
-          return (userName) ? userName : "Anonymous";
+          return userName || "Anonymous";
         }
 
       });
     });
-  });
 });
