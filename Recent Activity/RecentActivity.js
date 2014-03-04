@@ -1,279 +1,369 @@
-tau.mashups.addDependency('jQuery')
-  .addDependency('Underscore')
-  .addDependency('tp3/mashups/topmenu')
-  .addDependency('tp3/mashups/popup')
-  .addDependency('tp3/mashups/context')
-  .addDependency("tau/utils/utils.date")
-  .addMashup(function($, _, topmenu, popup, context, du) {
+/* globals tau, moment */
+tau
+    .mashups
+    .addDependency('jQuery')
+    .addDependency('Underscore')
+    .addDependency('tp3/mashups/topmenu')
+    .addDependency('tp3/mashups/popup')
+    .addDependency('tp3/mashups/context')
+    .addDependency('tau/utils/utils.date')
+    .addMashup(function($, _, topmenu, Popup, context, du) {
 
-  // add new link to the top header
-  var link = topmenu.addItem({
-    title: 'Activity'
-  });
+        'use strict';
 
-  if (!String.prototype.format) {
-    String.prototype.format = function() {
-      var args = arguments;
-      return this.replace(/{(\d+)}/g, function(match, number) {
-        return typeof args[number] != 'undefined' ? args[number] : match;
-      });
-    };
-  }
+        var extractDate = function(date) {
+            return du.convertToTimezone(du.parse(date));
+        };
 
-  require(['https://raw.github.com/timrwood/moment/2.0.0/min/moment.min.js'], function() {
+        var extractFullName = function(user) {
+            return _.compact([user.firstName, user.lastName]).join(' ').trim() || 'Anonymous';
+        };
 
-    var acid = "";
-    var selectedProjects = [];
+        var processFields = function(fields, prefix) {
 
-    context.onChange(function(ctx) {
-      acid = ctx.acid;
-      selectedProjects = ctx.selectedProjects;
-    });
-
-    link.onClick(function() {
-
-      var activityPopup = new popup();
-      activityPopup.show();
-      activityPopup.showLoading();
-      var $container = activityPopup.$container;
-
-      $.when(context.getApplicationPath(), context.getAcid()).then(
-
-      function(appPath, tempAcid) {
-
-        // appPath like "http://plan.tpondemand.com";
-
-        var DAY_AGO = 2;
-
-        var eventTypes = ["add", "comment", "state"];
-        var activity = [];
-        var callsCount = 0;
-
-        var stateQuery = appPath + "/api/v1/{0}Histories?where={1}and({0}.{2})&orderbyDesc=Date&include=[Date,EntityState[Name,EntityType],{0}[Name,Project[Color,Abbreviation]],Modifier]&format=json&take=100&callback=?";
-
-        var addQuery = appPath + "/api/v1/Generals?where={0}&acid={1}&include=[Name,Owner,EntityType[Name],CreateDate,Project[Color,Abbreviation]]&format=json&take=300&callback=?";
-
-        var commentQuery = appPath + "/api/v1/Comments?where={0}and(General.{1})&include=[Description,Owner,CreateDate,General[EntityType,Project[Color,Abbreviation],Name]]&format=json&take=100&callback=?";
-
-
-
-        var projectFilter = getProjectFilter();
-
-        var entities = ["UserStory", "Bug", "Task"];
-
-        var requests = [];
-        requests["state"] = function() {
-          _.each(entities, function(entity) {
-            callsCount++;
-            $.getJSON(stateQuery.toString().format(entity, getDateFilter("Date"), projectFilter), buildStateChangesData);
-          });
-        }
-        requests["comment"] = function() {
-          callsCount++;
-          $.getJSON(commentQuery.toString().format(getDateFilter("CreateDate"), projectFilter), buildCommentsData);
-        }
-        requests["add"] = function() {
-          callsCount++;
-          $.getJSON(addQuery.toString().format(getDateFilter("CreateDate"), acid), buildAddedData);
-        }
-
-        function fireRequests() {
-          callsCount = 0;
-          // reset activity array
-          activity.length = 0;
-
-          // fire required requests based on selected chedkboxes
-          _.each(eventTypes, function(e) {
-            requests[e]();
-          })
-        }
-
-        fireRequests();
-
-
-
-        function buildStateChangesData(data) {
-          //debugger;
-          for (i = 0; i < data.Items.length; i++) {
-            if (data.Items[i]) {
-
-              var history = data.Items[i];
-              var entityType = history.EntityState.EntityType.Name.toString();
-
-              activity.push({
-                EntityType: entityType,
-                EventDate: extractDate(history.Date),
-                State: history.EntityState.Name,
-                EntityName: history[entityType].Name,
-                User: extractFullName(history.Modifier),
-                UserId: history.Modifier.Id,
-                ProjectAbbreviation: history[entityType].Project.Abbreviation,
-                Color: history[entityType].Project.Color,
-                Id: history[entityType].Id
-              });
+            prefix = prefix || '';
+            if (_.isArray(fields)) {
+                return _.map(fields, function(field) {
+                    return (!_.isObject(fields) ? prefix : '') + processFields(field, prefix);
+                }).join(',');
+            } else if (_.isObject(fields)) {
+                var key = _.keys(fields)[0];
+                prefix += _.keys(fields)[0] + '.';
+                return 'new(' + processFields(fields[key], prefix) + ') as ' + key;
+            } else {
+                return prefix + fields;
             }
-          }
+        };
 
-          assembleActivity();
-        }
+        var Controller = {
 
-        function buildCommentsData(data) {
-          //debugger;
-          for (i = 0; i < data.Items.length; i++) {
-            if (data.Items[i]) {
+            DAYS_AGO: 2,
 
-              var comment = data.Items[i];
+            init: function() {
 
-              activity.push({
-                EntityType: comment.General.EntityType.Name,
-                EventDate: extractDate(comment.CreateDate),
-                State: "Comment",
-                EntityName: comment.General.Name,
-                User: extractFullName(comment.Owner),
-                UserId: comment.Owner.Id,
-                ProjectAbbreviation: (comment.General.Project) ? comment.General.Project.Abbreviation : "",
-                Color: (comment.General.Project) ? comment.General.Project.Color : "",
-                Id: comment.General.Id
-              });
-            }
-          }
+                this.acid = '';
+                this.projects = [];
+                this.appPath = '';
 
-          assembleActivity();
-        }
+                this.dataToLoad = {
+                    changes: true,
+                    added: true,
+                    comments: true
+                };
 
-        function buildAddedData(data) {
-          //debugger;
-          for (i = 0; i < data.Items.length; i++) {
-            if (data.Items[i]) {
+                this.link = topmenu.addItem({
+                    title: 'Activity'
+                });
 
-              var general = data.Items[i];
+                context.onChange(function(ctx) {
+                    this.acid = ctx.acid;
+                    this.projects = ctx.selectedProjects;
+                }.bind(this));
 
-              activity.push({
-                EntityType: general.EntityType.Name,
-                EventDate: extractDate(general.CreateDate),
-                State: "Added",
-                EntityName: general.Name,
-                User: extractFullName(general.Owner),
-                UserId: general.Owner.Id,
-                ProjectAbbreviation: (general.Project) ? general.Project.Abbreviation : "",
-                Color: (general.Project) ? general.Project.Color : "",
-                Id: general.Id
-              });
-            }
-          }
+                var def = $.Deferred();
+                require(['https://raw.github.com/timrwood/moment/2.0.0/min/moment.min.js'], function() {
+                    def.resolve();
+                });
 
-          assembleActivity();
-        }
+                return $
+                    .when(context.getApplicationPath(), def)
+                    .then(function(appPath) {
+                        this.appPath = appPath;
 
-        // combine data into HTML
-        var assembleActivity = _.after(callsCount, function() {
+                        this.link.onClick(function() {
+                            this.popup = new Popup();
+                            this.popup.show();
+                            this.$el = this.popup.$container;
+                            this.execute();
+                        }.bind(this));
 
-          // Sort unified history data by date
-          activity = _(activity).sortBy(function(item) {
-            return item.EventDate;
-          });
+                        return this;
+                    }.bind(this));
+            },
 
-          activity.reverse();
+            execute: function() {
 
-          var groupedActivity = _.groupBy(activity, function(item) {
-            return moment(item.EventDate).format('MMM-DD')
-          });
+                return $
+                    .when(context.getAcid(), this.popup.showLoading())
+                    .then(function(acid) {
+                        this.acid = acid;
+                    }.bind(this))
+                    .then(this.loadData.bind(this))
+                    .then(this.renderHtml.bind(this))
+                    .then(this.popup.hideLoading.bind(this.popup));
+            },
 
-          //$container.html("");
+            loadData: function() {
 
-          $("#ac_filter").remove();
-          $("#ac_main").remove();
+                var toLoad = [
+                    this.dataToLoad.changes ? this.loadChanges('userStory') : [],
+                    this.dataToLoad.changes ? this.loadChanges('bug') : [],
+                    this.dataToLoad.changes ? this.loadChanges('task') : [],
+                    this.dataToLoad.added ? this.loadAdded() : [],
+                    this.dataToLoad.comments ? this.loadComments() : []
+                ];
+                return $
+                    .when.apply(null, toLoad)
+                    .then(function() {
+                        return Array.prototype.concat.apply([], _.toArray(arguments));
+                    });
+            },
 
-          var html = '<div id="ac_filter" style="font-size: 12px"><input type="checkbox" ' + isEventChecked("add") + ' class="ac_event_filter" value="add"> Add <input type="checkbox"  ' + isEventChecked("comment") + '  class="ac_event_filter" value="comment"> Comment <input class="ac_event_filter"  ' + isEventChecked("state") + '  type="checkbox" value="state"> State Change</div>';
+            loadChanges: function(entityTypeName) {
 
-          html += "<div id='ac_main' style='height: 100%; overflow: scroll'><table style='font-size: 11px !important'>";
+                var fields = [
+                    'date',
+                    'modifier', {
+                        'entityState': ['name']
+                    }
+                ];
+                var entityFields = {};
+                entityFields[entityTypeName] = [
+                    'id',
+                    'name', {
+                        'project': ['color', 'abbreviation']
+                    }
+                ];
+                fields.push(entityFields);
 
-          var tmpl = ["<tr><td><img width='16' height='16' src='<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>'>",
-           " <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>",
-           "<td><span class='delimeter'>—</span> <span style='background:<%= this.color %>'><%= this.projectAbr %></span>",
-           " <%= this.entityType %> <a href='<%= this.path %>/entity/<%= this.entityId %>'><%= this.entityName %></a>",
-           " by <%= this.user %></td></tr>"].join("");
+                return $
+                    .when(this.doQuery({
+                        resource: entityTypeName + 'History',
+                        fields: processFields(fields),
+                        where: [this.buildProjectCondition(entityTypeName + '.Project'), this.buildDateCondition('Date')]
+                    }))
+                    .then(function(items) {
+                        return this.processChanges(items, entityTypeName);
+                    }.bind(this));
+            },
 
+            processChanges: function(items, entityType) {
 
-          _.each(groupedActivity, function(val, key) {
-            html += "<tr><td colspan='3'><h2>" + key + "</h2></td></tr>";
-            _.each(val, function(item) {
+                return items.map(function(item) {
+                    return {
+                        EntityType: entityType,
+                        EventDate: extractDate(item.date),
+                        State: item.entityState.name,
+                        EntityName: item[entityType].name,
+                        User: extractFullName(item.modifier),
+                        UserId: item.modifier.id,
+                        ProjectAbbreviation: (item[entityType].project && item[entityType].project.abbreviation) ? item[entityType].project.abbreviation : '',
+                        Color: (item[entityType].project && item[entityType].project.color) ? item[entityType].project.color : '',
+                        Id: item[entityType].id
+                    };
+                });
+            },
 
-              html += $.jqote(
-                tmpl,
-                 {
-                  path: appPath,
-                  date: moment(item.EventDate).format('HH:mm'),
-                  state: item.State,
-                  entityType: item.EntityType.toString(),
-                  entityId: item.Id,
-                  entityName: item.EntityName,
-                  projectAbr: item.ProjectAbbreviation,
-                  color: item.Color,
-                  userId: item.UserId,
-                  user: item.User,
-                  doneStyle: (item.State == "Done" || item.State == "Closed") ? "style='text-decoration: line-through;'" : ""
+            loadAdded: function() {
+
+                var fields = processFields([
+                    'id',
+                    'name',
+                    'owner', {
+                        'entityType': ['name']
+                    },
+                    'createDate', {
+                        'project': ['color', 'abbreviation']
+                    }
+                ]);
+
+                return $
+                    .when(this.doQuery({
+                        resource: 'general',
+                        fields: fields,
+                        where: [this.buildDateCondition('CreateDate'), this.buildProjectCondition('Project')],
+                        take: 300
+                    }))
+                    .then(function(items) {
+                        return this.processAdded(items);
+                    }.bind(this));
+            },
+
+            processAdded: function(items) {
+
+                return items.map(function(general) {
+                    return {
+                        EntityType: general.entityType.name,
+                        EventDate: extractDate(general.createDate),
+                        State: 'Added',
+                        EntityName: general.name,
+                        User: extractFullName(general.owner),
+                        UserId: general.owner.id,
+                        ProjectAbbreviation: (general.project && general.project.abbreviation) ? general.project.abbreviation : '',
+                        Color: (general.project && general.project.color) ? general.project.color : '',
+                        Id: general.id
+                    };
+                });
+            },
+
+            loadComments: function() {
+
+                var fields = processFields([
+                    'description',
+                    'owner',
+                    'createDate', {
+                        'general': [
+                            'id',
+                            'name',
+                            'entityType', {
+                                'project': ['color', 'abbreviation']
+                            }
+                        ]
+                    }
+                ]);
+
+                return $
+                    .when(this.doQuery({
+                        resource: 'comment',
+                        fields: fields,
+                        where: [this.buildProjectCondition('General.Project'), this.buildDateCondition('CreateDate')]
+                    }))
+                    .then(function(items) {
+                        return this.processComments(items);
+                    }.bind(this));
+            },
+
+            processComments: function(items) {
+
+                return items.map(function(comment) {
+
+                    return {
+                        EntityType: comment.general.entityType.name,
+                        EventDate: extractDate(comment.createDate),
+                        State: 'Comment',
+                        EntityName: comment.general.name,
+                        User: extractFullName(comment.owner),
+                        UserId: comment.owner.id,
+                        ProjectAbbreviation: (comment.general.project && comment.general.project.abbreviation) ? comment.general.project.abbreviation : '',
+                        Color: (comment.general.project && comment.general.project.color) ? comment.general.project.color : '',
+                        Id: comment.general.id
+                    };
+                });
+            },
+
+            doQuery: function(options) {
+
+                var where = _.compact(options.where || []);
+                if (where.length > 1) {
+                    where = where.map(function(cond) {
+                        return '(' + cond + ')';
+                    });
                 }
 
-              )
-            })
-          });
+                where = where.join(' and ');
+                var data = {
+                    select: '{' + options.fields + '}',
+                    where: where,
+                    take: options.take || 100,
+                    format: 'json'
+                };
 
-          $container.append(html);
-          $container.append("</table></div>");
+                return $.ajax({
+                    url: this.appPath + '/api/v2/' + options.resource,
+                    data: data
+                }).then(function(res) {
+                    return res.items || [];
+                }, function() {
+                    return [];
+                });
+            },
 
-          activityPopup.hideLoading();
+            buildProjectCondition: function(projectFieldName) {
 
-        });
+                projectFieldName = projectFieldName || 'Project';
+                var ids = _.map(this.projects, function(v) {
+                    return v.id;
+                });
 
+                var cond = '';
 
-        $('.ac_event_filter').live("change", function() {
+                var isAll = _.contains(ids, 'Any');
+                if (isAll) {
+                    return cond;
+                }
 
-          eventTypes.length = 0;
+                var isNone = _.contains(ids, 'None');
+                ids = _.without(ids, 'None');
+                if (ids.length) {
+                    cond += _.sprintf('%s.Id in [%s]', projectFieldName, ids.join(','));
+                }
 
-          // do your staff here. It will fire any checkbox change
-          var boxes = $(".ac_event_filter:checked");
-          _.each(boxes, function(box) {
-            eventTypes.push(box.value);
-          })
-          fireRequests();
-        });
+                if (isNone) {
+                    cond += cond ? ' or ' : '';
+                    cond += _.sprintf('%s.Id == null', projectFieldName);
+                }
 
-        function isEventChecked(e) {
-          return _.indexOf(eventTypes, e) == -1 ? "" : "checked";
-        }
+                return cond;
+            },
 
-        function extractDate(date) {
-            return du.convertToTimezone(du.parse(date));
-        }
+            buildDateCondition: function(dateFieldName) {
 
-        function getProjectFilter() {
-          var ids = "(<%_.each(p, function(project) { %>'<%= project.id %>',<%});%>";
-          var projectIds = _.template(ids, {p: selectedProjects});
-          projectIds = projectIds.slice(0, -1);
-          projectIds += ")";
-          return "Project.Id%20in%20{0}".format(projectIds);
-        }
+                var from = moment().subtract('days', this.DAYS_AGO).format('YYYY-MM-DD');
+                var to = moment().format('YYYY-MM-DD');
+                return _.sprintf('(%s >= DateTime.Parse("%s")) and (%s <= DateTime.Parse("%s"))', dateFieldName, from, dateFieldName, to);
+            },
 
-         function getDateFilter(fieldName) {
-          var daysAgo = moment().subtract('days', DAY_AGO).format("YYYY-MM-DD");
-          var today = moment().format("YYYY-MM-DD");
-          return "({0}%20gte%20'{1}')and({0}%20lte%20'{2}')".format(fieldName, daysAgo, today);
-        }
+            renderHtml: function(items) {
 
+                items = _.sortBy(items, function(item) {
+                    return item.EventDate;
+                });
 
-        function extractFullName(user) {
-          var userName = "";
-          if (user.FirstName) {
-            userName += user.FirstName;
-          }
-          if (user.LastName) {
-            userName += " " + user.LastName;
-          }
-          return (userName) ? userName : "Anonymous";
-        }
+                items.reverse();
 
-      });
+                var grouped = _.groupBy(items, function(item) {
+                    return moment(item.EventDate).format('MMM-DD');
+                });
+
+                this.$el.find('#ac_filter').remove();
+                this.$el.find('#ac_main').remove();
+
+                var html = $.jqote('<div id="ac_filter" style="font-size: 12px">' +
+                    '<label><input type="checkbox" <%= this.added ? "checked" : "" %> class="ac_event_filter" value="added"> Add </label> ' +
+                    '<label><input type="checkbox" <%= this.comments ? "checked" : "" %> class="ac_event_filter" value="comments"> Comment </label> ' +
+                    '<label><input type="checkbox" <%= this.changes ? "checked" : "" %>  class="ac_event_filter" value="changes"> State Change </label> ' +
+                    '</div>', this.dataToLoad);
+
+                html += '<div id="ac_main" style="height: 100%; overflow: scroll"><table style="font-size: 11px !important">';
+
+                var tmpl = ['<tr><td><img width="16" height="16" src="<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>">',
+                    ' <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>',
+                    '<td><span class="delimeter">—</span> <span style="background:<%= this.color %>"><%= this.projectAbr %></span>',
+                    ' <%= this.entityType %> <a href="<%= this.path %>/entity/<%= this.entityId %>"><%= this.entityName %></a>',
+                    ' by <%= this.user %></td></tr>'
+                ].join('');
+
+                _.forEach(grouped, function(val, key) {
+                    html += '<tr><td colspan="3"><h2>' + key + '</h2></td></tr>';
+                    _.forEach(val, function(item) {
+
+                        html += $.jqote(
+                            tmpl, {
+                                path: this.appPath,
+                                date: moment(item.EventDate).format('HH:mm'),
+                                state: item.State,
+                                entityType: item.EntityType.toString(),
+                                entityId: item.Id,
+                                entityName: item.EntityName,
+                                projectAbr: item.ProjectAbbreviation,
+                                color: item.Color,
+                                userId: item.UserId,
+                                user: item.User,
+                                doneStyle: (item.State === 'Done' || item.State === 'Closed') ? 'style="text-decoration: line-through;"' : ''
+                            });
+                    }.bind(this));
+                }.bind(this));
+
+                html += '</table></div>';
+
+                this.$el.append(html);
+
+                this.$el.find('#ac_filter').on('click', ':checkbox', function(e) {
+                    this.dataToLoad[e.currentTarget.value] = e.currentTarget.checked;
+                    this.execute();
+                }.bind(this));
+            }
+        };
+
+        return Controller.init();
     });
-  });
-});
