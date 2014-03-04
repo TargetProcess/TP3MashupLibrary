@@ -1,18 +1,34 @@
-TP2 Pages
+Targetprocess 2 Pages
 =======================
 
-This mashup - when it's turned on - replaces the current behaviour of the TP2 link and provides another one. Namely it restricts an access to TP2, but allows to set up a set of TP2 pages, which will be available for a user. Moreover all these pages will be shown within TP3 in an additional pop-up dialog with a turned off navigation.
+This mashup allows to see some of Targetprocess 2 pages in Targetprocess 3 user interface. This may be useful when you really like some particular pages in Targetprocess 2 and do not switch fully to Targetprocess 3 because of this.
 
-Navigate to ```TP2 > Popup Dialog > TP2 Page``` to open a TP2 page withing TP3.
+The mashup restricts access to Targetprocess 2. Only the pages, which you specify in a mashup config, will be shown under the TP2 link now.
 
 ![TP2 Pages](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Targetprocess%202%20Pages/TP2Pages.png)
+
+How to activate it:
+
+1. Install the mashup from the Targetprocess Mashups Library.
+2. Edit the ```uris``` section in the mashup code.
+
+``` 
+uris: {
+                'Dash Board': '/Default.aspx',
+                'Time Sheet': '/Default/TimeSheet.aspx',
+                'Assign People Page': '/Project/Planning/Iteration/CurrentPlanDevelopers.aspx'
+            }
+```
+
+This section specifies which Targetprocess 2 pages you'd like to have access in Targetprocess 3 to.
 
 Configuration:<br>
 ![TP2 Pages Configuration](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Targetprocess%202%20Pages/TP2PagesConfiguration.png)
 
-1. A menu item name has to be specified here. In case if it contains special symbols then it should be enclosed in single quotes.
-2. It's a place for a TP2 URI enclosed in single quotes.
+1. Specify a Targetprocess 2 Page Name. In case it contains special symbols or consists of several words, enclosed it into single quotes.
+2. Specify a Targetprocess 2 page URL, enclosing it into singe quotes.
 
-Note: the mash-up has one predifined item. It's a link to TP2 home page.
+__Note__:
+The mash-up has TP2 Home (or Dashboard) page by default.
 
 
