@@ -25,9 +25,9 @@ This section specifies which Targetprocess 2 pages you'd like to have access to 
 ![TP2 Pages Configuration](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Targetprocess%202%20Pages/TP2PagesConfiguration.png)
 
 1. Specify a Targetprocess 2 Page Name. If it contains special symbols or consists of several words, enclosed it in single quotes.
-2. Specify a Targetprocess 2 page URL, enclosing it into single quotes.
+2. Specify a Targetprocess 2 page URL, enclosing it in single quotes.
 
 __Note__:
-The mashup has the TP2 home page (TP2 Dashboard) page by default.
+The mashup has the Targetprocess 2 Home Page (Targetprocess 2 Dashboard) page by default.
 
 
