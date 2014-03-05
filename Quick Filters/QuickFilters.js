@@ -1,6 +1,7 @@
 tau.mashups
     .addDependency("jQuery")
     .addDependency('tau/configurator')
+    .addCSS('QuickFilters.css')
     .addMashup(function($, configurator) {
 
         'use strict';
@@ -12,13 +13,7 @@ tau.mashups
             'min-width': '200px'
         };
 
-        var addCSS = function() {
-            $('head').append('<style type="text/css">' +
-                '.i-role-complex-filter-example .filter-description:hover span {background-color: #fff;border: solid 1px #cbd1d6;border-top-color: #a3a7ab;padding: 2px 7px;min-width: 200px;color: #acb6bf;display: inline-block;height: 18px;line-height: 18px;}' +
-                //+'.i-role-complex-filter-example .filter-description {padding-right:20px;}' + '.i-role-complex-filter-example .filter-description span {display:block;height: 18px;line-height: 18px;overflow:hidden;text-overflow:ellipsis;}' +
-                '.i-role-complex-filter-example .filter-description.edit-mode span,.i-role-complex-filter-example:hover .filter-description.edit-mode span {background-color: #fff;border: solid 1px #cbd1d6;border-top-color: #a3a7ab;padding: 2px 7px;min-width:200px;color: #16343b;font-weight: 600;display: inline-block;height: 18px;line-height: 18px;}' +
-                '</style>');
-        };
+       
 
         var getNewID = function() {
             return (new Date()).getTime();
@@ -180,7 +175,7 @@ tau.mashups
             saveinfo(current_info);
         };
 
-        addCSS();
+        
         configurator.getGlobalBus().on('content.$element.ready', function(evt, $element) {
 
             var sampleFilter = $element.find('tr').last().clone();
