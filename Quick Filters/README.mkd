@@ -1,0 +1,19 @@
+Quick Filters
+======================
+
+The Quick Filters mashup adds the ability for a user to save a personal set of advanced filters that can be reused.  
+ 
+How to activate it:
+ 
+1)  Install the mashup from the Targetprocess Mashups Library.
+
+
+How to use it:
+
+![Quick Filters](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Quick%20Filters/QuickFilters.png)
+
+1)  Build your filter in the advanced filter input
+2)  Open the Advanced Filters Suggestions
+3)  Save the filter
+4)  Give your filter a description
+5)  Click ‘Use’ to apply your different filters

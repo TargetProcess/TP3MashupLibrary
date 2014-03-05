@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "The Quick Filters mashup adds the ability for a user to save a personal set of advanced filters that can be reused.",
+  "CompatibleTpVersion": {
+		"Minimum": "3.11.0"
+	}		
+}
