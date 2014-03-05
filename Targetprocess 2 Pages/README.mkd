@@ -1,7 +1,7 @@
 Targetprocess 2 Pages
 =======================
 
-This mashup allows a specific set of Targetprocess 2 pages to be available in Targetprocess 3. This may be useful when you really like some particular page in Targetprocess 2 and have not switch to Targetprocess 3 because of this.
+This mashup allows a specific set of Targetprocess 2 pages to be available in Targetprocess 3. This may be useful when you really like some particular page in Targetprocess 2 and have not switched to Targetprocess 3 because of this.
 
 The mashup also restricts access to Targetprocess 2. Only the pages, which are specified in the mashup config, will be shown under the TP2 link now.
 
@@ -28,6 +28,6 @@ This section specifies which Targetprocess 2 pages you'd like to have access to 
 2. Specify a Targetprocess 2 page URL, enclosing it in single quotes.
 
 __Note__:
-The mashup has the Targetprocess 2 Home Page (Targetprocess 2 Dashboard) page by default.
+The mashup has the Targetprocess 2 Home Page (Targetprocess 2 Dashboard) by default.
 
 
