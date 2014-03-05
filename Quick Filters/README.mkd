@@ -4,8 +4,8 @@ Quick Filters
 The Quick Filters mashup adds the ability for a user to save a personal set of advanced filters that can be reused.  
  
 How to activate it:
- 
-1)  Install the mashup from the Targetprocess Mashups Library.
+
+Install the mashup from the Targetprocess Mashups Library.
 
 
 How to use it:
