@@ -27,7 +27,4 @@ This section specifies which Targetprocess 2 pages you'd like to have access to 
 1. Specify a Targetprocess 2 Page Name. If it contains special symbols or consists of several words, enclosed it in single quotes.
 2. Specify a Targetprocess 2 page URL, enclosing it in single quotes.
 
-__Note__:
-The mashup has the Targetprocess 2 Home Page (Targetprocess 2 Dashboard) by default.
-
 
