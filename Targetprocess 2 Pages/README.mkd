@@ -14,7 +14,7 @@ How to activate it:
 
 ``` 
 uris: {
-                'Dash Board': '/Default.aspx',
+                'Dashboard': '/Default.aspx',
                 'Time Sheet': '/Default/TimeSheet.aspx',
                 'Assign People Page': '/Project/Planning/Iteration/CurrentPlanDevelopers.aspx'
             }
