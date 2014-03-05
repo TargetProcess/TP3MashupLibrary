@@ -5,19 +5,15 @@ tau.mashups
     .addDependency('Tp2Pages.config')
     .addCSS('Tp2Pages.css')
     .addMashup(function(_, topmenu, ComponentEventListener, settings) {
-        var DEFAULT_ITEM = {
-            'TP2 Home' : '/Default.aspx'
-        };
-
         new ComponentEventListener('board.main.menu').on('afterRenderAll', function(event, afterRenderData) {
             // Get the mash-up configuration
-            var uris = _.extend(DEFAULT_ITEM, settings.uris);
+            var uris = settings.uris;
             var appPath = afterRenderData.data.context.configurator.getApplicationPath();
 
             function createMenuItemCallback(uri) {
                 return function () {
                     var paramJoin =  uri.indexOf('?') == -1 ? '?' : '&';
-                    $(this).tauIFramePopup({ url: [appPath, uri.replace(/^\s+|\s+$/g,''), paramJoin, 'rmnav=1&tp3=1&tp2link=1'].join('') });
+                    $(this).tauIFramePopup({ url: [appPath, uri.replace(/^\s+|\s+$/g,''), paramJoin, 'rmnav=1&tp3=1&notp3redirect=1'].join('') });
                     $(this).tauIFramePopup('show');
                 }
             }
