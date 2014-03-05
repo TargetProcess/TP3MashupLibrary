@@ -13,7 +13,11 @@ How to use it:
 ![Quick Filters](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Quick%20Filters/QuickFilters.png)
 
 1)  Build your filter in the advanced filter input
+
 2)  Open the Advanced Filters Suggestions
+
 3)  Save the filter
+
 4)  Give your filter a description
+
 5)  Click ‘Use’ to apply your different filters
