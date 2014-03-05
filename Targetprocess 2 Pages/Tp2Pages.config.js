@@ -3,7 +3,7 @@ tau.mashups
         return {
             // Menu name and its URI
             uris: {
-                'Dash Board': '/Default.aspx',
+                'Dashboard': '/Default.aspx',
                 'Time Sheet': '/Default/TimeSheet.aspx',
                 'Assign People Page': '/Project/Planning/Iteration/CurrentPlanDevelopers.aspx'
             }
