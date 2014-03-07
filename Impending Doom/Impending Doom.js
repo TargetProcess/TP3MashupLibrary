@@ -7,6 +7,29 @@ tau.mashups
     .addDependency('tau/configurator')
     .addMashup(function(m, $, context, _, busRegistry, configurator) {
 
+        /***
+         * This is our configuration, an object mapping the name of a process (case insensitive) to
+         * another object mapping days due to colors.  Specifying a wildcard (*) for the process 
+         * name will apply the coloring to all cards who do not match previous process names.
+         *
+         * IMPORTANT: Your day -> color object should be ordered descending - the mashup will pick 
+         * the first day color that is applicable, so ordering is important!
+         */
+        var DoomConfig = {
+            'My Sweet Process': {
+                    0: '#F26C4F',
+                    1: '#FFF467',
+                    2: '#3BB878',
+                    7: '#FBaF5C'
+                },
+            '*': {
+                    0: '#F26C4F',
+                    1: '#FFF467',
+                    2: '#3BB878',
+                    7: '#FBaF5C'
+            }
+        };
+
         /**
          * No need to edit anything below this line !!!
          */
@@ -53,7 +76,7 @@ tau.mashups
             // get cards
             this.getCards = function() {
 				_.each(this.getCardTypes(), function(cardType) {
-					var ajaxUrl = configurator.getApplicationPath() + '/api/v1/' + this.apiCalls[cardType] + '?format=json&include=[PlannedEndDate,Id]&where=(PlannedEndDate is not null) and (EntityState.IsFinal eq "false")';
+					var ajaxUrl = configurator.getApplicationPath() + '/api/v1/' + this.apiCalls[cardType] + '?format=json&include=[PlannedEndDate,Id,Project[Process[Name]]]&where=(PlannedEndDate is not null) and (EntityState.IsFinal eq "false")';
 
 	                $.ajax({
 	                    url: ajaxUrl,
@@ -81,7 +104,7 @@ tau.mashups
             };
 
             this.colorCard = function(currentCard) {
-                var color = this.getCardColor(currentCard.PlannedEndDate);
+                var color = this.getCardColor(currentCard);
                 if (color) {
                     $('div[data-entity-id='+currentCard.Id+']').attr('style', 'background: '+color+';');
                 }
@@ -91,32 +114,22 @@ tau.mashups
 				return new Date(Number(apiDate.match(/Date\((\d+)[-\+](\d+)\)/)[1]));
 			};
 
-            /**
-             *
-             * @param dueDate
-             * @returns {string}
-             */
-            this.getCardColor = function(dueDate) {
-				dueDate = this.convertDate(dueDate);
+            this.getCardColor = function(card) {
+                var process = card.Project.Process.Name.toLowerCase();
+                var processMap = _.find(DoomConfig, function(v,k) {
+                    return k.toLowerCase() == process;
+                });
+                /* revert to our catch-all...if we've got one */
+                if ((processMap == undefined) && (DoomConfig['*'] != undefined)) {
+                    processMap = DoomConfig['*'];
+                }
+                if (processMap == undefined) return false;                
+                var dueDate = this.convertDate(card.PlannedEndDate);
                 var diff = dueDate.getTime() - (new Date()).getTime();
-				if (diff < 0) {
-					return '#F26C4F';
-				} else {
-					/* Convert ms to days
-					* 86400000 = 1000ms/sec * 60sec/min * 60min/hr * 24hr/day */
-					var daysToGo = (diff / 86400000);
-					if (daysToGo > 2) {
-						/* We're not due for at least 2 days */
-						return '#3BB878';
-					} else if (daysToGo > 1) {
-						/* We're due tomorrow */
-						return '#FFF467';
-					} else {
-						/* We're due today */
-						return '#FBAF5C';
-					}
-				}
-				return false;
+                var daysToGo = (diff / 86400000);
+                return _.find(processMap, function(v, k) {
+                    return daysToGo < k;
+                });
             };
 
         };
