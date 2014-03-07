@@ -1,0 +1,27 @@
+.i-role-complex-filter-example .filter-description:hover span {
+	background-color: #fff;
+	border: solid 1px #cbd1d6;
+	border-top-color: #a3a7ab;
+	padding: 2px 7px;
+	min-width: 200px;
+	color: #acb6bf;
+	display: inline-block;
+	height: 18px;
+	line-height: 18px;
+	}
+               
+.i-role-complex-filter-example .filter-description.edit-mode span,
+.i-role-complex-filter-example:hover .filter-description.edit-mode span {
+	background-color: #fff;
+	border: solid 1px #cbd1d6;
+	border-top-color: #a3a7ab;
+	padding: 2px 7px;
+	min-width:200px;
+	color: #16343b;
+	font-weight: 600;
+	display: inline-block;
+	height: 18px;
+	line-height: 18px;
+	
+	}
+	
