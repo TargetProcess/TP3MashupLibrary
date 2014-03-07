@@ -126,7 +126,7 @@ tau.mashups
                 if (processMap == undefined) return false;                
                 var dueDate = this.convertDate(card.PlannedEndDate);
                 var diff = dueDate.getTime() - (new Date()).getTime();
-                var daysToGo = Math.round(diff / 86400000);
+                var daysToGo = (diff / 86400000);
                 return _.find(processMap, function(v, k) {
                     return daysToGo < k;
                 });
