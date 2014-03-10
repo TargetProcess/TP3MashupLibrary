@@ -4,7 +4,7 @@ tau.mashups
             // Menu name and its URI
             uris: {
                 'Dash Board': '/Default.aspx',
-                'Time Sheet': '/Default/TimeSheet.aspx',
+                'Requesters': '/User/Requester/List.aspx',
                 'Assign People Page': '/Project/Planning/Iteration/CurrentPlanDevelopers.aspx'
             }
         };
