@@ -1,0 +1,22 @@
+Share Board
+==================
+
+How to activate it:
+
+Install the mashup from the Targetprocess Mashups Library
+__Note__: Targetprocess OnDemand customers have this mashup enabled by default, there is no need to install it a second time.
+
+A Mashup will add a Share icon near your Board name. Press it to share the given Board:
+
+![Share Board Link](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Share%20Board/ShareBoardLink.png)
+
+
+You’ll be able to copy the public link to the board or manage your public boards list. Remove the link from the list when sharing is no longer required.
+
+![Share Board Manage](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Share%20Board/ShareBoardManage.png)
+
+The mashup provides external users with the details shown on the board. Card details can be customized using the Customize Cards feature. Click on cards to open a pop-up with entity details. The pop-up displays only basic details: Entity ID#, Name and Description.
+
+You’re welcome to remove the board from shared boards list at anytime. When the link is removed from public boards list, it is no longer accessible by external users and the board is no longer shared.
+
+The mashup shares only the board mode.  It is not possble to share the view, list or timeline modes.
