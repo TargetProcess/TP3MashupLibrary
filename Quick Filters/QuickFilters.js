@@ -1,8 +1,10 @@
+/* globals tau, loggedUser */
 tau.mashups
+    .addDependency('Underscore')
     .addDependency("jQuery")
     .addDependency('tau/configurator')
     .addCSS('QuickFilters.css')
-    .addMashup(function($, configurator) {
+    .addMashup(function(_, $, configurator) {
 
         'use strict';
 
@@ -13,75 +15,67 @@ tau.mashups
             'min-width': '200px'
         };
 
-       
-
         var getNewID = function() {
             return (new Date()).getTime();
         };
 
         var getinfo = function() {
 
-            var info = false;
-
-            $.ajax({
+            return $.ajax({
                 type: 'GET',
                 url: configurator.getApplicationPath() + '/storage/v1/QuickFilters/?where=(scope == "Private")&select={UserData,key}',
-                async: false,
                 contentType: 'application/json; charset=utf8',
-                success: function(data) {
-                    $.each(data.items, function(k, item) {
-                        info = item.userData;
-                    });
-                }
+                dataType: 'json'
+            }).then(function(data) {
+                var storageData = _.first(data.items);
+                var items = storageData && storageData.userData && storageData.userData.filters ? JSON.parse(storageData.userData.filters) : [];
+                return items;
             });
-
-            var array = [];
-
-            if (info) {
-                array = $.parseJSON(info.filters);
-            }
-
-            return array;
         };
 
         var saveinfo = function(savedata) {
 
-            var saves = {};
+            var data = {
+                filters: JSON.stringify(savedata)
+            };
 
-            saves["Filters"] = JSON.stringify(savedata);
-
-            $.ajax({
+            return $.ajax({
                 type: 'POST',
-                async: false,
                 url: configurator.getApplicationPath() + '/storage/v1/QuickFilters/',
                 data: JSON.stringify({
                     'key': loggedUser.id,
                     'scope': 'Private',
                     'publicData': null,
-                    'userData': saves
+                    'userData': data
                 }),
-                contentType: 'application/json; charset=utf8',
-
-                success: function() {
-                    //console.log('save success');
-                    return true;
-                },
-                error: function() {
-                    //console.log('fail');
-                    return false;
-                }
+                contentType: 'application/json; charset=utf8'
             });
         };
 
-        var addFilterToList = function(filter, desc, el, sampleFilter, filterID) {
+        var saveDesc = function(desc, filter, key) {
 
-            var lastFilterClone = sampleFilter.clone();
-            lastFilterClone.find('.i-role-predefined-filter').data('value', unescape(filter));
+            return $
+                .when(getinfo())
+                .then(function(items) {
+                    items = items.map(function(v) {
+                        if (key === v.ID) {
+                            v.Desc = desc;
+                        }
+                        return v;
+                    });
+                    return saveinfo(items);
+                });
+        };
+
+        var addFilterToList = function(filter, desc, $table, $rowTemplate, filterID) {
+
+            var lastFilterClone = $rowTemplate.clone();
+            lastFilterClone.find('.i-role-predefined-filter').data('value', filter);
             lastFilterClone.find('.i-role-output-filter').css(tableCSS);
-            lastFilterClone.find('.i-role-output-filter').html(unescape(filter));
+            lastFilterClone.find('.i-role-output-filter').text(filter);
             lastFilterClone.find('td:last').html('');
 
-            var descTD = $("<td class='filter-description'><span>" + unescape(desc) + "</span></td>").click(function() {
+            var descTD = $("<td class='filter-description'><span>" + desc + "</span></td>").click(function() {
 
                 if ($(this).children(":first").hasClass('placeholder')) {
 
@@ -119,110 +113,108 @@ tau.mashups
             lastFilterClone.find('td:last').replaceWith(descTD);
             lastFilterClone.find('td:last').css(tableCSS);
 
-            var removebtn = $('<td data-id="' + filterID + '"><span class="tau-icon_name_close" style="cursor: pointer;display:block;width:10px; background-position:-1067px -103px;">&nbsp;</span</td>').click(function() {
+            var removebtn = $('<td><span class="tau-icon_name_close" style="cursor: pointer;display:block;width:10px; background-position:-1067px -103px;">&nbsp;</span</td>');
+            removebtn.click(function() {
 
-                var current_info = getinfo();
-                var filterID = $(this).data('id');
-
-                $(this).parents('tr').remove();
-                //console.log(filterID);
-
-                var indexToRemove = null;
-
-                $.each(current_info, function(k, item) {
-                    if (item.ID == filterID) {
-                        indexToRemove = k;
-                        return false;
-                    }
-                });
-
-                current_info.splice(indexToRemove, 1);
-                saveinfo(current_info);
+                $(this).parents('tr:first').remove();
+                $
+                    .when(getinfo())
+                    .then(function(items) {
+                        items = items.filter(function(v) {
+                            return v.ID !== filterID;
+                        });
+                        return saveinfo(items);
+                    });
             });
 
             lastFilterClone.append(removebtn);
-            el.find('#customfilters > tbody').prepend(lastFilterClone);
+            $table.find('tbody').prepend(lastFilterClone);
         };
 
-        var addSavedFilters = function($element, sampleFilter) {
+        var addSavedFilters = function($table, $rowTemplate) {
 
-            var customfilters = getinfo();
-
-            $.each(customfilters, function(k, item) {
-                addFilterToList(item.Filter, item.Desc, $element, sampleFilter, item.ID);
-            });
+            return $
+                .when(getinfo())
+                .then(function(items) {
+                    items.forEach(function(item) {
+                        addFilterToList(item.Filter, item.Desc, $table, $rowTemplate, item.ID);
+                    });
+                });
         };
 
-        var saveDesc = function(desc, filter, key) {
+        var initFilterList = function($filter, $help) {
 
-            var current_info = getinfo();
-            var indexToUpdate = null;
-            var itemToUpdate = null;
-            $.each(current_info, function(k, item) {
+            var $input = $filter.find('.i-role-filter-input');
+            var $table = $help.find('table:last');
 
-                if (item.ID == key) {
-                    indexToUpdate = k;
-                    itemToUpdate = item;
-                    return false;
-                }
-            });
+            $table.find('.filter-help-heading').remove();
+            $table.find('.i-role-output-filter').css(tableCSS);
+            $table.find('td:nth-child(3)').css(tableCSS);
+            var $rowTemplate = $table.find('tr:last').clone();
 
-            if (indexToUpdate !== -1) {
-                itemToUpdate.Desc = escape(desc);
-                current_info[indexToUpdate] = itemToUpdate;
-            }
+            $help.find('#filter_wrapper').remove();
 
-            saveinfo(current_info);
-        };
+            var $wrapper = $("<div id='filter_wrapper'></div>");
 
-        
-        configurator.getGlobalBus().on('content.$element.ready', function(evt, $element) {
+            var $savedTable = $table.clone().addClass('i-role-savedfilters').attr('id', 'customfilters');
+            $savedTable.find('tr').remove();
 
-            var sampleFilter = $element.find('tr').last().clone();
-            var inputbox = $element.parents('.i-role-filter').find('.i-role-filter-input');
-            var currentTable = $element.find('table');
-            var newtable = $element.find('table').clone().attr('id', 'customfilters');
+            var $actions = $([
+                "<div id='quickfilters_actions' style='height:23px;'>",
+                "<div style='margin-top:10px;margin-bottom:-25px;margin-left:10px;'>Saved Filters</div>",
+                "<div style='float:right;'><button class='tau-btn'>Save current filter</button></div>",
+                "</div>"
+            ].join(''));
 
-            //make coulmns match
-            currentTable.find('.i-role-output-filter').css(tableCSS);
-            currentTable.find('td:nth-child(3)').css(tableCSS);
+            $wrapper.prepend("<div style='border-bottom-color: rgb(215, 215, 215); border-bottom-style: dashed; border-bottom-width: 1px;'></div>");
+            $wrapper.prepend($savedTable);
+            $wrapper.prepend($actions);
 
-            var savebutton = $("<div style='float:right;'><button class='tau-btn'>Save current filter</button></div>").click(function() {
+            var savebutton = $actions.find('button');
+            savebutton.click(function() {
 
-                var current_info = getinfo();
-                var filterText = inputbox.val();
-                var filterID = getNewID();
-                var filterToAdd = {
-                    "ID": filterID,
+                var item = {
+                    "ID": getNewID(),
                     "Desc": "",
-                    "Filter": escape(filterText)
+                    "Filter": $input.val() || ''
                 };
 
-                current_info.push(filterToAdd);
-                saveinfo(current_info);
-
-                var table = $(this).parents('.tau-help-content.i-role-help-content');
-                table.find('tr').last();
-                addFilterToList(escape(filterText), "", table, table.find('tr').last(), filterID);
+                $
+                    .when(getinfo())
+                    .then(function(items) {
+                        items.push(item);
+                        return $.when(item, saveinfo(items));
+                    })
+                    .then(function(item) {
+                        addFilterToList(item.Filter, item.Desc, $savedTable, $rowTemplate, item.ID);
+                    });
             });
 
-            if (!$element.find('#filter_wrapper').length) {
-                currentTable.wrap("<div id='filter_wrapper'></div>");
+            $wrapper.insertBefore($table);
+
+            return addSavedFilters($savedTable, $rowTemplate);
+        };
+
+        configurator.getGlobalBus().on('content.$element.ready', function(evt, $help) {
+
+            var $el = $help.parents('.i-role-filter:first');
+            if (!$el.length) {
+                $el = $($help.context).parents('.i-role-filter:first');
             }
 
-            newtable.find('tr:not(.filter-help-heading)').remove();
-            //When reports is open it runs 3 times...
+            var $trigger = $el.find('.i-role-help');
 
-            if (!$element.find('#quickfilters_actions').length) {
-                $element.find('#filter_wrapper').prepend("<div id='quickfilters_actions' style = 'height:23px;'></div>");
-                $element.find('#quickfilters_actions').append("<div style='margin-top:10px;margin-bottom:-25px;margin-left:10px;'>Saved Filters</div>");
-                $element.find('#quickfilters_actions').append(savebutton);
-                $element.find('#quickfilters_actions').after("<div style='border-bottom-color: rgb(215, 215, 215); border-bottom-style: dashed; border-bottom-width: 1px;'></div>");
+            // // to prevent inner help bubbles should be only one listener
+            if ($trigger.data('init')) {
+                return;
             }
-
-            $element.find('#quickfilters_actions').after(newtable);
-            $element.find('.filter-help-heading').remove();
-
-            addSavedFilters($element, sampleFilter);
+            $trigger.data('init', true);
+            $trigger.on('taububbleshow', function() {
+                $
+                    .when(initFilterList($el, $help))
+                    .then(function() {
+                        $trigger.tauBubble('adjust');
+                    });
+            });
         });
     });
