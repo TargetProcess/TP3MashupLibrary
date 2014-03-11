@@ -1,9 +1,7 @@
 Share Board
 ==================
 
-How to activate it:
-
-Install the mashup from the Targetprocess Mashups Library
+Install the mashup from the Targetprocess Mashups Library to active it.
 
 __In order to share boards using Targetproces On-Site - the Targetprocess instance has to be publicly accessible (available from another computer over the internet)__
 
