@@ -1,5 +1,5 @@
 {
-	"ShortDescription": "Adds the ability to share boards with users who do not have a Targetprocess 3 account.  Please note: Sharing is performed via our service https://www.tauboard.com and requires the Targetprocess instance to be accessible from the internet.",
+	"ShortDescription": "Adds the ability to share boards with users without a Targetprocess login.  Please note: Sharing is via https://www.tauboard.com and requires Targetprocess to be accessible from the internet.",
 	"CompatibleTpVersion": {
 		"Minimum": "3.0.11"
 	}		
