@@ -16,7 +16,7 @@ You’ll be able to copy the public link to the board or manage your public boar
 
 ![Share Board Manage](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Share%20Board/ShareBoardManage.png)
 
-The mashup provides external users with the details shown on the board. Card details can be customized using the Customize Cards feature. Click on cards to open a pop-up with entity details. The pop-up displays only basic details.
+The mashup provides external users with the details shown on the board. Card details can be customized using the Customize Cards feature. Click on cards to open a pop-up with entity details. The pop-up displays only basic details.  Your board settings determine the look of the shared board, so if you have medium cards selected with the ToDo column collapsed, the same will show for your shared board.  To prevent unwanted changes to your shared boards, we recommend not sharing boards that you use for your daily work.  Instead, create a new board specifically to be shared.
 
 You’re welcome to remove the board from shared boards list at anytime. When the link is removed from public boards list, it is no longer accessible by external users and the board is no longer shared.
 
