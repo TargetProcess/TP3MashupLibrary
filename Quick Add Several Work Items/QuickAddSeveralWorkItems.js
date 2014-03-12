@@ -126,7 +126,7 @@ require([
                     queue.processNextItem = function() {
 
                         initFormValues.map(function(v) {
-                            var $field = $inputs.filter('[data-fieldname=' + v.name + ']');
+                            var $field = $inputs.filter('[data-fieldname="' + v.name + '"]');
                             if ($field.is(':checkbox')) {
                                 $field.prop('checked', v.value);
                             } else {
