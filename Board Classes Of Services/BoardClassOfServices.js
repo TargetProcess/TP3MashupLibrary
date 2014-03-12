@@ -38,10 +38,10 @@ tau.mashups
                 this.taggedCards = {};
                 this.cards = [];
 
-                context.onChange(function(ctx) {
-                    self.setContext(ctx);
-                    self.refresh(ctx);
-                });
+                //context.onChange(function(ctx) {
+                //    self.setContext(ctx);
+                //    self.refresh(ctx);
+                //});
 
                 this.showSeveralTags = showSeveralTags;
 
