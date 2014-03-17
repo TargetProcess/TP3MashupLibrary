@@ -10,3 +10,9 @@
     font-size: 11px;
     display: block;
 }
+
+.entity-tabs__list .tab-item.disabled .ui-label,
+.drop-down-list .tab-item.disabled .ui-label {
+    color: #e8e8e8;
+    cursor: not-allowed;
+}
