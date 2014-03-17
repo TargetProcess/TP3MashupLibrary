@@ -7,7 +7,7 @@ __In order to share boards using Targetproces On-Site - the Targetprocess instan
 
 __Note__: Targetprocess OnDemand customers have this mashup enabled by default, there is no need to install it a second time.
 
-The Mashup will add a Share icon near your Board name. Press it to share the given Board:
+The Mashup will add a Share Board button into the Actions menu on a Board. Press it to share the given Board:
 
 ![Share Board Link](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Share%20Board/ShareBoardLink.png)
 
