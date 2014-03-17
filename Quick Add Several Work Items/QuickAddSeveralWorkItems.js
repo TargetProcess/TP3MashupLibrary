@@ -1,17 +1,13 @@
+/*eslint quotes:[0, "single"] */
 require([
+    'Underscore',
+    'jQuery',
     'app.bus'
-    , 'Underscore'
-    , "libs/jquery/jquery.fileupload"
-    , "libs/jquery/jquery.iframe-transport"
-], function (appBusDeferred, _) {
+], function(_, $, appBusDeferred) {
 
-    var url = "drop2board.aws.af.cm/lines";
-    var isSSL = "https:" === document.location.protocol;
-    url = (isSSL ? 'https://' : 'http://') + url;
+    'use strict';
 
-    $.ajax(url);
-
-    appBusDeferred.then(function (bus) {
+    appBusDeferred.then(function(bus) {
 
         var isQuickAddEvent = function(evt) {
             return ['board.cell.quick.add', 'board plus quick add cells'].indexOf(evt.caller.name.toLowerCase()) >= 0;
@@ -22,9 +18,8 @@ require([
 
         $("<style type='text/css'> .file-upload-item { padding-bottom: 5px; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; } </style>").appendTo("head");
         $("<style type='text/css'> .file-upload-container { overflow-x: hidden ; overflow-y: auto; max-height: 200px; } </style>").appendTo("head");
-        $("<style type='text/css'> .file-added-cell { background-color: #2ca02c; opacity: 0.2; } </style>").appendTo("head");
 
-        bus.on('model.data.item.did.add', function (evt, data) {
+        bus.on('model.data.item.did.add', function(evt, data) {
             if (!isQuickAddEvent(evt)) {
                 return;
             }
@@ -33,7 +28,7 @@ require([
                 if (queue.shift) {
                     queue.shift();
 
-                    setTimeout(function () {
+                    setTimeout(function() {
                         queue.processNextItem();
                     }, 10);
 
@@ -41,17 +36,25 @@ require([
             }
         });
 
-        bus.on('model.data.item.did.fail.add', function (evt, data) {
+        bus.on('model.data.item.did.fail.add', function(evt, data) {
             if (!isQuickAddEvent(evt)) {
                 return;
             }
-
             if (queue.length) {
                 queue.showImportButton();
             }
         });
 
-        bus.on('blur', function (evt, data) {
+        bus.on('model.add.item', function(evt) {
+            if (!isQuickAddEvent(evt)) {
+                return;
+            }
+            if (queue.length) {
+                queue.hideImportButton();
+            }
+        });
+
+        bus.on('blur', function(evt, data) {
             if (!isQuickAddEvent(evt)) {
                 return;
             }
@@ -61,154 +64,185 @@ require([
             $quickAdd = $('<div ></div>');
         });
 
-        bus.on('afterRender', function (evt, data) {
+        bus.on('afterRender', function(evt, data) {
             if (!isQuickAddEvent(evt)) {
                 return;
             }
 
             $quickAdd = data.element;
 
-            if (addedItems.length > 0) {
-                
-                $('.tau-entity-fields', $quickAdd).each(function () {
-                    var $form = $(this);
+            if (!addedItems.length) {
+                return;
+            }
 
-                    var $name = $('.Name', $form);
-                    var $parent = $name.hide().parent();
+            $('.tau-entity-fields', $quickAdd).each(function() {
+                var $form = $(this);
 
-                    var $container = $('<div class="file-upload-container" ></div>');
+                var $name = $('.Name', $form);
+                var $parent = $name.hide().parent();
 
-                    _.each(addedItems, function (item, index) {
-                        var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item)
-                        $container.append($item);
-                    });
+                var $container = $('<div class="file-upload-container" ></div>');
 
-                    $container.appendTo($parent);
-
-                    var $tauButton = $('.tau-add-item', $form);
-                    $tauButton.hide();
-
-                    var $importButton = $('<div class="tau-success tau-btn" style="height: 15px; font-size: 14px;">Add ' + addedItems.length + ' item(s)</div>');
-                    $importButton.appendTo($tauButton.parent());
-
-                    var items = addedItems.concat([]);
-
-                    $importButton.click(function () {
-                        $importButton.hide();
-
-                        queue = items;
-                        var $messagePool = $('.tau-message-pool', $quickAdd).hide();
-
-                        queue.showImportButton = function () {
-                            $importButton.show();
-                            $messagePool.show();
-                        };
-
-                        queue.processNextItem = function () {
-
-                            var countToImport = this.length;
-
-                            var $items = $('.file-upload-item', $container);
-                            var countOfDone = $items.length - countToImport;
-
-                            $items = $('.file-upload-item:lt(' + countOfDone + ')', $container)
-                                .css({'text-decoration': 'line-through'});
-
-                            if ($items.length) {
-                                $container.scrollTop($container.scrollTop() + $($items[$items.length - 1]).position().top);
-                            }
-
-                            var item = this[0];
-
-                            if (item) {
-                                $name.val(item);
-                                $tauButton.click();
-                            }
-                        };
-
-                        queue.processNextItem();
-                    });
+                _.each(addedItems, function(item, index) {
+                    var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item);
+                    $container.append($item);
                 });
 
-                addedItems = [];
-            }
+                $container.appendTo($parent);
+
+                var $tauButton = $('.tau-add-item', $form);
+                $tauButton.hide();
+
+                var $importButton = $('<div class="tau-success tau-btn" style="height: 15px; font-size: 14px;">Add ' + addedItems.length + ' item(s)</div>');
+                $importButton.appendTo($tauButton.parent());
+
+                var items = addedItems.concat([]);
+
+                $importButton.click(function() {
+
+                    queue = items;
+                    var $messagePool = $('.tau-message-pool', $quickAdd);
+
+                    var $inputs = $form.find('form :input[data-fieldname]');
+                    var initFormValues = $inputs.map(function() {
+
+                        var $field = $(this);
+                        return {
+                            name: $field.data('fieldname'),
+                            value: $field.is(':checkbox') ? $field.prop('checked') : $field.val()
+                        };
+                    }).toArray();
+
+                    queue.showImportButton = function() {
+                        $importButton.show();
+                        $messagePool.show();
+                    };
+
+                    queue.hideImportButton = function() {
+                        $importButton.hide();
+                        $messagePool.hide();
+                    };
+
+                    queue.processNextItem = function() {
+
+                        initFormValues.map(function(v) {
+                            var $field = $inputs.filter('[data-fieldname="' + v.name + '"]');
+                            if ($field.is(':checkbox')) {
+                                $field.prop('checked', v.value);
+                            } else {
+                                $field.val(v.value);
+                            }
+                        });
+
+                        var countToImport = this.length;
+
+                        var $items = $('.file-upload-item', $container);
+                        var countOfDone = $items.length - countToImport;
+
+                        $items = $('.file-upload-item:lt(' + countOfDone + ')', $container)
+                            .css({
+                                'text-decoration': 'line-through'
+                            });
+
+                        if ($items.length) {
+                            $container.scrollTop($container.scrollTop() + $($items[$items.length - 1]).position().top);
+                        }
+
+                        var item = this[0];
+
+                        if (item) {
+                            $name.val(item);
+                            $tauButton.click();
+                        }
+                    };
+
+                    queue.processNextItem();
+                });
+            });
+
+            addedItems = [];
         });
 
         var noDrop = false;
 
-        bus.on('board.configuration.ready', function (evt, data) {
+        bus.on('board.configuration.ready', function(evt, data) {
 
-             if (!data.cells) {
+            if (!data.cells) {
                 noDrop = true;
                 return;
-             }
+            }
 
-             if (!data.cells.types) {
+            if (!data.cells.types) {
                 noDrop = true;
                 return;
-             }
+            }
 
-             if (data.cells.types.length === 0) {
+            if (data.cells.types.length === 0) {
                 noDrop = true;
                 return;
-             }
+            }
 
-             if (!data.cells.types[0]) {
+            if (!data.cells.types[0]) {
                 noDrop = true;
                 return;
-             }
+            }
 
-             if (data.cells.types[0].indexOf('iteration') >= 0
-                    || data.cells.types[0].indexOf('release') >= 0
-                    || data.cells.types[0] === 'user'
-                ) {
+            if (data.cells.types[0].indexOf('iteration') >= 0 || data.cells.types[0].indexOf('release') >= 0 || data.cells.types[0] === 'user') {
                 noDrop = true;
                 return;
-             }
-              
+            }
+
             noDrop = false;
         });
 
-        bus.on('overview.board.ready', function (evt, data) {
-            
+        bus.on('overview.board.ready', function(evt, data) {
+
             if (noDrop) {
                 return;
             }
 
-            var processItems = function ($cell, r) {
+            var processItems = function($cell, items) {
                 if ($cell.hasClass('i-role-ch-quickadd-target')) {
-                    addedItems = (r || { items: [] }).items || [];
+                    addedItems = items;
                     $('.i-role-cell', $cell).trigger('dblclick');
                 }
-
-                $cell.removeClass('file-added-cell');
             };
-
 
             var $grid = $(".i-role-grid", data.element);
             var $cells = $(".i-role-cellholder", $grid);
 
-            $cells.each(function () {
-                $(this).fileupload({
-                    sequentialUploads: true,
-                    dropZone: $(this),
-                    pastZone: null,  
-                    url: url,
-
-                    add: function (e, data) {
-                        $(e.target).addClass('file-added-cell');
-
-                        data.submit().success(function (r) {
-                            if (_.isString(r)) {
-                                r = $.parseJSON(r);
-                            }
-                            processItems($(e.target), r);
-                        });
-                    }
-                });
-
+            $cells.on('dragover', function(e) {
+                e.preventDefault();
+                return false;
             });
 
+            $cells.on('drop', function(e) {
+                e.preventDefault();
+
+                if (!window.FileReader || !e.originalEvent.dataTransfer || !e.originalEvent.dataTransfer.files || !e.originalEvent.dataTransfer.files.length) {
+                    return false;
+                }
+
+                var file = e.originalEvent.dataTransfer.files[0];
+
+                if (!file.type.match(/^text\//)) {
+                    return false;
+                }
+
+                var $cell = $(this);
+                var reader = new FileReader();
+
+                reader.onload = function(e) {
+                    var text = reader.result || '';
+                    var items = _.compact(text.split(/\r?\n/).map(function(v){
+                        return (v || '').trim();
+                    }));
+                    processItems($cell, items);
+                };
+
+                reader.readAsText(file, 'utf8');
+                return false;
+            });
         });
     });
 });
