@@ -1,170 +1,209 @@
 tau.mashups
-    .addDependency('tp/mashups')
-    .addDependency('user/mashups')
     .addDependency('jQuery')
     .addDependency('Underscore')
-    .addDependency('tp3/mashups/context')
-    .addDependency('tau/core/bus.reg')
+    .addDependency('BoardClassOfServices.config')
+    .addDependency('tau/core/class')
+    .addDependency('app.bus')
     .addDependency('tau/configurator')
-    .addMashup(function(m, um, $, _, context, busRegistry, configurator) {
+    .addMashup(function($, _, config, Class, appBus, configurator) {
 
-        var colorer = function() {
-            this.init = function() {
+        'use strict';
 
-                var self = this;
+        configurator.getGlobalBus().once('configurator.ready', function(e, appConfigurator) {
+            configurator = appConfigurator;
+        });
 
-                /* Coloring of the cards is done from the top down.  The first mapping that is found
-                 * is going to be the one that is used.  Once a match is found, subsequent mappings are 
-                 * ignored.  This mapping is NOT case-sensitive. */
-                var colorMapping = {
-                    'PIT Web CEPAL': '#fdfadb',
-                    'in PROGRESS': '#fdfadb', // you can use state name
-                    'urgent': '#f9d9d1',
-                    '.net': '#d2e0ef',
-                    'regression': '#ffe1b3',
-                    'today': '#d2e0ef',
-                    'mb_wip': '#d2e0ef',
-                    'performance': '#e2eece',
-                    '1week': '#f9f5bd',
-                    'when have time': '#A1D9D6',
-                    'done': '#dae0e8',
-                    'closed': '#dae0e8'
-                };
+        var Colorer = Class.extend({
 
-                var showSeveralTags = true; // change to 'false' if you do not want multi-colored cards
+            options: config,
 
-                /* NO NEED TO CHANGE ANYTHING BENEATH THIS LINE! */
+            init: function() {
 
-                this.taggedCards = {};
-                this.cards = [];
+                this.fields = this.collectFields(this.options.colors);
 
-                //context.onChange(function(ctx) {
-                //    self.setContext(ctx);
-                //    self.refresh(ctx);
-                //});
-
-                this.showSeveralTags = showSeveralTags;
-
-                this.tagMapping = {};
-                $.each(colorMapping, $.proxy(function(i, v) {
-                    this.tagMapping[i.toLowerCase()] = v;
-                }, this));
-
-                busRegistry.on('create', function(eventName, sender) {
-                    if (sender.bus.name == 'board_plus') {
-                        sender.bus.on('start.lifecycle', _.bind(function(e) {
-                            this.cards = [];
-                        }, self));
-                        sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
-                    }
+                var cf = _.find(this.fields, function(field) {
+                    return _.isObject(field) && _.keys(field)[0] === 'customFields';
                 });
-            };
-
-            this._ctx = {};
-            this.setContext = function(ctx) {
-                this._ctx = ctx;
-            };
-
-            this.refresh = function(ctx) {
-
-                var acid = ctx.acid;
-                var whereIdsStr = _.chain(this.cards)
-                    .map(_.bind(this._getCardId, this))
-                    .uniq()
-                    .value()
-                    .join(',');
-
-                if (whereIdsStr == '') {
-                    whereIdsStr = '0';
+                if (cf) {
+                    this.fields = _.without(this.fields, cf);
+                    this.fields.push('customFields');
                 }
+            },
 
+            collectFields: function(colorsConfig) {
 
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Assignable?take=1000&where=(id in [' + whereIdsStr + '])&select={id,Tags,EntityState.Name as state,Priority.Name as priority}&acid=' + acid;
-                $.ajax({
-                    url: requestUrl,
-                    context: this
-                }).done(function(data) {
-                        this.taggedCards = {};
-                        for (var i = 0; i < data.items.length; i++) {
-                            var id = data.items[i].id;
-                            var tags = data.items[i].tags.split(',');
-                            tags.push(data.items[i].state);
-                            tags.push(data.items[i].priority);
-                            $.each(tags, function(i, v) {
-                                tags[i] = $.trim(tags[i].toLowerCase());
-                            });
-                            this.taggedCards[id] = tags;
+                var fields = [];
+                _.forEach(colorsConfig, function(value, fieldName) {
+
+                    var field;
+
+                    if (_.isObject(value) && !_.isArray(value) && !_.isFunction(value)) {
+
+                        if (_.any(_.values(value), _.isObject)) {
+                            field = {};
+                            field[fieldName] = this.collectFields(value);
+                        } else {
+                            field = fieldName;
                         }
-                        this.renderAll();
-                    });
-            };
+                    } else if (_.isArray(value)) {
 
-            this.refreshDebounced = _.debounce(this.refresh, 100, false);
+                        field = {};
+                        field[fieldName] = this.collectFields(value[0]);
+                    }
 
-            this.cardAdded = function(eventName, sender) {
-                this.cards.push(sender.element);
-                this.refreshDebounced(this._ctx);
-            };
+                    if (field) {
+                        fields.push(field);
+                    }
+                }.bind(this));
 
-            this._getCardId = function(card) {
-                return card.attr('data-entity-id');
-            };
+                return fields;
+            },
 
-            this.renderCard = function(card) {
-                var id = this._getCardId(card);
-                var tags = this.taggedCards[id];
+            execute: function() {
 
-                if (tags) {
-                    var style = this.getStyle(tags);
-                    card.attr('style', style);
+                var $cards = this.getCardsEl();
+
+                $
+                    .when(this.getCardsData($cards))
+                    .then(function(data) {
+                        return this.applyToCards(data, $cards);
+                    }.bind(this));
+            },
+
+            getCardsEl: function() {
+                return $('.tau-card:not(.coloredByMashup),.tau-card-v2:not(.coloredByMashup)');
+            },
+
+            getCardsData: function($cards) {
+
+                var ids = _.uniq(_.compact($cards.map(function() {
+                    return $(this).data('entity-id');
+                })));
+
+                if (!ids.length) {
+                    return [];
                 }
-            };
 
-            this.getStyle = function(tags) {
-                var self = this;
-                var colors = _.chain(tags)
-                    .map(function(tag) {
-                        return self.tagMapping[tag];
+                return configurator.getStore()
+                    .getDef('Assignables', {
+                        fields: this.fields,
+                        $query: {
+                            id: {
+                                $in: ids
+                            }
+                        }
                     })
-                    .filter(function(color) {
-                        return !!color;
-                    })
-                    .value();
+                    .then(function(items) {
+                        return items.map(function(item) {
+                            return item;
+                        });
+                    });
+            },
 
-                if (colors.length === 0) {
-                    return '';
-                } else if (colors.length == 1 || !this.showSeveralTags) {
-                    return 'background: ' + colors[0];
+            applyToCards: function(data, $cards) {
+
+                var hash = _.object(data.map(function(v) {
+                    return [v.id, v];
+                }));
+
+                $cards.each(function(k, v) {
+
+                    var $el = $(v);
+                    this.applyToCard(hash[$el.data('entity-id')], $el);
+                }.bind(this));
+            },
+
+            applyToCard: function(cardData, $cardEl) {
+
+                $cardEl.addClass('coloredByMashup');
+                return this.applyBackgroundByValues(cardData, $cardEl);
+            },
+
+            applyBackgroundByValues: function(cardData, $cardEl) {
+
+                var values = this.collectValues(cardData);
+                var colors = this.collectColors(values, this.options.colors);
+
+                if (!colors.length) {
+                    return $cardEl;
+
+                } else if (colors.length === 1 || this.options.colorType === 'single') {
+
+                    $cardEl.css('background', colors[0]);
+                    return $cardEl;
                 }
 
                 var gradientElements = [];
-                var length = colors.length;
-                var delta = 1 / length;
-                for (var i = 0; i < length; i++) {
-                    var color = colors[i];
+                var delta = 1 / colors.length;
+
+                colors.forEach(function(color, i) {
                     gradientElements.push(color + ' ' + (delta * i * 100 + 3) + '%');
                     gradientElements.push(color + ' ' + (delta * (i + 1) * 100 - 3) + '%');
+                });
+                $cardEl.css('background', 'linear-gradient(45deg, ' + gradientElements.join(', ') + ')');
+                return $cardEl;
+            },
+
+            collectValues: function(cardData) {
+
+                if (!_.isArray(cardData.tags)) {
+                    cardData.tags = _.compact((cardData.tags || '').split(',').map(function(tag) {
+                        return tag.trim().toLowerCase();
+                    }));
                 }
 
+                return cardData;
+            },
 
-                return 'background: linear-gradient(45deg, ' + gradientElements.join(', ') + ')';
-            };
+            collectColors: function(value, fieldColorConfig) {
 
-            this.renderAll = function() {
-                var self = this;
-                $.each(this.cards, function(index, card) {
-                    self.renderCard(card);
-                });
-            };
+                var colors = [];
+                if (!fieldColorConfig || (fieldColorConfig.match && !fieldColorConfig.match(value))) {
+                    return colors;
+                }
 
-            this.renderAll = function() {
-                var self = this;
-                $.each(this.cards, function(index, card) {
-                    self.renderCard(card);
-                });
-            };
-        }
+                if (_.isArray(value) && _.isArray(fieldColorConfig)) {
 
-        new colorer().init();
+                    colors = fieldColorConfig.reduce(function matchInEntityArrayData(colors, colorsConfig) {
+                        return colors.concat(value.reduce(function(colors, value) {
+                            return colors.concat(this.collectColors(value, colorsConfig));
+                        }.bind(this), []));
+                    }.bind(this), colors);
+                } else if (_.isArray(value) && _.isObject(fieldColorConfig)) {
 
+                    colors = colors.concat(value.reduce(function(colors, value) {
+                        return colors.concat(this.collectColors(value, fieldColorConfig));
+                    }.bind(this), []));
+                } else if (_.isObject(value) && _.isObject(fieldColorConfig)) {
+
+                    colors = colors.concat(_.keys(value).reduce(function(colors, fieldName) {
+                        return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName]));
+                    }.bind(this), []));
+                } else {
+
+                    var findFunc = this.matchValueAndConfigValue.bind(this, value);
+                    var key = _.find(_.keys(fieldColorConfig), findFunc);
+                    if (key) {
+                        var color = fieldColorConfig[key];
+                        colors.push(color);
+                    }
+                }
+
+                return colors;
+            },
+
+            matchValueAndConfigValue: function(value, configValue) {
+                return String(value).toLowerCase() === String(configValue).toLowerCase();
+            }
+        });
+
+        $
+            .when(appBus)
+            .then(function(bus) {
+                var colorer = new Colorer();
+                var listener = _.debounce(colorer.execute.bind(colorer), 500);
+                bus.on('overview.board.ready', listener);
+                bus.on('view.card.skeleton.built', listener);
+                bus.on('destroy', listener);
+            });
     });
