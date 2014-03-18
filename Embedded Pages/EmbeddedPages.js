@@ -26,6 +26,7 @@ tau
             templateDefault: [
                 '<iframe class="embedded-pages-tab-frame" src="${url}" frameborder="0"></iframe>'
             ].join(''),
+
             templateEmptyDefault: ['<span class="embedded-pages-tab-empty">',
                 'Nothing to display in the Tab: the value of the \'${name}\' Custom Field is empty',
                 '</span>'
@@ -88,6 +89,11 @@ tau
             preAdd: function(context) {
 
                 this.customField = null;
+
+                if (!context.entity) {
+                    return $.when(false);
+                }
+
                 this.entity = {
                     id: context.entity.id,
                     entityType: {
@@ -100,7 +106,7 @@ tau
 
             checkByType: function() {
                 return _.contains(this.validTypes, this.entity.entityType.name) &&
-                    this.config.entityTypeName === this.entity.entityType.name;
+                    this.entity.entityType.name === this.config.entityTypeName;
             },
 
             checkByCustomField: function() {
@@ -118,15 +124,10 @@ tau
                     return this.customField;
                 }
 
-                if (!this.entity) {
-                    return false;
-                }
-
-                var field = this.getCustomFieldByProcess();
-
                 return $
-                    .when(field)
-                    .then(function(field) {
+                    .when(this.getCustomFieldByProcess())
+                    .then(function cacheFieldAndStartListenChanges(field) {
+
                         this.customField = field;
                         this.subscribeOnChanges(field);
                         return field;
@@ -139,6 +140,9 @@ tau
                     .when(this.getProcess())
                     .then(function(process) {
 
+                        if (this.config.processName && process.name !== this.config.processName) {
+                            return null;
+                        }
                         return this.findFieldInProcess(process);
                     }.bind(this));
             },
@@ -251,10 +255,6 @@ tau
 
             findFieldInProcess: function(process) {
 
-                if (this.config.processName && this.config.processName !== process.name) {
-                    return null;
-                }
-
                 return _.find(process.customFields, function(field) {
 
                     return field.name === this.config.customFieldName &&
@@ -290,6 +290,7 @@ tau
             },
 
             findFieldInEntity: function(entity) {
+
                 return _.find(entity.customFields || [], function(field) {
                     return field.name === this.config.customFieldName && this.checkCustomFieldType(field.type);
                 }.bind(this));
