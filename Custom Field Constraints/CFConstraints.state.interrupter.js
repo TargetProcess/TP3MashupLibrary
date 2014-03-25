@@ -30,22 +30,25 @@ tau.mashups
 
             _getEntitiesWithRequirements: function(entitiesToHandleDeferred, entitiesDetailed, entityStatesDetailed, changesToHandle, defaultProcess, tasks) {
                 var entitiesToHandle = _.map(entitiesDetailed, function(entity) {
-                    var entities = [];
+                    var entities = [],
+                        newState = this._getNewState(entity, entityStatesDetailed, changesToHandle, defaultProcess);
 
-                    var newState = this._getNewState(entity, entityStatesDetailed, changesToHandle, defaultProcess);
-                    var entityToHandle = {
-                        entity: entity,
-                        processId: this.dataProvider.getEntityProcessId(entity, defaultProcess),
-                        requirementsData: {
-                            newState: newState
+                    if (newState){
+                        var entityToHandle = {
+                            entity: entity,
+                            processId: this.dataProvider.getEntityProcessId(entity, defaultProcess),
+                            requirementsData: {
+                                newState: newState
+                            }
+                        };
+
+                        if (entity.entityType.name.toLowerCase() === 'userstory' && newState.isFinal) {
+                            entities = entities.concat(this._getUserStoryTasksToHandle(entityToHandle, tasks, entityStatesDetailed, defaultProcess));
                         }
-                    };
 
-                    if (entity.entityType.name.toLowerCase() === 'userstory' && newState.isFinal) {
-                        entities = entities.concat(this._getUserStoryTasksToHandle(entityToHandle, tasks, entityStatesDetailed, defaultProcess));
+                        entities.push(entityToHandle);
                     }
 
-                    entities.push(entityToHandle);
 
                     return entities;
                 }, this);
