@@ -115,10 +115,12 @@ tau.mashups
 			};
 
             this.getCardColor = function(card) {
-                var process = card.Project.Process.Name.toLowerCase();
-                var processMap = _.find(DoomConfig, function(v,k) {
-                    return k.toLowerCase() == process;
-                });
+                if (card.Project) {
+                    var process = card.Project.Process.Name.toLowerCase();
+                    var processMap = _.find(DoomConfig, function(v,k) {
+                        return k.toLowerCase() == process;
+                    });
+                }
                 /* revert to our catch-all...if we've got one */
                 if ((processMap == undefined) && (DoomConfig['*'] != undefined)) {
                     processMap = DoomConfig['*'];
