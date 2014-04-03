@@ -1,71 +1,105 @@
+/*globals require */
+/*eslint max-len: 0, no-underscore-dangle: 0 */
 tau.mashups.addDependency('jQuery')
     .addDependency('Underscore')
     .addDependency('tp3/mashups/topmenu')
     .addDependency('tp3/mashups/popup')
     .addDependency('app.bus')
     .addDependency('app.path')
+    .addDependency('tau/configurator')
     .addDependency('all.components')
-    .addMashup(function ($, _, topmenu, popup, $deferred, path) {
+    .addMashup(function($, _, topmenu, Popup, $deferred, path, configurator) {
+
+        'use strict';
+
         var boards = {
-            userstory: [
-                { type: 'bug', name: 'Bugs Board' },
-                { type: 'task', name: 'Tasks Board' }
-            ],
+            userstory: [{
+                type: 'bug',
+                name: 'Bugs Board'
+            }, {
+                type: 'task',
+                name: 'Tasks Board'
+            }],
 
-            feature: [
-                { type: 'userstory', name: 'Stories Board' }
-            ],
+            feature: [{
+                type: 'userstory',
+                name: 'Stories Board'
+            }],
 
-            testplan: [
-                { type: 'testplanrun', name: 'View Plan Runs' }
-            ],
+            testplan: [{
+                type: 'testplanrun',
+                name: 'View Plan Runs'
+            }],
 
-            iteration: [
-                { type: 'bug', name: 'Iteration Bugs' },
-                { type: 'userstory', name: 'Iteration Stories' }
-            ],
+            iteration: [{
+                type: 'bug',
+                name: 'Iteration Bugs'
+            }, {
+                type: 'userstory',
+                name: 'Iteration Stories'
+            }],
 
-            release: [
-                { type: 'bug', name: 'Release Bugs' },
-                { type: 'feature', name: 'Release Features' },
-                { type: 'userstory', name: 'Release Stories' }
-            ],
+            release: [{
+                type: 'bug',
+                name: 'Release Bugs'
+            }, {
+                type: 'feature',
+                name: 'Release Features'
+            }, {
+                type: 'userstory',
+                name: 'Release Stories'
+            }],
 
-            teamiteration: [
-                { type: 'bug', name: 'Bugs Board (TI)' },
-                { type: 'userstory', name: 'Stories Board (TI)' }
-            ]
+            teamiteration: [{
+                type: 'bug',
+                name: 'Bugs Board (TI)'
+            }, {
+                type: 'userstory',
+                name: 'Stories Board (TI)'
+            }]
 
         };
 
         var acid = '';
         var isInnerBoard = document.location.href.indexOf('boardlink_inner_board') > 0;
 
-        var getParameterByName = function (name) {
+        var getParameterByName = function(name) {
+
             var match = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
             return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
         };
 
-        var toggleFullScreen = function (data, element) {
+        var toggleFullScreen = function(data, element) {
+
             $('.tau-app-header', element).hide();
             $('.tau-board-header', element).hide();
+            $('.tau-board-settings', element).hide();
             $('.tau-app-secondary-pane', element).hide();
-            $('.tau-app-main-pane', element).css({ position: 'static' }); //absolute
-            $('.tau-app-body', element).css({ position: 'static'}); //absolute
-            $('.tau-board', element).css({ position: 'static'}); //absolute
+            $('.tau-app-main-pane', element).css({
+                top: 0,
+                left: 0
+            });
+            $('.tau-board', element).css({
+                height: '100%'
+            });
             $('.tau-boardclipboard', element).hide();
             $('.tau-boardtools', element).hide();
             $('.i-role-axis-mark-selector').hide();
             $('.tau-board-view-switch', element).hide();
-            $('.tau-board-body-wrapper', element).css({ top: 0 });
-            $('body').css({ background: '#e5e9ee' });
+            $('.tau-board-body-wrapper', element).css({
+                top: 0
+            });
+            $('body').css({
+                background: '#e5e9ee'
+            });
         };
 
+        var onLoadLibs = function(registry, eventHelper, storeapi, sliceapi) {
 
-        var onLoadLibs = function (registry, eventHelper, storeapi, sliceapi) {
-            var loadBoard = function () {
+            var loadBoard = function() {
+
                 var cardsArray = $(this).data().cards;
-                var activityPopup = new popup();
+                var activityPopup = new Popup();
                 activityPopup.show();
                 activityPopup.showLoading();
 
@@ -73,25 +107,22 @@ tau.mashups.addDependency('jQuery')
 
                 var ids = [];
 
-                _.each(cardsArray, function (card) {
+                _.each(cardsArray, function(card) {
                     ids.push(card.entityId);
                 });
 
-                var url = path.get() + "/restui/board.aspx?boardlink_inner_board=true&acid="
-                    + acid + "&ids=" + ids.join("_")
-                    + "&parent=" + $(this).data().parent
-                    + "&child=" + $(this).data().child;
-                var $frame = $('<iframe id="inner-board" style="width:100%; height:100%;margin:0;border:0;" src="'
-                    + url + '"></iframe>');
+                var url = path.get() + "/restui/board.aspx?boardlink_inner_board=true&acid=" + acid + "&ids=" + ids.join("_") + "&parent=" + $(this).data().parent + "&child=" + $(this).data().child;
+                var $frame = $('<iframe id="inner-board" style="width:100%; height:100%;margin:0;border:0;" src="' + url + '"></iframe>');
 
-                $frame.load(function () {
+                $frame.load(function() {
                     activityPopup.hideLoading();
                 });
 
                 $container.append($frame);
-                $container.css({ padding: 0 });
+                $container.css({
+                    padding: 0
+                });
             };
-
 
             if (isInnerBoard) {
 
@@ -100,13 +131,11 @@ tau.mashups.addDependency('jQuery')
 
                 var prevY = sliceapi.prototype.axis;
 
-                sliceapi.prototype.axis = function () {
-                    return prevY.apply(this, arguments).done(function (r) {
+                sliceapi.prototype.axis = function() {
+                    return prevY.apply(this, arguments).done(function(r) {
 
-                        _.each(r.data.items.concat([]), function (v, i) {
-                            if (v.y && v.dynamic && v.dynamic.items
-                                && v.dynamic.items.length > 0
-                                && v.dynamic.items[0].data.empty === true) {
+                        _.each(r.data.items.concat([]), function(v, i) {
+                            if (v.y && v.dynamic && v.dynamic.items && v.dynamic.items.length > 0 && v.dynamic.items[0].data.empty === true) {
                                 r.data.items.splice(i, 1);
 
                             }
@@ -115,31 +144,35 @@ tau.mashups.addDependency('jQuery')
                     });
                 };
 
-
                 var prevFn = storeapi.prototype._makeServiceCall;
 
-                storeapi.prototype._makeServiceCall = function (ajaxConfig) {
-                    ajaxConfig.url = ajaxConfig.url.replace('/boards', '/boards_private_' + lane + "_" + card + '_boardlink');
+                storeapi.prototype._makeServiceCall = function(ajaxConfig) {
+
+                    if (ajaxConfig.url.match(/api\/board\/v1\//) && ajaxConfig.type.toLowerCase() === 'post') {
+                        var matched = ajaxConfig.url.match(/\/(\d+)/);
+                        if (matched) {
+                            var boardId = ajaxConfig.url.match(/\/(\d+)/)[1];
+                            ajaxConfig.url = configurator.getApplicationPath() + '/storage/v1/boards_private_' + lane + "_" + card + '_boardlink/' + boardId;
+                        }
+                    }
                     return prevFn.apply(this, arguments);
                 };
 
-                registry.getByName('board_plus', function (boardBus) {
+                registry.getByName('board_plus', function(boardBus) {
 
                     var listener = {
                         bus: boardBus,
 
-                        "bus before_board.configuration.ready": function (evt, data) {
+                        "bus before_board.configuration.ready": function(evt, data) {
 
                             var ids = getParameterByName("ids").split("_");
                             var query = [];
                             var cardsQuery = [];
 
-
-                            _.each(ids, function (id) {
+                            _.each(ids, function(id) {
                                 cardsQuery.push(lane + '.id == ' + id);
                                 query.push("id == " + id);
                             });
-
 
                             data.cells = {
                                 filter: "?" + cardsQuery.join(" or "),
@@ -147,7 +180,9 @@ tau.mashups.addDependency('jQuery')
                             };
                             delete data.focus;
                             delete data.selectedMarks;
-                            data.x = { types: ['entitystate'] };
+                            data.x = {
+                                types: ['entitystate']
+                            };
                             data.y = {
                                 filter: "?" + query.join(" or "),
                                 types: [lane]
@@ -161,8 +196,9 @@ tau.mashups.addDependency('jQuery')
                 });
             }
 
-            var processCards = function (data, type, boards) {
-                var cardsSelector = '.tau-' + type;
+            var processCards = function(data, type, boards) {
+
+                var cardsSelector = '.tau-card-v2_type_' + type;
                 var $cards = $(cardsSelector, data);
 
                 _.each(boards, function(innerBoard) {
@@ -180,39 +216,44 @@ tau.mashups.addDependency('jQuery')
                             $button.click(loadBoard);
                         }
 
-                        $cards.each(function (i, card) {
+                        $cards.each(function(i, card) {
                             cardsData.push($(card).data());
                         });
 
-                        $(buttonSelector, data).data({ cards: cardsData, parent: type, child: innerBoard.type });
+                        $(buttonSelector, data).data({
+                            cards: cardsData,
+                            parent: type,
+                            child: innerBoard.type
+                        });
                     } else {
                         $(buttonSelector, data).remove();
                     }
                 });
             };
 
-            var startMashup = function (bus) {
+            var startMashup = function(bus) {
+
                 if (isInnerBoard) {
-                    bus.on('overview.board.ready', function (evt, data) {
+                    bus.on('overview.board.ready', function(evt, data) {
                         toggleFullScreen(data.element);
                     });
 
-                    bus.on('contentRendered', function (evt, data) {
+                    bus.on('contentRendered', function(evt, data) {
                         toggleFullScreen(data.element);
                     });
                     return;
                 }
 
-                bus.on('acid.ready', function (evt, data) {
+                bus.on('acid.ready', function(evt, data) {
                     acid = data;
                 });
 
-                bus.on('$el.readyToLayout', function (evt, data) {
+                bus.on('$el.readyToLayout', function(evt, data) {
                     if (evt.caller.name !== 'board.clipboard') {
                         return;
                     }
 
-                    _.each(_.keys(boards), function (key) {
+                    _.each(_.keys(boards), function(key) {
                         processCards(data, key, boards[key]);
                     });
 
