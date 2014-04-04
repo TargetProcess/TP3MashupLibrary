@@ -73,19 +73,36 @@ tau.mashups
                 this.getCards();
             };
 
+            // Helper function to get API information and deal with paging
+            this.apiGet = function(url, callback, _objects) {
+                if (_objects === undefined) { _objects = [] };
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    context: this
+                }).then(function(response) {
+                    if (response.hasOwnProperty("Items")) {
+                        _objects = $.merge(_objects, response.Items);
+                    }
+                    if (response.hasOwnProperty("Next")) {
+                        this.apiGet(response.Next, callback, _objects);
+                    } else {
+                        callback(_objects); 
+                    }
+                });
+            };
+
             // get cards
             this.getCards = function() {
 				_.each(this.getCardTypes(), function(cardType) {
-					var ajaxUrl = configurator.getApplicationPath() + '/api/v1/' + this.apiCalls[cardType] + '?format=json&include=[PlannedEndDate,Id,Project[Process[Name]]]&where=(PlannedEndDate is not null) and (EntityState.IsFinal eq "false")';
+					var ajaxUrl = configurator.getApplicationPath() + '/api/v1/' + this.apiCalls[cardType] + '?format=json&take=100&include=[PlannedEndDate,Id,Project[Process[Name]]]&where=(PlannedEndDate is not null) and (EntityState.IsFinal eq "false")';
 
-	                $.ajax({
-	                    url: ajaxUrl,
-	                    context: this
-	                }).done(_.bind(function(data) {
-	                        for (var i = 0; i < data.Items.length; i++) {
-	                            this.colorCard(data.Items[i]);
-	                        }
-	                    }, this));
+                    this.apiGet(ajaxUrl, _.bind(function(data) {
+                        for (var i = 0; i < data.length; i++) {
+                            this.colorCard(data[i]);
+                        }
+                    }, this));
 				}, this);                
             };
 
