@@ -1,0 +1,23 @@
+body.fullscreen {
+    background: '#e5e9ee';
+}
+
+body.fullscreen .tau-app-header,
+body.fullscreen .tau-board-header,
+body.fullscreen .tau-board-settings,
+body.fullscreen .tau-app-secondary-pane,
+body.fullscreen .tau-boardclipboard,
+body.fullscreen .tau-boardtools,
+body.fullscreen .i-role-axis-mark-selector,
+body.fullscreen .tau-board-view-switch  {
+    display: none;
+}
+
+body.fullscreen .tau-app-main-pane,
+body.fullscreen .tau-board-body,
+body.fullscreen .tau-board {
+    left: 0 !important;
+    top: 0 !important;
+    height: 100% !important;
+}
+
