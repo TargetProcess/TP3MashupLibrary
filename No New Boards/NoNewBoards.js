@@ -1,37 +1,67 @@
 var listAccessDenied = {
- roles: [],
- ids: []
+    roles: [],
+    ids: []
 };
 tau.mashups
- .addDependency('tau/core/bus.reg')
- .addMashup(function(reg) {
- 
-  var loggedUser = window.loggedUser || {};
-    var isAccessDenied = false;
-    isAccessDenied = (_.indexOf(listAccessDenied.roles, loggedUser.role) !== -1);
-    isAccessDenied = isAccessDenied || (_.indexOf(listAccessDenied.ids, loggedUser.id) !== -1);
-  
-  var hideElement = function(bus) {   
-   bus.on('afterRender', function(evt, data) {    
-    if (isAccessDenied) {
-     var $element = data.element;
-     if(bus.name === 'board.editor.container') {
-      $element.find('.i-role-tabheader[data-label=templates]').hide();
-     } else {
-      $element.hide();
-     }     
-    }    
-   });
-  };
- 
-  reg.getByName('board.add').done(hideElement);
-  reg.getByName('board.clone').done(hideElement);
-  reg.getByName('board.editor.container').done(hideElement);
- 
-  reg.getByName('application board').done(function(bus){
-    bus.on('boardSettings.ready',function(){
-     reg.getByName('board.clone').done(hideElement);
-     reg.getByName('board.editor.container').done(hideElement);
+    .addDependency('Underscore')
+    .addDependency('tau/core/bus.reg')
+    .addMashup(function(_, reg) {
+
+        'use strict';
+
+        var addBusListener = function(busName, eventName, listener) {
+
+            reg.on('create', function(e, data) {
+
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.on(eventName, listener);
+                }
+            });
+
+            reg.on('destroy', function(e, data) {
+
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.removeListener(eventName, listener);
+                }
+            });
+
+            reg.getByName(busName).done(function(bus) {
+                bus.on(eventName, listener);
+            });
+        };
+
+        var hideCreateViewButton = function() {
+
+            addBusListener('board.add', 'afterRender', function(e, data) {
+                data.element.hide();
+            });
+        };
+
+        var hideTemplatesTab = function() {
+
+            addBusListener('board.editor.container', 'afterRender', function(e, data) {
+                data.element.find('.i-role-tabheader[data-label=templates]').hide();
+            });
+        };
+
+        var hideActionButtons = function() {
+
+            addBusListener('actions-bubble', 'afterRender', function(e, data) {
+                var $element = data.element;
+                $element.find('.tau-board-actions-item:has(.clone-board-button)').hide();
+                $element.find('.tau-board-actions-item:has(.save-template-button)').hide();
+            });
+        };
+
+        var loggedUser = window.loggedUser || {};
+        var isAccessDenied = _.contains(listAccessDenied.roles, loggedUser.role) ||
+            _.contains(listAccessDenied.ids, loggedUser.id);
+
+        if (isAccessDenied) {
+            hideCreateViewButton();
+            hideTemplatesTab();
+            hideActionButtons();
+        }
     });
-  }); 
-});
