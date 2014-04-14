@@ -1,9 +1,9 @@
 No New Boards
 ==================
 
-This mashup will disable the Create Board function for certain users and/or roles.
+This mashup will disable the Create View function for certain users and/or roles.
 
-![No New Boards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/No%20New%20Boards/NoNewBoards.png)
+![No New Views](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/No%20New%20Boards/NoNewBoards.png)
  
 How to activate it:
 
@@ -19,11 +19,11 @@ How to activate it:
 
 Please note that the code is case-sensitive.
 
-In this section you specify which roles and/or users will not be able to create new boards in Targetprocess.
+In this section you specify which roles and/or users will not be able to create new views in Targetprocess.
 
 For example: 
 
-``` roles: ["Developer","QA"]```  will block the Create Board function both for Developers and QA
+``` roles: ["Developer","QA"]```  will block the Create View function both for Developers and QA
 
-```ids: [1,2,3]``` will block the Create Board function for the users with IDs=1,2,3
+```ids: [1,2,3]``` will block the Create View function for the users with IDs=1,2,3
 
