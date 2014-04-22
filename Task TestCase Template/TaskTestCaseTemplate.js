@@ -1,960 +1,958 @@
-var contentType = 'application/json; charset=utf8';
-
 var renderContent = function($contentElement, context) {
+		
+		var html = '';
+		html += '<div class="templates-mashap">';
+    		html += '<div class="tm-add-btn" id = "addbutton">Add template</div>';
+	        html += '<table class="tm-grid"><tbody></tbody></table>';
+        
+      		html += '<div id = "table"><div>';
+ 
+    		html += '</div>';
+    		
+		$contentElement.append(html);
 
-        var html = '';
-        html += '<div class="templates-mashap">';
-            html += '<div class="tm-add-btn" id = "addbutton">Add template</div>';
-            html += '<table class="tm-grid"><tbody></tbody></table>';
+	}
 
-            html += '<div id = "table"><div>';
-
-            html += '</div>';
-
-        $contentElement.append(html);
-
-    }
-
-
-
-
+        
+        
+        
 tau.mashups.addDependency('tp/userStory/view')
-
+    
     .addMashup(function (view) {
         view.addTab('Template', renderContent)
-
+          
     });
-
-    tau.mashups
-    .addDependency('app.bus')
+    
+    tau.mashups 
+    .addDependency('app.bus') 
     .addDependency('tau/configurator')
     .addDependency('tau/core/bus.reg')
-    .addMashup(function ($deferred, configurator,r) {
-
-
+    .addMashup(function ($deferred, configurator,r) { 
+ 	
+               
 var applyTemplate = function() {
-
-
-
-
-
-        debug('hello');
-            var pathname = window.location.pathname;
-
+               
+    				
+		      
+               
+    		
+		debug('hello');
+      		var pathname = window.location.pathname;
+                
                 debug(pathname.toLowerCase());
-
+                
                 if(pathname.toLowerCase().indexOf('/restui/tpview.aspx') != -1 ){
-                    debug('TP2 Additional CSS Needed');
-                    addTP2CSS();
-
+            		debug('TP2 Additional CSS Needed');
+                	addTP2CSS();
+                
                 }
-             addCSS();
-
-        this.init = function() {
-
-            this._userstoryid = 0;
-            $deferred.then(function(bus) {
-
-
-                bus.on('afterRenderAll', function(evt, data) {
-
-                    if (evt.caller.name == "container") {
-
-                        if (typeof data.data.context.entity !== 'undefined') {
-                            debug("=== Start Event Information");
-                                        debug(evt);
-                                        debug(data.data.children);
-                                        debug(data.data.children.length);
-                                        debug("=== End Event Information");
-
-                                            if(data.data.children.length > 0){
+      		 addCSS();
+		
+		this.init = function() {
+			
+			this._userstoryid = 0;
+			$deferred.then(function(bus) {
+				
+                                       
+				bus.on('afterRenderAll', function(evt, data) {
+					
+					if (evt.caller.name == "container") {
+                                        	                                     
+						if (typeof data.data.context.entity !== 'undefined') {
+							debug("=== Start Event Information");
+                      					debug(evt);
+                      					debug(data.data.children);
+                          				debug(data.data.children.length);
+                      					debug("=== End Event Information");
+                            
+                            				if(data.data.children.length > 0){
                                                                 if( data.data.children[0].name.indexOf("Template") != -1) {
                                                                         //Only run on the template tab
-                                    startApplyTemplate(data);
-                                                }
-                                            }
-                        }
-                    }
+									startApplyTemplate(data);
+                              					}
+                              				}
+						}
+					}
 
-                });
-
-
-            })
-
-        };
+				});
 
 
+			})
+
+		};
 
 
 
 
-        startApplyTemplate = function(eventdata) {
 
-        debug("event");
+
+		startApplyTemplate = function(eventdata) {
+                                                          
+		debug("event");
                 $element = eventdata.element;
                 var id = eventdata.data.context.entity.id;
-        this._userstoryid = id;
-
+		this._userstoryid = id;
+                
                 $element.find('.tm-add-btn').click(function(){
-
-                        addNewTemplate();
-
-        });
-
+                
+                      	addNewTemplate();
+                                                  
+		});
+                
                 buildTemplateTable($element);
-
-        };
-
-
+                
+		};
+                
+                
                 buildTemplateTable = function($element){
-
-
-            $element.find(".tm-grid > tbody").html('');
-                buildTable($element.find(".tm-grid > tbody"));
-
-
-
+                       
+                  
+			$element.find(".tm-grid > tbody").html('');
+        		buildTable($element.find(".tm-grid > tbody"));
+                	
+                                                
+                                                
                 };
-
+                
                 rebuildTemplateTable = function(){
-
-
-                    $(".tm-grid > tbody").html('');
-                        buildTable($(".tm-grid > tbody"));
-
-
-        };
-
-
+                  
+                  
+	                $(".tm-grid > tbody").html('');
+                    	buildTable($(".tm-grid > tbody"));
+                  	
+                	                             
+		};
+         
+                
                 buildTable = function($table){
-
+                
                 $.ajax({
-
+                        
                 type: 'GET',
                 url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/?where=(scope == "Public")&select={publicData,key}',
                 async: false,
-                contentType: contentType,
-                success: function(data) {
-                                        debug(data);
+                contentType: 'application/json; charset=utf8',
+				success: function(data) {
+                                        debug(data);                 
                                         $.each(data.items, function(k,item) {
 
-
-
-                                        $table.append(buildInfoRow(item));
+	     
+                                                
+                              			$table.append(buildInfoRow(item));
                                                 $table.append(buildEditRow(item));
-
-                                        debug(item.key);
-                                        debug(item.publicData);
-
-
-                        });
-
-                }
+                                		
+                                		debug(item.key);
+                                  		debug(item.publicData);
+						
+                                
+				        });    
+                                        
+				}
                 });
-
-
-        };
-
-
+                                        
+           
+		};
+                
+                
                 buildInfoRow = function(item){
-
+                
                 //setup elements for info table row
-            var infotr = $('<tr class="info-line"></tr>');
+			var infotr = $('<tr class="info-line"></tr>');
+			
+                    	//controls when template name is clicked.
 
-                        //controls when template name is clicked.
-
-            infotr.append($('<td class="td-name"><div class="tm-name"></div></td>').click(function() {
-
-                $(this).parent().siblings(".info-line").removeClass('active');
+			infotr.append($('<td class="td-name"><div class="tm-name"></div></td>').click(function() {                                                                                                                                                                      
+							
+				$(this).parent().siblings(".info-line").removeClass('active');                                                                                                                                                                                                          
                                 $(this).parent().addClass("active");
-                                $(this).parent().siblings(".edit-line").removeAttr('style');
+                                $(this).parent().siblings(".edit-line").removeAttr('style');                                                                                                                                                                                                                                        
                                 $(this).parent().next().css("display","table-row");
-                                $(this).parent().next().find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
-                        debug("Template TD Clicked");
-            }));
-
-
+                            	$(this).parent().next().find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');                                        		
+          	      		debug("Template TD Clicked");
+			}));
+                                		
+                                                
                         //Used for changing template name
-
+                                            
                        var templatename = $('<span contenteditable="false">' + item.publicData.name + '</span>').click(function() {
-
-            //Only enable when edit line is visible
+                       
+			//Only enable when edit line is visible
                                                         if($(this).parents(".info-line").next().css('display') != "none"){
-                                $(this).parent().addClass("edit-mode");
-                                    $(this).attr('contentEditable', true);
-
-                                                        //$(this).focus();
-                                debug("Template Span Clicked - Editing Enabled");
-                                                    }
-
-                            }).blur(function() {
-
-                                                        $(this).parent().removeClass("edit-mode");
-                                                    $(this).attr('contentEditable', false);
+								$(this).parent().addClass("edit-mode");                                                                                                              
+							        $(this).attr('contentEditable', true);
+                              					
+	                                              		//$(this).focus();
+								debug("Template Span Clicked - Editing Enabled");
+                                                  	}
+                                              
+						    }).blur(function() {
+                                                                        
+                                                        $(this).parent().removeClass("edit-mode");  
+                                                	$(this).attr('contentEditable', false);
                                                         debug("Template Name Exited, Save Name Changes" + item.key);
-
-                                                        item.publicData.name = $(this).text();
-
+                                                    
+                                                    	item.publicData.name = $(this).text();
+                                                      
                                                         saveTemplate(item.publicData, item.key);
-
-
-                            }).keypress(function(e) {
-
-                                if(e.which == 13) {
-                                                                $(this).parent().removeClass("edit-mode");
-                                                        $(this).attr('contentEditable', false);
-                                    debug("Enter Key Pressed, Save Name Changes " + item.key);
-                                                            item.publicData.name = $(this).text();
-                                                            saveTemplate(item.publicData, item.key);
+					                
+                                                  
+					        }).keypress(function(e) {
+                                                                         
+    							if(e.which == 13) {
+                                                                $(this).parent().removeClass("edit-mode");  
+                                                		$(this).attr('contentEditable', false);
+							        debug("Enter Key Pressed, Save Name Changes " + item.key);
+                                                    		item.publicData.name = $(this).text();
+	                                                        saveTemplate(item.publicData, item.key);
                                                             }
-                            });
-
-            infotr.find(".tm-name").append(templatename);
-
-            infotr.append('<td class="td-entities"><span class="entity-icon entity-task">T</span><span class="counter">' + item.publicData.taskCount + '</span></td>');
-
+					    	});
+                                                
+			infotr.find(".tm-name").append(templatename);
+                                                
+			infotr.append('<td class="td-entities"><span class="entity-icon entity-task">T</span><span class="counter">' + item.publicData.taskCount + '</span></td>');
+			
                         infotr.append('<td class="td-entities"><span class="entity-icon entity-test-case">TC</span><span class="counter">' + item.publicData.testCaseCount + '</span></td>');
-
-            var actions = $('<td class="td-actions"></td>');
-
-            actions.append($('<button class="tau-btn tau-attention">Delete</button>').click(function() {
-                removeTemplate(item.key);
-                debug("Delete button pressed");
+                                    		  		
+			var actions = $('<td class="td-actions"></td>');
+                                      	
+			actions.append($('<button class="tau-btn tau-attention">Delete</button>').click(function() {
+				removeTemplate(item.key);
+				debug("Delete button pressed");
                                        return false;
-            }));
-
-
-            actions.append($('<button class="tau-btn tau-primary">Apply template</button>').click(function() {
-                applyTemplate(item);
-
-            }));
-
-            infotr.append(actions);
-
-            return infotr;
-        };
-
+			}));
+                                          
+                                          	
+			actions.append($('<button class="tau-btn tau-primary">Apply template</button>').click(function() {
+				applyTemplate(item);
+                                                                                                              
+			}));
+                                          
+			infotr.append(actions);                   
+                
+			return infotr;     
+		};
+                
 
                 buildEditRow = function(item){
-
-                        var edittr = $('<tr class="edit-line"></tr>');
+                                              
+                        var edittr = $('<tr class="edit-line"></tr>');                                                  
                         edittr.append(buildTasks(item));
-            edittr.append(buildTestCases(item));
-
-                    return(edittr);
-        };
-
-
+			edittr.append(buildTestCases(item));                              
+                                              
+                 	return(edittr);                             
+		};
+                
+                
                 /*
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-         Start of TASK actions
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-        */
-
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		 Start of TASK actions
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		*/
+                
                 buildTasks = function (item){
+                                               	 
 
+			var tasktd = $('<td class="td-task" colspan="3"></td>');                        
+   			tasktd.append('<div class="tm-caption"><b class="task">Tasks</b><span class="counter">' + item.publicData.taskCount + '</span></div>');
+                                                
+                                                
+                                                
 
-            var tasktd = $('<td class="td-task" colspan="3"></td>');
-            tasktd.append('<div class="tm-caption"><b class="task">Tasks</b><span class="counter">' + item.publicData.taskCount + '</span></div>');
-
-
-
-
-
+                                                
                                                 var newtask = $('<button class="tau-btn tau-btn-small tau-success"></button>').click(function() {
-
-
-
-
-
-                                                        //build object for when a new task is created.
+                                                	
+                                                                                                                                     
+                                                                                                                                     
+                                                                                                                                     
+                                                                                                                                 
+                                                        //build object for when a new task is created.                                                                             
                                                         var taskline = $('<div class="tm-item"></div>');
-
-                                                        taskline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
-
-                                                $(this).parent().parent().children('.tm-body').prepend(taskline);
-
-
-
-                                                $(this).attr("disabled", true);
-
-                                                    var taskname = $('<span contenteditable="true">Name</span>').click(function() {
-
-                                                                if($(this).parents('.entity-name').hasClass("tm-placeholder")){
-                                                                    $(this).text('');
-                                                            $(this).parents('.entity-name').removeClass('tm-placeholder');
-                                                            debug('TaskName Clicked');
-
-                                                        }
-
-
-                            });
-
-
-
-                                                    $(this).parents('.td-task').find('.entity-name.tm-placeholder').first().append(taskname);
-
-
-                                                var addtask = $('<button class="tau-btn tau-success left">Add task</button>').click(function() {
-
-                                                                debug('Add Task Clicked');
+                                  
+                                                        taskline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');                                                                             
+                                                        
+                                      			$(this).parent().parent().children('.tm-body').prepend(taskline);
+                                                       	
+                                        		
+                                        
+                                        		$(this).attr("disabled", true);
+                                        		
+                                            		var taskname = $('<span contenteditable="true">Name</span>').click(function() {
+                                                                                                                           
+                                                                if($(this).parents('.entity-name').hasClass("tm-placeholder")){                                                          
+                                                                	$(this).text('');
+			                                                $(this).parents('.entity-name').removeClass('tm-placeholder');
+                                              				debug('TaskName Clicked'); 
+                                                			
+                                              			}
+                                                                                                                           
+                                                		                                                                                  
+							});
+                                              	
+                                                	
+                                                
+                                                	$(this).parents('.td-task').find('.entity-name.tm-placeholder').first().append(taskname);
+                                                
+                                            
+                                        		var addtask = $('<button class="tau-btn tau-success left">Add task</button>').click(function() {
+                                                                
+                                                                debug('Add Task Clicked');                                                                            
                                                                 var taskname = $(this).parents('.tm-item').find('.entity-name > span').html();
-                                                        var taskdesc = $(this).parents('.edit-block').children('.tm-description').html();
-
-                                                            //TODO: Make sure they are not blank
+                                                		var taskdesc = $(this).parents('.edit-block').children('.tm-description').html();
+                                                                
+                                                    		//TODO: Make sure they are not blank
                                                                 if(true){
                                                                         var tasks = $.parseJSON(item.publicData.tasks);
-                                                                var tasktoadd = {"Name" : taskname,"Description" : taskdesc, "Id": getNewID()};
-                                                                tasks.unshift(tasktoadd);
-
-                                    debug(tasks);
-
-                                                                    saveTasks(item, tasks);
-                                                                    //Stop edit on Span
-
+                                                          		var tasktoadd = {"Name" : taskname,"Description" : taskdesc, "Id": getNewID()};
+                                                        		tasks.unshift(tasktoadd);
+                                                        		
+									debug(tasks);
+                               
+                                                            		saveTasks(item, tasks);
+                                                                	//Stop edit on Span
+                                                                        
                                                                         $(this).parents('.view-mode').find('.entity-name > span').attr('contentEditable', false)
-
+                                                                        
                                                                         //enable the add buttton
-                                                                    $(this).parents('.td-task').find('.tm-caption > button').attr("disabled",false);
-
-                                    $(this).parents('.tm-item').children('.view-mode').removeClass("active");
-                                                                    //Update Task Counts
-                                                                    $(this).parents('.td-task').find('.counter').text(item.publicData.taskCount);
-                                                                        $(this).parents('.edit-line').prev().find('.td-entities > .entity-task').next().text(item.publicData.taskCount);
-                                                                        //Remove the old actions
+                                                               		$(this).parents('.td-task').find('.tm-caption > button').attr("disabled",false);
+                                                                        
+									$(this).parents('.tm-item').children('.view-mode').removeClass("active");
+                                                                  	//Update Task Counts
+                                                                	$(this).parents('.td-task').find('.counter').text(item.publicData.taskCount);
+                                                                    	$(this).parents('.edit-line').prev().find('.td-entities > .entity-task').next().text(item.publicData.taskCount);
+                                                                    	//Remove the old actions
                                                                         taskline.find('.action-buttons').children().remove();
-
-
+                                                                       
+                                                                        
                                                                         //Add the actions for the new line
                                                                         debug(item);
                                                                         taskline.find('.action-buttons').append(buildSaveButton(item,tasktoadd,"task"));
                                                                         taskline.find('.action-buttons').append(buildDeleteButton(item,tasktoadd, "task"));
-
+                                                                	
                                                                         //Enable edit mode on new items
-                                                                        debug(taskline);
+                                                                       	debug(taskline);
                                                                         taskline.find('.view-mode > .entity-name').click(function(){
-
-                                                                    debug("New task item clicked (gogo edit mode)");
-
-                                                        $(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
-                                        $(this).parent().addClass("active");
-                                        $(this).parent().find('.entity-name > span').attr('contentEditable', true);
-
-
+                                                        			
+                                                        			debug("New task item clicked (gogo edit mode)"); 
+                    								
+                                						$(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');                                        		
+										$(this).parent().addClass("active");
+										$(this).parent().find('.entity-name > span').attr('contentEditable', true);
+                                                                        
+                                                                        
                                                                         });
-                                                                }
-
-                            });
-
-                            var canceltask = $('<button class="tau-btn tau-attention right">Cancel</button>').click(function() {
-                                debug('Cancel Task Clicked');
-
-                                                            $(this).parents('.td-task').find('.tm-caption > button').attr("disabled",false);
-                                                            $(this).parents('.tm-item').remove();
-                            });
-
-                                                    tasktd.find('.action-buttons').first().append(addtask);
-                                                    tasktd.find('.action-buttons').first().append(canceltask);
-
-
-
+                                                                }                                                                                
+                                                                                                                                            
+							});
+                                                
+							var canceltask = $('<button class="tau-btn tau-attention right">Cancel</button>').click(function() {
+								debug('Cancel Task Clicked');
+                                                                
+	                                                        $(this).parents('.td-task').find('.tm-caption > button').attr("disabled",false);
+	                                                       	$(this).parents('.tm-item').remove();
+							});
+                                                
+                                                	tasktd.find('.action-buttons').first().append(addtask);
+                                                	tasktd.find('.action-buttons').first().append(canceltask);                                                  	
+                                                
+							
+	                                               
                                                 });
-
+                                                
                                                 tasktd.children('.tm-caption').append(newtask);
-
-
-
-
-
-
-
+                                        	
+                                                
+                                                
+	                                        
+                                                
+                                                
+                                                
                                                 var tasks = $.parseJSON(item.publicData.tasks);
                                                 debug('=== Start Task List ===');
                                                 debug(tasks);
-                                                debug('=== End Task List===');
-
+                                               	debug('=== End Task List==='); 
+                                                
                                                 debug('=== Start Build Task List===');
-
+                                                
                                                 var taskitem;
                                                 tasktd.append('<div class="tm-body"></div>');
-
+                                                
                                                 for (var i = 0; i < tasks.length; i++) {
-
-                                                    var task = tasks[i];
-                                                    tasktd.children('.tm-body').append(buildTask(item, task));
-
-                        }
-
-                                                debug('=== End Build Task List===');
-
-
-            return tasktd;
-
-        };
-
-
+    							
+                                                	var task = tasks[i];
+                                                  	tasktd.children('.tm-body').append(buildTask(item, task));                                                	
+                                                    
+						}
+                                                
+                                                debug('=== End Build Task List==='); 
+                                                
+                                                
+			return tasktd;
+                                             
+		};
+                
+                
                 buildSaveButton = function(item, newdata, buttontype){
-
-                    var buttonString = "";
-
-                    if(buttontype == "task"){
-                        buttonString = "Task"
+                        
+                	var buttonString = "";
+                
+                	if(buttontype == "task"){
+                		buttonString = "Task"        	                         
                         }else{
-                                buttonString = "Test Case";
+                              	buttonString = "Test Case";
                         }
-
-            var savetask = $('<button class="tau-btn tau-success left">Save ' + buttonString + '</button>').click(function() {
-
-                    debug('Save Button Clicked');
-
-                    var name = $(this).parents('.tm-item').find('.entity-name > span').html();
-
-
-                                //TODO: Make sure they are not blank
-                    if(true){
-
-                                        var datalist;
-
-                                        if(buttontype == "task"){
-                                                    datalist = $.parseJSON(item.publicData.tasks);
+                                                     
+ 			var savetask = $('<button class="tau-btn tau-success left">Save ' + buttonString + '</button>').click(function() {
+                                                                
+					debug('Save Button Clicked'); 
+                    			
+					var name = $(this).parents('.tm-item').find('.entity-name > span').html();
+					
+					
+                      			//TODO: Make sure they are not blank
+					if(true){
+                                                
+                                  		var datalist;
+                                  
+                                  		if(buttontype == "task"){
+                                                	datalist = $.parseJSON(item.publicData.tasks);	                         
                                                 }else{
-                                                        datalist = $.parseJSON(item.publicData.testCases);
+                                                     	datalist = $.parseJSON(item.publicData.testCases);
                                                 }
-
-
-                                    var found = -1;
-                                    for (var i = 0; i < datalist.length; i++) {
-
-                                                if (datalist[i].Id == newdata.Id){
-                                                    debug("removing " + i + "  " + datalist[i].Name);
-                                                found = i;
-                                                break;
-                                }
+						
+                        
+                        			var found = -1;
+                        			for (var i = 0; i < datalist.length; i++) {
+    							
+                                    			if (datalist[i].Id == newdata.Id){
+                                    				debug("removing " + i + "  " + datalist[i].Name);
+                            					found = i;
+                              					break;
+				    			}  	                                                	
                                                  }
 
-
-                                        if(found >= 0){
+		                                
+                		                if(found >= 0){
                                                         newdata.Name = name;
                                                         if(buttontype == "task"){
-                                var desc = $(this).parents('.edit-block').children('.tm-description').html();
-                                            newdata.Description = desc;
-                                                datalist.splice(found,1,newdata);
-                                                saveTasks(item, datalist);
-
+								var desc = $(this).parents('.edit-block').children('.tm-description').html();
+                      						newdata.Description = desc;
+                	        		        	datalist.splice(found,1,newdata);
+        	               			        	saveTasks(item, datalist);
+                                                
                                                         }else{
-
+                                                              	
                                                                 var steps = $(this).parents('.edit-block').children(".note:contains('Steps')").next().html();
                                                                 var success = $(this).parents('.edit-block').children(".note:contains('Success')").next().html();
-                                                                newdata.Steps = steps;
-                                                            newdata.Success = success;
-                                                datalist.splice(found,1,newdata);
-                                                saveTestCases(item,datalist);
-
-                            }
-
-                        }
-
-
-                        $(this).closest('.tm-item').children('.view-mode').removeClass("active");
-                        $(this).closest('.tm-item').find('.view-mode > .entity-name > span').attr('contentEditable', false);
-
-
-                    }
-
+                                                             	newdata.Steps = steps;
+                                                    		newdata.Success = success;
+                	        		        	datalist.splice(found,1,newdata);
+        	               			        	saveTestCases(item,datalist); 
+                                                                                       
+							}
+                                               		                  	
+						}
+						
+                                                               		
+						$(this).closest('.tm-item').children('.view-mode').removeClass("active");
+						$(this).closest('.tm-item').find('.view-mode > .entity-name > span').attr('contentEditable', false);
+                                                                    	
+                                                                	
+					} 
+                                        
                                         //So it doesn't refresh in tp2
                                         return false;
-
-            });
-
-
+                                                                                                                                            
+			});
+                        
+                        
                         return savetask;
-
-        };
-
-
+                                           
+		};
+                
+                
                 buildDeleteButton = function(item, newdata, buttontype){
-
-
-
-            var deletebutton = $('<button class="tau-btn tau-attention right">Delete</button>').click(function() {
-
-                debug('Delete Button Clicked');
-                            var datalist;
-
-                                if(buttontype == "task"){
-                            datalist = $.parseJSON(item.publicData.tasks);
-                            }else{
-                                    datalist = $.parseJSON(item.publicData.testCases);
+                                                         
+                                                         
+                                                         
+			var deletebutton = $('<button class="tau-btn tau-attention right">Delete</button>').click(function() {
+				
+				debug('Delete Button Clicked');
+                        	var datalist;
+                        
+                               	if(buttontype == "task"){
+                   			datalist = $.parseJSON(item.publicData.tasks);        	
+                      		}else{
+                                  	datalist = $.parseJSON(item.publicData.testCases);
                                 }
-
-                            var found = -1;
-                            for (var i = 0; i < datalist.length; i++) {
-
+                        
+                        	var found = -1;
+                        	for (var i = 0; i < datalist.length; i++) {
+    							
                                     if (datalist[i].Id == newdata.Id){
-
-                                        debug("removing " + i + "  " + datalist[i].Name);
-                                    found = i;
-                                    break;
-                    }
-
-
-                }
-
-
+                                                                      
+                                    	debug("removing " + i + "  " + datalist[i].Name);
+                            		found = i;
+                              		break;
+				    }
+                                                  	                                                	
+                                                    
+				}
+                      		
+                                
                                 if(found >= 0){
-
-                                    datalist.splice(found,1);
-
-                                    if(buttontype == "task"){
-                                            saveTasks(item, datalist);
-                        //Update Task Counts
-                                    $(this).parents('.td-task').find('.counter').text(item.publicData.taskCount);
-                        $(this).parents('.edit-line').prev().find('.td-entities > .entity-task').next().text(item.publicData.taskCount);
-                                }else{
-                                            saveTestCases(item, datalist);
-                        $(this).parents('.td-test-case').find('.counter').text(item.publicData.testCaseCount);
-                        $(this).parents('.edit-line').prev().find('.td-entities > .entity-test-case').next().text(item.publicData.testCaseCount);
+                                               
+                	                datalist.splice(found,1);
+                                	
+                                  	if(buttontype == "task"){
+                                        	saveTasks(item, datalist);
+						//Update Task Counts
+		                        	$(this).parents('.td-task').find('.counter').text(item.publicData.taskCount);
+						$(this).parents('.edit-line').prev().find('.td-entities > .entity-task').next().text(item.publicData.taskCount);                                                                
+		                        }else{
+                                        	saveTestCases(item, datalist);                                                                       
+						$(this).parents('.td-test-case').find('.counter').text(item.publicData.testCaseCount);
+						$(this).parents('.edit-line').prev().find('.td-entities > .entity-test-case').next().text(item.publicData.testCaseCount);                                                                
                                         }
 
-
-
-                    $(this).parents('.tm-item').children('.view-mode').removeClass("active");
-                                        $(this).parents('.tm-item').remove();
-                }
-
-
-            });
-
-
-
-
+		
+                			
+					$(this).parents('.tm-item').children('.view-mode').removeClass("active");
+                                        $(this).parents('.tm-item').remove();                            	
+				}
+                    		
+                    		
+			});
+                        
+                        
+                       
+                        
                         return deletebutton;
-
-        };
-
-
+                                             
+		};
+                
+                                
                 buildTask = function(item, task){
 
                         taskitem = $('<div class="tm-item"><div class="view-mode"></div></div>');
-
-                        var name = $('<div class="entity-name"><span contenteditable="false">' + task.Name  + '</span></div>').click(function(){
-
-
-                            debug("task item clicked (gogo edit mode)");
-
+                      	
+                      	var name = $('<div class="entity-name"><span contenteditable="false">' + task.Name  + '</span></div>').click(function(){
+                       		
+				
+        	            	debug("task item clicked (gogo edit mode)"); 
+                    			
                                 debug($(this).parent());
-                            $(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
-                $(this).parent().addClass("active");
-                $(this).parent().find('.entity-name > span').attr('contentEditable', true);
-
-            });
-
-                    var desc = $('<div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true">' + task.Description + '</div><div class="action-buttons"></div></div>');
-
+                          	$(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
+				$(this).parent().addClass("active");
+				$(this).parent().find('.entity-name > span').attr('contentEditable', true);                                                                                                                         
+                                                                                                                                                
+			});
+                        
+                	var desc = $('<div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true">' + task.Description + '</div><div class="action-buttons"></div></div>');
+                      	
                         taskitem.find('.view-mode').append(name);
-                        taskitem.find('.view-mode').append(desc);
-                        taskitem.find('.action-buttons').append(buildSaveButton(item, task, "task"));
+                        taskitem.find('.view-mode').append(desc);                        
+                      	taskitem.find('.action-buttons').append(buildSaveButton(item, task, "task"));
                         taskitem.find('.action-buttons').append(buildDeleteButton(item, task, "task"));
-
-                        return taskitem;
-        };
-
-
+                  	
+                        return taskitem;                   
+		};
+                
+                
                 /*
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-         Start of TESTCASE actions
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-        */
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		 Start of TESTCASE actions
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		*/                
+                
+        	buildTestCases = function(item){
+            
+            	var testcasetd = $('<td class="td-test-case"></td>');                        
+		testcasetd.append('<div class="tm-caption"><b class="test-case">Test Cases</b><span class="counter">' + item.publicData.testCaseCount + '</span></div>');
+                                        
+                                        
+                                        
 
-            buildTestCases = function(item){
-
-                var testcasetd = $('<td class="td-test-case"></td>');
-        testcasetd.append('<div class="tm-caption"><b class="test-case">Test Cases</b><span class="counter">' + item.publicData.testCaseCount + '</span></div>');
-
-
-
-
-
+                                        
                                         var newtestcase = $('<button class="tau-btn tau-btn-small tau-success"></button>').click(function() {
-
-
-                                                //build object for when a new testcase is created.
+                                                                                                  
+                                                                                                                         
+                                                //build object for when a new testcase is created.                                                                             
                                                 var testcaseline = $('<div class="tm-item"></div>');
-
-                                                //testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
-
-                                        testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true"></div><div class="note">Success</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
-
-                                        $(this).parent().parent().children('.tm-body').prepend(testcaseline);
-
-
-
-                                        $(this).attr("disabled", true);
-
-                                            var testcasename = $('<span contenteditable="true">Name</span>').click(function() {
-
-                                                        if($(this).parents('.entity-name').hasClass("tm-placeholder")){
-                                                            $(this).text('');
-                                                    $(this).parents('.entity-name').removeClass('tm-placeholder');
-                                                    debug('TestCase Clicked');
-
-                                                }
-
-
-                        });
-
-
-
-                                            $(this).parents('.td-test-case').find('.entity-name.tm-placeholder').first().append(testcasename);
-
-
-                                        var addtestcase = $('<button class="tau-btn tau-success left">Add Test Case</button>').click(function() {
-
-                                                        debug('Add testcase Clicked');
+                          
+                                                //testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');                                                                             
+                                                
+                            			testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true"></div><div class="note">Success</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
+                            
+                              			$(this).parent().parent().children('.tm-body').prepend(testcaseline);
+                                               	
+                                		
+                                
+                                		$(this).attr("disabled", true);
+                                		
+                                    		var testcasename = $('<span contenteditable="true">Name</span>').click(function() {
+                                                                                                                   
+                                                        if($(this).parents('.entity-name').hasClass("tm-placeholder")){                                                          
+                                                        	$(this).text('');
+	                                                $(this).parents('.entity-name').removeClass('tm-placeholder');
+                                      				debug('TestCase Clicked'); 
+                                        			
+                                      			}
+                                                                                                                   
+                                        		                                                                                  
+						});
+                                      	
+                                        	
+                                        
+                                        	$(this).parents('.td-test-case').find('.entity-name.tm-placeholder').first().append(testcasename);
+                                        
+                                    
+                                		var addtestcase = $('<button class="tau-btn tau-success left">Add Test Case</button>').click(function() {
+                                                        
+                                                        debug('Add testcase Clicked');                                                                            
                                                         var testcasename = $(this).parents('.tm-item').find('.entity-name > span').text();
-                                                var testcasesteps = $(this).parents('.edit-block').children(".note:contains('Steps')").next().html();
-                                                        var testcasesuccess = $(this).parents('.edit-block').children(".note:contains('Success')").next().html();
-
-                                                    //TODO: Make sure they are not blank
+                                        		var testcasesteps = $(this).parents('.edit-block').children(".note:contains('Steps')").next().html();
+                                                       	var testcasesuccess = $(this).parents('.edit-block').children(".note:contains('Success')").next().html();
+                                            
+                                            		//TODO: Make sure they are not blank
                                                         if(true){
                                                                 var testcases = $.parseJSON(item.publicData.testCases);
-                                                        var testcasetoadd = {"Name" : testcasename, "Steps" : testcasesteps, "Success" : testcasesuccess, "Id": getNewID()};
-                                                        testcases.unshift(testcasetoadd);
-
-                                debug(testcases);
-
-                                                            saveTestCases(item, testcases);
-                                                            //Stop edit on Span
-
+                                                  		var testcasetoadd = {"Name" : testcasename, "Steps" : testcasesteps, "Success" : testcasesuccess, "Id": getNewID()};
+                                                		testcases.unshift(testcasetoadd);
+                                                		
+								debug(testcases);
+                       
+                                                    		saveTestCases(item, testcases);
+                                                        	//Stop edit on Span
+                                                                
                                                                 $(this).parents('.view-mode').find('.entity-name > span').attr('contentEditable', false)
-
+                                                                
                                                                 //enable the add buttton
-                                                            $(this).parents('.td-test-case').find('.tm-caption > button').attr("disabled",false);
-
-                                $(this).parents('.tm-item').children('.view-mode').removeClass("active");
-                                                            //Update testcase Counts
-                                                            $(this).parents('.td-test-case').find('.counter').text(item.publicData.testCaseCount);
-                                                                $(this).parents('.edit-line').prev().find('.td-entities > .entity-test-case').next().text(item.publicData.testCaseCount);
-                                                                //Remove the old actions
+                                                       		$(this).parents('.td-test-case').find('.tm-caption > button').attr("disabled",false);
+                                                                
+								$(this).parents('.tm-item').children('.view-mode').removeClass("active");
+                                                          	//Update testcase Counts
+                                                        	$(this).parents('.td-test-case').find('.counter').text(item.publicData.testCaseCount);
+                                                            	$(this).parents('.edit-line').prev().find('.td-entities > .entity-test-case').next().text(item.publicData.testCaseCount);
+                                                            	//Remove the old actions
                                                                 testcaseline.find('.action-buttons').children().remove();
-
-
+                                                               
+                                                                
                                                                 //Add the actions for the new line
                                                                 debug(item);
                                                                 testcaseline.find('.action-buttons').append(buildSaveButton(item,testcasetoadd, "testcase"));
                                                                 testcaseline.find('.action-buttons').append(buildDeleteButton(item,testcasetoadd, "testcase"));
-
+                                                        	
                                                                 //Enable edit mode on new items
-                                                                debug(testcaseline);
-
+                                                               	debug(testcaseline);
+                                                                
                                                                 testcaseline.find('.view-mode > .entity-name').click(function(){
-
-                                                            debug("New testcase item clicked (gogo edit mode)");
-
-                                                $(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
-                                    $(this).parent().addClass("active");
-                                    $(this).parent().find('.entity-name > span').attr('contentEditable', true);
-
-
+                                                			
+                                                			debug("New testcase item clicked (gogo edit mode)"); 
+            								
+                        						$(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');                                        		
+									$(this).parent().addClass("active");
+									$(this).parent().find('.entity-name > span').attr('contentEditable', true);
+                                                                
+                                                                
                                                                 });
-                                                        }
-
-                    });
-
-                    var canceltestcase = $('<button class="tau-btn tau-attention right">Cancel</button>').click(function() {
-                        debug('Cancel testcase Clicked');
+                                                        }                                                                                
+                                                                                                                                    
+					});
+                                        
+					var canceltestcase = $('<button class="tau-btn tau-attention right">Cancel</button>').click(function() {
+						debug('Cancel testcase Clicked');
                                                         //TODO:  Have cancel enable button newtestcase
                                                    $(this).parents('.td-test-case').find('.tm-caption > button').attr("disabled",false);
                                                    $(this).parents('.tm-item').remove();
-                    });
-
-                                            testcasetd.find('.action-buttons').first().append(addtestcase);
-                                            testcasetd.find('.action-buttons').first().append(canceltestcase);
-
-
-
+					});
+                                        
+                                        	testcasetd.find('.action-buttons').first().append(addtestcase);
+                                        	testcasetd.find('.action-buttons').first().append(canceltestcase);                                                  	
+                                        
+					
+                                           
                                         });
-
+                                        
                                         testcasetd.children('.tm-caption').append(newtestcase);
-
-
-
-
-
-
-
-
+                                	
+                                        
+                                        
+                                    
+                                        
+                                        
+                                        
+                                        
                                         var testcases = $.parseJSON(item.publicData.testCases);
                                         debug('=== Start testcase List ===');
                                         debug(testcases);
-                                        debug('=== End testcase List===');
-
+                                       	debug('=== End testcase List==='); 
+                                        
                                         debug('=== Start Build testcase List===');
-
+                                        
                                         var testcaseitem;
                                         testcasetd.append('<div class="tm-body"></div>');
-
+                                        
                                         for (var i = 0; i < testcases.length; i++) {
-
-                                            var testcase = testcases[i];
-                                            testcasetd.children('.tm-body').append(buildTestCase(item, testcase));
-
-                    }
-
-                                        debug('=== End Build testcase List===');
-
-
-            return testcasetd;
-
-        };
-
-                buildTestCase = function(item, testcase){
+						
+                                        	var testcase = testcases[i];
+                                          	testcasetd.children('.tm-body').append(buildTestCase(item, testcase));                                                	
+                                            
+					}
+                                        
+                                        debug('=== End Build testcase List==='); 
+                                        
+                                        
+			return testcasetd;
+            
+		};
+              
+              	buildTestCase = function(item, testcase){
 
                         testcaseitem = $('<div class="tm-item"><div class="view-mode"></div></div>');
-
-                        var name = $('<div class="entity-name"><span contenteditable="false">' + testcase.Name  + '</span></div>').click(function(){
-
-
-                            debug("task item clicked (gogo edit mode)");
-
+                      	
+                      	var name = $('<div class="entity-name"><span contenteditable="false">' + testcase.Name  + '</span></div>').click(function(){
+                       		
+				
+        	            	debug("task item clicked (gogo edit mode)"); 
+                    			
                                 debug($(this).parent());
-                            $(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
-                $(this).parent().addClass("active");
-                $(this).parent().find('.entity-name > span').attr('contentEditable', true);
-
-            });
-
-                    var desc = $('<div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true">' + testcase.Steps + '</div><div class="note">Success</div><div class="tm-description" contenteditable="true">' + testcase.Success + '</div><div class="action-buttons"></div></div>');
-
+                          	$(this).parents('.tm-body').find('.view-mode:not(:has(.entity-name.tm-placeholder))').removeClass('active');
+				$(this).parent().addClass("active");
+				$(this).parent().find('.entity-name > span').attr('contentEditable', true);                                                                                                                         
+                                                                                                                                                
+			});
+                        
+                	var desc = $('<div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true">' + testcase.Steps + '</div><div class="note">Success</div><div class="tm-description" contenteditable="true">' + testcase.Success + '</div><div class="action-buttons"></div></div>');
+                      	
                         testcaseitem.find('.view-mode').append(name);
-                        testcaseitem.find('.view-mode').append(desc);
-                        testcaseitem.find('.action-buttons').append(buildSaveButton(item, testcase, "testcase"));
+                        testcaseitem.find('.view-mode').append(desc);                        
+                      	testcaseitem.find('.action-buttons').append(buildSaveButton(item, testcase, "testcase"));
                         testcaseitem.find('.action-buttons').append(buildDeleteButton(item, testcase, "testcase"));
-
-                        return testcaseitem;
-        };
-
+                  	
+                        return testcaseitem;                   
+		};
+              
                 /*
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-         Start of Add New Template
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-        */
-
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		 Start of Add New Template
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		*/
+                
                 addNewTemplate = function(){
-
-                        var savedata = {  };
-                            //savedata["Tasks"] = { };
-                            savedata["Tasks"] = '[]';
-                            savedata["TestCases"] = '[]';
-                        savedata["Name"] = 'New Template';
-                            savedata["TaskCount"] = '0';
-                            savedata["TestCaseCount"] = '0';
-
-
-                                debug(savedata);
-                            debug(JSON.stringify(savedata));
-
-                            $.ajax({
-                                type: 'POST',
-                                async: false,
-                                url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/',
-                                data: JSON.stringify({
-                                        'key'       : '',
-                                'scope'     : 'Public',
-                                'publicData': savedata,
-                                'userData'  : null
-                            }),
-                            contentType: contentType,
-                        success: function(){
+                	
+                		var savedata = {  };
+                        	//savedata["Tasks"] = { };
+                    		savedata["Tasks"] = '[]';
+                      		savedata["TestCases"] = '[]';
+                		savedata["Name"] = 'New Template';
+	                        savedata["TaskCount"] = '0';
+	                        savedata["TestCaseCount"] = '0';
+                            	
+                          	
+                            	debug(savedata);
+                          	debug(JSON.stringify(savedata));
+                
+                    		$.ajax({
+                    			type: 'POST',
+		                        async: false,
+                    			url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/',
+		                        data: JSON.stringify({
+                                        'key'       : '',                   
+                        		'scope'     : 'Public',
+                        		'publicData': savedata,
+                        		'userData'  : null
+                    		}),
+                    		contentType: 'application/json; charset=utf8',
+		                success: function(){
                                         debug("yay!");
-                                rebuildTemplateTable();
-                            },
-                        error: function(){
+                        		rebuildTemplateTable();
+                      		}, 
+       		    		error: function(){
                                         debug("boo!");}
-                        });
-
-
-        };
-
+                		});
+                
+                                 
+		};
+                
                 //save the list of new tasks to the storage
                 saveTasks = function(item, newtasks){
-
-                    var key = item.key
-
-                    item.publicData.taskCount = newtasks.length.toString();
-                        newtasks = JSON.stringify(newtasks);
-                    item.publicData.tasks = newtasks;
-                    saveTemplate(item.publicData, key);
-
-        };
-
-
+        		
+                	var key = item.key
+                
+                	item.publicData.taskCount = newtasks.length.toString();
+                      	newtasks = JSON.stringify(newtasks);
+                	item.publicData.tasks = newtasks;
+                	saveTemplate(item.publicData, key);
+                                                              
+		};
+ 
+                
                 saveTestCases = function(item, newTestCases){
-
-                    var key = item.key
-
-                    item.publicData.testCaseCount = newTestCases.length.toString();
-                        newTestCases = JSON.stringify(newTestCases);
-                    item.publicData.testCases = newTestCases;
-                    saveTemplate(item.publicData, key);
-
-        };
-
-
+        		
+                	var key = item.key
+                
+                	item.publicData.testCaseCount = newTestCases.length.toString();
+                      	newTestCases = JSON.stringify(newTestCases);
+                	item.publicData.testCases = newTestCases;
+                	saveTemplate(item.publicData, key);
+                                                              
+		};
+                
+                
                 saveTemplate = function(savedata, key){
-
-
-
-                            debug('======');
-                            debug('saving');
-                                debug(savedata);
-                            debug('======');
-
-                            $.ajax({
-                                type: 'POST',
-                                async: false,
-                                url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/',
-                                data: JSON.stringify({
-                                        'key'       : key,
-                                'scope'     : 'Public',
-                                'publicData': savedata,
-                                'userData'  : null
-                            }),
-                            contentType: contentType,
-                        success: function(){
+                		
+                
+	                        
+                        	debug('======');
+                          	debug('saving');
+                              	debug(savedata);
+                        	debug('======');
+                
+                    		$.ajax({
+                    			type: 'POST',
+		                        async: false,
+                    			url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/',
+		                        data: JSON.stringify({
+                                        'key'       : key,                   
+                        		'scope'     : 'Public',
+                        		'publicData': savedata,
+                        		'userData'  : null
+                    		}),
+                    		contentType: 'application/json; charset=utf8',
+		                success: function(){
                                         debug("yay!");
-                                return true;
-                            },
-                        error: function(){
+                          		return true;
+                      		}, 
+       		    		error: function(){
                                         debug("boo!");
-                                    rebuildTemplateTable();
-                                    return false;
+                                	rebuildTemplateTable();
+                                  	return false;
                                 }
-                        });
-
-
-        };
-
-
-
-        /*
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-         Start of Remove Template
-         =-=-=-=-=-=-=-=-=-=-=-=-=-
-        */
-
+                		});
+                
+                                 
+		};
+                
+                
+                
+		/*
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		 Start of Remove Template
+		 =-=-=-=-=-=-=-=-=-=-=-=-=-
+		*/
+                
                 function removeTemplate(templatename){
-
-
-
-                debug('remove template' + templatename);
-
+        
+                                              
+                                              
+          	  	debug('remove template' + templatename);
+                
                         $.ajax({
                                     type: 'DELETE',
                                     url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/' + templatename,
-                                    contentType: contentType,
+                                    contentType: 'application/json; charset=utf8',
                                     success: function(){debug("yay!");
                                                         rebuildTemplateTable();
-                                                        },
+                                                        }, 
                                     error: function(){debug("failed removing!");}
                                 });
-
-            };
-
-
+          
+	        };
+                
+        
                applyTemplate = function(item){
-
-
-            getProjectID(function(output){
-
-
-
-
-                    debug('apply details');
-                    debug(item.publicData);
-            var tasks = $.parseJSON(item.publicData.tasks);
-
-
-                    var testcases = $.parseJSON(item.publicData.testCases);
-
-                        for (var i = 0; i < testcases.length; i++) {
-
-                            var testcase = testcases[i];
-                            var postdata = {};
-                postdata.Name = testcase.Name;
-                    postdata.Project = {'Id' : output.Items[0].Project.Id};
-                        postdata.UserStory = { 'Id' : _userstoryid };
-
-                                if(testcase.Steps.length > 0){
+            
+                     	
+			getProjectID(function(output){
+                                                      
+                                                      
+                                                      
+                                                      
+                	debug('apply details');
+                   	debug(item.publicData);
+			var tasks = $.parseJSON(item.publicData.tasks);
+                
+                
+                	var testcases = $.parseJSON(item.publicData.testCases);
+                  	
+                    	for (var i = 0; i < testcases.length; i++) {
+						
+                        	var testcase = testcases[i];
+	                        var postdata = {};
+				postdata.Name = testcase.Name;
+			        postdata.Project = {'Id' : output.Items[0].Project.Id};
+              			postdata.UserStory = { 'Id' : _userstoryid };
+                                
+                               	if(testcase.Steps.length > 0){
                                 postdata.Steps = testcase.Steps;
                                 }else{
-                                    postdata.Steps = " ";
+                                	postdata.Steps = " ";
                                 }
                                 if(testcase.Success.length > 0){
-                        postdata.Success = testcase.Success;
+		                postdata.Success = testcase.Success;
                                 }else{
                                 postdata.Success = " ";
                                 }
                                 postTemplateData(postdata, "testcases");
-            }
-
-            for (var i = 0; i < tasks.length; i++) {
-
-                            var task = tasks[i];
-                            var postdata = {};
-                postdata.Name = task.Name;
-                    postdata.Project = {'Id' : output.Items[0].Project.Id};
-                        postdata.UserStory = { 'Id' : _userstoryid }
+			}
+                        
+			for (var i = 0; i < tasks.length; i++) {
+						
+                        	var task = tasks[i];
+	                        var postdata = {};
+				postdata.Name = task.Name;
+			        postdata.Project = {'Id' : output.Items[0].Project.Id};
+              			postdata.UserStory = { 'Id' : _userstoryid }
                                 postdata.Description = task.Description;
 
-
+                                
                                 postTemplateData(postdata, "tasks");
-
-            }
-
-
-
-
-                        });
-
-
-                    r.getByName('entity component', function(b)
-                            {
+                                            
+			}
+                        
+                        
+                        
+                        
+                    	});
+                    
+                        
+               		r.getByName('entity component', function(b) 
+                            { 
                              debug('refreshing');
                              debug(b);
-                             b.fire('refreshMainEntity');
-                 });
-
-
-
-
-
-            };
-
-
-        postTemplateData = function(postdata, itemtype){
-            $.ajax({
+                             b.fire('refreshMainEntity');                                
+			     });
+            		
+               
+            	
+           
+        
+        	};
+        
+       	
+     	postTemplateData = function(postdata, itemtype){
+        	$.ajax({ 
                                         async: false,
-                                    type: 'POST',
-                                    url: configurator.getApplicationPath() + '/api/v1/' + itemtype + '/?&format=json',
-                                    dataType: 'json',
-                                    processData: false,
-                                    contentType: contentType,
-                        data: JSON.stringify(postdata),
-                        success: function(){
+                                	type: 'POST', 
+                                  	url: configurator.getApplicationPath() + '/api/v1/' + itemtype + '/&format=json', 
+                                  	dataType: 'json',
+	                                processData: false,
+                                  	contentType: 'application/json',
+        				data: JSON.stringify(postdata), 
+        				success: function(){ 
                                                             debug("add success");
-                                                            },
-                        error: function(){debug("add failed");}
-
-                                      });
-
-
+                                                            }, 
+       					error: function(){debug("add failed");}
+    					
+                                      }); 
+                        	                   
+                           
         };
-
-
-        function getProjectID(handleData) {
-
-
+        
+        
+       	function getProjectID(handleData) {
+        
+        
         debug('us id :' + this._userstoryid);
                 $.ajax({
                         async: false,
@@ -963,51 +961,51 @@ var applyTemplate = function() {
                         contentType: 'application/json',
                         dataType: 'json',
                         success: function(resp) {
-                             handleData(resp);
+                             handleData(resp); 
                         }
-
+                                   
                 });
-        };
-
-
+        }; 
+                
+                
         function getNewID(){
-
-        var d = new Date();
-
-            s = d.getTime();
-
-            return s;
-
+                            
+		var d = new Date();
+        
+        	s = d.getTime();
+        
+        	return s;
+        
         };
+                
+                
 
 
-
-
-    /*
+	/*
         fix the input from the text boxes (not needed, using spans now)
         */
-        function fixInput(s) {
+		function fixInput(s) {
 
-            s = s.replace(/"/gm, '"');
-            s = s.replace(/>/gm, '>');
-            s = s.replace(/</gm, '<');
-            //s = s.replace(/'/gm, ''');
-            s = s.replace(/(\r\n|\n|\r)/gm, '\n');
-            s = s.replace(/(\r\n|\n|\r)/gm, '<br />');
-            return s;
-        }
+			s = s.replace(/"/gm, '"');
+			s = s.replace(/>/gm, '>');
+			s = s.replace(/</gm, '<');
+			//s = s.replace(/'/gm, ''');
+			s = s.replace(/(\r\n|\n|\r)/gm, '\n');
+			s = s.replace(/(\r\n|\n|\r)/gm, '<br />');
+			return s;
+		}
 
-        function debug(message){
-
-                    if(false){
-                            console.log(message);
-            }
-
+		function debug(message){
+                
+               		if(false){
+                        	console.log(message);         
+			}
+                
                 };
 
 
 
-    };
+	};
 
 
 
@@ -1023,7 +1021,7 @@ function addTP2CSS(){
 //Needed for when running in TP2 Mode
 
 $('head').append('<style type="text/css">'
-
+                 
 +'.tau-btn{font-family:OpenSans,"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:11px;font-weight:600;display:inline-block;vertical-align:middle;cursor:pointer;margin:0 2px;border-radius:3px;padding:3px 9px 5px 9px;height:24px;line-height:16px;white-space:nowrap;text-shadow:0 1px #fff;color:#606c7b;border:solid 1px #acb3ba;background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAxIDEiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiPgo8bGluZWFyR3JhZGllbnQgaWQ9ImczOTIiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+CjxzdG9wIHN0b3AtY29sb3I9IiNGRkZGRkYiIG9mZnNldD0iMCIvPjxzdG9wIHN0b3AtY29sb3I9IiNFOEU4RTgiIG9mZnNldD0iMSIvPgo8L2xpbmVhckdyYWRpZW50Pgo8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2czOTIpIiAvPgo8L3N2Zz4=);background-image:-webkit-linear-gradient(bottom,#e8e8e8,#fff);background-image:-moz-linear-gradient(bottom,#e8e8e8,#fff);background-image:linear-gradient(to top,#e8e8e8,#fff)}'
 +'.tau-btn::-moz-focus-inner{border:0;padding:0}'
 +'.tau-btn:focus{box-shadow:0 0 0 1px rgba(255,255,255,0.3),0 0 7px 0 #52a8ec;outline:0}'
@@ -1048,7 +1046,7 @@ $('head').append('<style type="text/css">'
 +'.tau-btn.tau-danger:focus,.tau-btn.tau-primary:focus,.tau-btn.tau-attention:focus,.tau-btn.tau-success:focus{box-shadow:0 0 0 1px rgba(255,255,255,0.3),0 0 7px 0 #52a8ec;outline:0}'
 
 +'</style>');
-
+                     
 };
 
 
