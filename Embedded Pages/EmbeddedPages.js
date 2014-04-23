@@ -245,7 +245,7 @@ tau
                     .getDef('process', {
                         fields: fields,
                         $query: {
-                            isDefault: true
+                            isDefault: 1
                         }
                     })
                     .then(function(res) {
