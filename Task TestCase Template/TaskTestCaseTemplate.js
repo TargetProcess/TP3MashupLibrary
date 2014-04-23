@@ -843,21 +843,20 @@ var applyTemplate = function() {
          =-=-=-=-=-=-=-=-=-=-=-=-=-
         */
 
-                function removeTemplate(templatename){
-
-
+            function removeTemplate(templatename){
 
                 debug('remove template' + templatename);
 
-                        $.ajax({
-                                    type: 'DELETE',
-                                    url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/' + templatename,
-                                    contentType: contentType,
-                                    success: function(){debug("yay!");
-                                                        rebuildTemplateTable();
-                                                        },
-                                    error: function(){debug("failed removing!");}
-                                });
+                $.ajax({
+                    type: 'POST',
+                    contentType: contentType,
+                    url: configurator.getApplicationPath()+'/storage/v1/ApplyTemplateMashup/' + templatename,
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader("X-HTTP-Method-Override", "DELETE");
+                    }
+                }).done(function( msg ) {
+                    rebuildTemplateTable();
+                });
 
             };
 
