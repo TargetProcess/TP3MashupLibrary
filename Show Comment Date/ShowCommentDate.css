@@ -1,0 +1,3 @@
+.ui-comment-ago span[title]::before {
+    content: attr(title)' ';
+}
