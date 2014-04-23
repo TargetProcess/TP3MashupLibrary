@@ -15,6 +15,18 @@ tau
             configurator = appConfigurator;
         });
 
+        var store = {
+            getDef:function(entityName, fields){
+                var store = configurator.getStore();
+                return store.freeze(true).then(function(promise){
+                    var result = store.getDef(entityName, fields);
+                    promise.unfreeze();
+                    return result;
+                })
+
+            }
+        };
+
         var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release',
             'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
         ];
@@ -184,12 +196,10 @@ tau
                     }
                 ];
 
-                return configurator
-                    .getStore()
-                    .getDef(this.entity.entityType.name, {
-                        id: this.entity.id,
-                        fields: fields
-                    })
+                return store.getDef(this.entity.entityType.name, {
+                    id: this.entity.id,
+                    fields: fields
+                })
                     .then(function(res) {
                         return res.process;
                     });
@@ -215,8 +225,7 @@ tau
                     }
                 ];
 
-                return configurator
-                    .getStore()
+                return store
                     .getDef(this.entity.entityType.name, {
                         id: this.entity.id,
                         fields: fields
@@ -240,8 +249,7 @@ tau
                     }
                 ];
 
-                return configurator
-                    .getStore()
+                return store
                     .getDef('process', {
                         fields: fields,
                         $query: {
@@ -278,8 +286,7 @@ tau
                     'customFields'
                 ];
 
-                return configurator
-                    .getStore()
+                return store
                     .getDef(this.entity.entityType.name, {
                         id: this.entity.id,
                         fields: fields
