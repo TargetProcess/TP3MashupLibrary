@@ -3,7 +3,7 @@ No New Boards
 
 This mashup will disable the Create View function for certain users and/or roles.
 
-![No New Views](NoNewBoards.png)
+![No New Views](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/No%20New%20Boards/NoNewBoards.png)
  
 How to activate it:
 
