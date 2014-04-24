@@ -15,17 +15,16 @@ tau
             configurator = appConfigurator;
         });
 
-        var store = {
-            getDef:function(entityName, fields){
-                var store = configurator.getStore();
-                return store.freeze(true).then(function(promise){
-                    var result = store.getDef(entityName, fields);
-                    promise.unfreeze();
-                    return result;
-                })
+        var getData = function(entityName, fields) {
+            var store = configurator.getStore();
+            return store.freeze(true).then(function (promise) {
+                var result = store.getDef(entityName, fields);
+                promise.unfreeze();
+                return result;
+            });
 
-            }
         };
+
 
         var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release',
             'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
@@ -196,11 +195,11 @@ tau
                     }
                 ];
 
-                return store.getDef(this.entity.entityType.name, {
+                return getData(this.entity.entityType.name, {
                     id: this.entity.id,
                     fields: fields
                 })
-                    .then(function(res) {
+                    .then(function (res) {
                         return res.process;
                     });
             },
@@ -225,8 +224,7 @@ tau
                     }
                 ];
 
-                return store
-                    .getDef(this.entity.entityType.name, {
+                return getData(this.entity.entityType.name, {
                         id: this.entity.id,
                         fields: fields
                     })
@@ -249,8 +247,7 @@ tau
                     }
                 ];
 
-                return store
-                    .getDef('process', {
+                return getData('process', {
                         fields: fields,
                         $query: {
                             isDefault: 1
@@ -286,8 +283,7 @@ tau
                     'customFields'
                 ];
 
-                return store
-                    .getDef(this.entity.entityType.name, {
+                return getData(this.entity.entityType.name, {
                         id: this.entity.id,
                         fields: fields
                     })
