@@ -17,14 +17,12 @@ tau
 
         var getData = function(entityName, fields) {
             var store = configurator.getStore();
-            return store.freeze(true).then(function (promise) {
+            return store.freeze(true).then(function(promise) {
                 var result = store.getDef(entityName, fields);
                 promise.unfreeze();
                 return result;
             });
-
         };
-
 
         var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release',
             'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
