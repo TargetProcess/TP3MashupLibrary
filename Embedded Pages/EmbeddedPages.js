@@ -197,7 +197,7 @@ tau
                     id: this.entity.id,
                     fields: fields
                 })
-                    .then(function (res) {
+                    .then(function(res) {
                         return res.process;
                     });
             },
@@ -206,29 +206,31 @@ tau
 
                 var fields = [
                     'customFields', {
-                        project: [{
-                            process: [
-                                'name', {
-                                    customFields: [
-                                        'name',
-                                        'value',
-                                        'fieldType', {
-                                            entityType: ['name']
-                                        }
-                                    ]
-                                }
-                            ]
-                        }]
+                        project: [
+                            {
+                                process: [
+                                    'name', {
+                                        customFields: [
+                                            'name',
+                                            'value',
+                                            'fieldType', {
+                                                entityType: ['name']
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ];
 
                 return getData(this.entity.entityType.name, {
-                        id: this.entity.id,
-                        fields: fields
-                    })
-                    .then(function(res) {
-                        return res.project ? res.project.process : null;
-                    });
+                            id: this.entity.id,
+                            fields: fields
+                        })
+                        .then(function(res) {
+                            return res.project ? res.project.process : null;
+                        });
             },
 
             getDefaultProcess: function() {
@@ -246,14 +248,14 @@ tau
                 ];
 
                 return getData('process', {
-                        fields: fields,
-                        $query: {
-                            isDefault: 1
-                        }
-                    })
-                    .then(function(res) {
-                        return res[0];
-                    });
+                            fields: fields,
+                            $query: {
+                                isDefault: 1
+                            }
+                        })
+                        .then(function(res) {
+                            return res[0];
+                        });
             },
 
             findFieldInProcess: function(process) {
@@ -282,12 +284,12 @@ tau
                 ];
 
                 return getData(this.entity.entityType.name, {
-                        id: this.entity.id,
-                        fields: fields
-                    })
-                    .then(function(entity) {
-                        return this.findFieldInEntity(entity);
-                    }.bind(this));
+                            id: this.entity.id,
+                            fields: fields
+                        })
+                        .then(function(entity) {
+                            return this.findFieldInEntity(entity);
+                        }.bind(this));
             },
 
             findFieldInEntity: function(entity) {
