@@ -1,5 +1,5 @@
 {
-	"ShortDescription": "This mashup will disable the Create Board function for certain users and/or roles.",
+	"ShortDescription": "This mashup will disable the Create View function for certain users and/or roles.",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.4"
 	}		
