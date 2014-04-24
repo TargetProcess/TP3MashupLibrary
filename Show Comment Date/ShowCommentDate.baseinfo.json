@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "This mashup will add the actual comment date.",
+	"CompatibleTpVersion": {
+		"Minimum": "2.22.0"
+	}		
+}

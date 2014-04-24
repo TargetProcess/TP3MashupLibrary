@@ -1,0 +1,14 @@
+Show Comment Date
+==================
+
+By default only a relative date ('Just now' / 'X minutes ago' / 'X months ago') is displayed.
+The exact date is available as a tooltip, but this might not be ideal in some cases - like audits, for instance.
+
+![Comment Date Without Mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Show%20Comment%20Date/CommentDateWithoutMashup.png)
+
+This mashup will add the actual comment date.
+
+![Comment Date With Mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Show%20Comment%20Date/CommentDateWithMashup.png)
+
+
+
