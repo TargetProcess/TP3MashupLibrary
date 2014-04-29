@@ -15,6 +15,15 @@ tau
             configurator = appConfigurator;
         });
 
+        var getData = function(entityName, fields) {
+            var store = configurator.getStore();
+            return store.freeze(true).then(function(promise) {
+                var result = store.getDef(entityName, fields);
+                promise.unfreeze();
+                return result;
+            });
+        };
+
         var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release',
             'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
         ];
@@ -184,12 +193,10 @@ tau
                     }
                 ];
 
-                return configurator
-                    .getStore()
-                    .getDef(this.entity.entityType.name, {
-                        id: this.entity.id,
-                        fields: fields
-                    })
+                return getData(this.entity.entityType.name, {
+                    id: this.entity.id,
+                    fields: fields
+                })
                     .then(function(res) {
                         return res.process;
                     });
@@ -199,31 +206,31 @@ tau
 
                 var fields = [
                     'customFields', {
-                        project: [{
-                            process: [
-                                'name', {
-                                    customFields: [
-                                        'name',
-                                        'value',
-                                        'fieldType', {
-                                            entityType: ['name']
-                                        }
-                                    ]
-                                }
-                            ]
-                        }]
+                        project: [
+                            {
+                                process: [
+                                    'name', {
+                                        customFields: [
+                                            'name',
+                                            'value',
+                                            'fieldType', {
+                                                entityType: ['name']
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
                     }
                 ];
 
-                return configurator
-                    .getStore()
-                    .getDef(this.entity.entityType.name, {
-                        id: this.entity.id,
-                        fields: fields
-                    })
-                    .then(function(res) {
-                        return res.project ? res.project.process : null;
-                    });
+                return getData(this.entity.entityType.name, {
+                            id: this.entity.id,
+                            fields: fields
+                        })
+                        .then(function(res) {
+                            return res.project ? res.project.process : null;
+                        });
             },
 
             getDefaultProcess: function() {
@@ -240,17 +247,15 @@ tau
                     }
                 ];
 
-                return configurator
-                    .getStore()
-                    .getDef('process', {
-                        fields: fields,
-                        $query: {
-                            isDefault: 1
-                        }
-                    })
-                    .then(function(res) {
-                        return res[0];
-                    });
+                return getData('process', {
+                            fields: fields,
+                            $query: {
+                                isDefault: 1
+                            }
+                        })
+                        .then(function(res) {
+                            return res[0];
+                        });
             },
 
             findFieldInProcess: function(process) {
@@ -278,15 +283,13 @@ tau
                     'customFields'
                 ];
 
-                return configurator
-                    .getStore()
-                    .getDef(this.entity.entityType.name, {
-                        id: this.entity.id,
-                        fields: fields
-                    })
-                    .then(function(entity) {
-                        return this.findFieldInEntity(entity);
-                    }.bind(this));
+                return getData(this.entity.entityType.name, {
+                            id: this.entity.id,
+                            fields: fields
+                        })
+                        .then(function(entity) {
+                            return this.findFieldInEntity(entity);
+                        }.bind(this));
             },
 
             findFieldInEntity: function(entity) {
