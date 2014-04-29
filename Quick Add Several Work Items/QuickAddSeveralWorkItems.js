@@ -77,17 +77,17 @@ require([
 
             $('.tau-entity-fields', $quickAdd).each(function() {
                 var $form = $(this);
+                var argumentsCount = addedItems[0].length;
 
-                var $name = $('.Name', $form);
-                var $parent = $name.hide().parent();
+                var $name = $('.tau-required-field-editor:lt(' + argumentsCount + ')', $form);
+                $name.hide();
 
                 var $container = $('<div class="file-upload-container" ></div>');
-
-                _.each(addedItems, function(item, index) {
-                    var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item);
+                _.each(addedItems, function (item, index) {
+                    var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item.join(', '));
                     $container.append($item);
                 });
-
+                var $parent = $('.tau-field', $form)[0];
                 $container.appendTo($parent);
 
                 var $tauButton = $('.tau-add-item', $form);
@@ -151,7 +151,9 @@ require([
                         var item = this[0];
 
                         if (item) {
-                            $name.val(item);
+                            $name.each(function (i, v) {
+                                $(v).val(item[i]);
+                            })
                             $tauButton.click();
                         }
                     };
@@ -164,6 +166,7 @@ require([
         });
 
         var noDrop = false;
+        var complexEntity = false;
 
         bus.on('board.configuration.ready', function(evt, data) {
 
@@ -187,9 +190,13 @@ require([
                 return;
             }
 
-            if (data.cells.types[0].indexOf('iteration') >= 0 || data.cells.types[0].indexOf('release') >= 0 || data.cells.types[0] === 'user') {
+            if (data.cells.types[0].indexOf('iteration') >= 0 || data.cells.types[0].indexOf('release') >= 0) {
                 noDrop = true;
                 return;
+            }
+
+            if (data.cells.types[0] === 'user') {
+                complexEntity = true;
             }
 
             noDrop = false;
@@ -235,7 +242,13 @@ require([
                 reader.onload = function(e) {
                     var text = reader.result || '';
                     var items = _.compact(text.split(/\r?\n/).map(function(v){
-                        return (v || '').trim();
+                        if (complexEntity == true) {
+                            //allow commas in non-complex entities
+                            return (v || '').split(',');
+                        }
+                        else {
+                            return [(v || '').trim()];
+                        }
                     }));
                     processItems($cell, items);
                 };
