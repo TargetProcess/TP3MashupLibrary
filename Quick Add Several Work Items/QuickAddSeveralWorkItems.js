@@ -87,7 +87,7 @@ require([
                     var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item.join(', '));
                     $container.append($item);
                 });
-                var $parent = $('.tau-field', $form)[0];
+                var $parent = $('.tau-field', $form).eq(0);
                 $container.appendTo($parent);
 
                 var $tauButton = $('.tau-add-item', $form);
