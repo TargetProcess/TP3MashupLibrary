@@ -79,15 +79,24 @@ require([
                 var $form = $(this);
                 var argumentsCount = addedItems[0].length;
 
-                var $name = $('.tau-required-field-editor:lt(' + argumentsCount + ')', $form);
+                var $name = $('input.tau-required-field-editor:lt(' + argumentsCount + ')', $form);
                 $name.hide();
+
+                var $icons = $('.tau-select-team-icon', $form);
+                $icons.hide();
+
+                var $ivite = $('.tau-invite-widget', $form);
+                $ivite.hide();
+
+                var $assignTeams = $('.tau-teams', $form);
+                $assignTeams.hide();
 
                 var $container = $('<div class="file-upload-container" ></div>');
                 _.each(addedItems, function (item, index) {
                     var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item.join(', '));
                     $container.append($item);
                 });
-                var $parent = $('.tau-field', $form).eq(0);
+                var $parent = $name.eq(0).parent();
                 $container.appendTo($parent);
 
                 var $tauButton = $('.tau-add-item', $form);
@@ -190,7 +199,7 @@ require([
                 return;
             }
 
-            if (data.cells.types[0].indexOf('iteration') >= 0 || data.cells.types[0].indexOf('release') >= 0) {
+            if (data.cells.types[0].indexOf('iteration') >= 0 || data.cells.types[0].indexOf('release') >= 0 || data.cells.types[0] === 'projectmember') {
                 noDrop = true;
                 return;
             }
