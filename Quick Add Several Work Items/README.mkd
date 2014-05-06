@@ -20,7 +20,7 @@ This mashup will create new entities (User Stories, Tasks, Bugs, etc.) from a .t
 | Project  | Name  |
 | Build  | Name  |
 | User  | First name,Last name,Email,Login,Password  |
-| ~~Release~~  | not supported  |
-| ~~Iteration~~  | not supported  |
-| ~~Team Iteration~~  | not supported  |
-| ~~Project Allocation~~  | not supported  |
+| Release  | not supported  |
+| Iteration  | not supported  |
+| Team Iteration  | not supported  |
+| Project Allocation  | not supported  |
