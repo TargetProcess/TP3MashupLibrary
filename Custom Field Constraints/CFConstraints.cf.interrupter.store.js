@@ -13,7 +13,7 @@ tau.mashups
             },
 
             _shouldChangeBeHandled: function(change) {
-                return change.name.toLowerCase() === 'customfields';
+                return change.name && change.name.toLowerCase() === 'customfields';
             },
 
             _getChangedEntityId: function(change) {

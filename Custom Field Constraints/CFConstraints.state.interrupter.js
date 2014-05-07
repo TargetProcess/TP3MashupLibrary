@@ -9,7 +9,7 @@ tau.mashups
             },
 
             _shouldChangeBeHandled: function(change) {
-                return change.name.toLowerCase() === 'entitystate';
+                return change.name && change.name.toLowerCase() === 'entitystate';
             },
 
             _getEntityRequiredCFs: function(entityToRequire) {

@@ -19,7 +19,7 @@ tau.mashups
             },
 
             _shouldChangeBeHandled: function(change) {
-                return this.CUSTOM_FIELD_CHANGE_ID_PREFIX_REGEX.test(change.name.toLowerCase());
+                return change.name && this.CUSTOM_FIELD_CHANGE_ID_PREFIX_REGEX.test(change.name.toLowerCase());
             },
 
             _getChangedEntityId: function(change) {
