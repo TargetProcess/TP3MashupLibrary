@@ -61,7 +61,7 @@ tau
                 }.bind(this));
 
                 var def = $.Deferred();
-                require(['https://raw.github.com/timrwood/moment/2.0.0/min/moment.min.js'], function() {
+                require(['https://rawgit.com/timrwood/moment/2.0.0/min/moment.min.js'], function() {
                     def.resolve();
                 });
 
