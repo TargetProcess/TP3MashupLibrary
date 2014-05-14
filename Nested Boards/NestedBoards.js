@@ -161,9 +161,9 @@ tau.mashups.addDependency('jQuery')
                 registry.getByName('board_plus', function(boardBus) {
 
                     var listener = {
-                        bus: boardBus,
+                        bus: configurator.getGlobalBus(),
 
-                        "bus before_board.configuration.ready": function(evt, data) {
+                        "bus board.configuration.ready": function(evt, data) {
 
                             var ids = getParameterByName("ids").split("_");
                             var query = [];
