@@ -12,7 +12,7 @@ tau
         'use strict';
 
         var extractDate = function(date) {
-            return du.convertToTimezone(du.parse(date));
+            return du.parse(date);
         };
 
         var extractFullName = function(user) {
