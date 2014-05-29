@@ -13,21 +13,95 @@ tau.mashups
             configurator = appConfigurator;
         });
 
+        var types = configurator.getStore().getTypes().getDictionary();
+
+        var getParents = function(typeName) {
+
+            var type = types[typeName];
+            if (type.parent) {
+                var parentType = types[type.parent];
+                return [parentType].concat(getParents(parentType.name));
+            } else {
+                return [];
+            }
+        };
+
         var Colorer = Class.extend({
 
             options: config,
 
+            colorsConfigCache: {},
+
             init: function() {
 
-                this.fields = this.collectFields(this.options.colors);
+                this.options.colors = _.object(_.map(this.options.colors, function(v, k) {
+                    return [k.toLowerCase(), v];
+                }));
+            },
 
-                var cf = _.find(this.fields, function(field) {
+            getColorsConfigByType: function(typeName) {
+
+                if (this.colorsConfigCache[typeName]) {
+                    return this.colorsConfigCache[typeName];
+                }
+
+                var colors = this.options.colors;
+                var color = colors[typeName] || {};
+
+                var parents = getParents(typeName);
+                parents.forEach(function(parentType) {
+
+                    var parentColor = colors[parentType.name];
+                    if (parentColor) {
+                        color = _.extend(_.deepClone(parentColor), color);
+                    }
+                }.bind(this));
+
+                this.colorsConfigCache[typeName] = color;
+                return color;
+            },
+
+            getFieldsConfigByType: function(typeName) {
+
+                var colorsConfig = this.getColorsConfigByType(typeName);
+                var fields = this.collectFields(colorsConfig);
+
+                var cf = _.find(fields, function(field) {
                     return _.isObject(field) && _.keys(field)[0] === 'customFields';
                 });
                 if (cf) {
-                    this.fields = _.without(this.fields, cf);
-                    this.fields.push('customFields');
+                    fields = _.without(fields, cf);
+                    fields.push('customFields');
                 }
+
+                return fields;
+            },
+
+            mergeTypes: function(cardsByType) {
+
+                var colors = this.options.colors;
+                _.keys(cardsByType).forEach(function(typeName) {
+
+                    if (!colors[typeName]) {
+
+                        var parents = getParents(typeName);
+
+                        for (var i = 0, c = parents.length; i < c; i++) {
+                            var parentTypeName = parents[i].name;
+
+                            if (colors[parentTypeName]) {
+                                if (!cardsByType[parentTypeName]) {
+                                    cardsByType[parentTypeName] = [];
+                                }
+                                cardsByType[parentTypeName] = cardsByType[parentTypeName].concat(cardsByType[typeName]);
+                                delete cardsByType[typeName];
+                                break;
+                            }
+                        }
+                    }
+                });
+
+                return cardsByType;
             },
 
             collectFields: function(colorsConfig) {
@@ -76,28 +150,41 @@ tau.mashups
 
             getCardsData: function($cards) {
 
-                var ids = _.uniq(_.compact($cards.map(function() {
-                    return $(this).data('entity-id');
-                })));
+                var ids = $cards.map(function() {
+                    return {
+                        entityTypeName: $(this).data('entity-type'),
+                        id: $(this).data('entity-id')
+                    };
+                });
 
-                if (!ids.length) {
-                    return [];
-                }
+                ids = _.groupBy(ids, function(v) {
+                    return v.entityTypeName;
+                });
 
-                return configurator.getStore()
-                    .getDef('Assignables', {
-                        fields: this.fields,
-                        $query: {
-                            id: {
-                                $in: ids
+                ids = _.object(_.map(ids, function(v, k) {
+                    return [k, _.unique(_.compact(_.pluck(v, 'id')))];
+                }));
+
+                ids = this.mergeTypes(ids);
+
+                var defs = _.map(ids, function(ids, entityTypeName) {
+                    return configurator.getStore()
+                        .getDef(entityTypeName, {
+                            fields: this.getFieldsConfigByType(entityTypeName),
+                            $query: {
+                                id: {
+                                    $in: ids
+                                }
                             }
-                        }
-                    })
-                    .then(function(items) {
-                        return items.map(function(item) {
-                            return item;
                         });
-                    });
+                }.bind(this));
+
+                return $.whenList(defs).then(function() {
+                    var items = _.toArray(arguments).reduce(function(res, v) {
+                        return res.concat(v);
+                    }, []);
+                    return items;
+                });
             },
 
             applyToCards: function(data, $cards) {
@@ -122,7 +209,9 @@ tau.mashups
             applyBackgroundByValues: function(cardData, $cardEl) {
 
                 var values = this.collectValues(cardData);
-                var colors = this.collectColors(values, this.options.colors);
+                /*eslint-disable */
+                var colors = this.collectColors(values, this.getColorsConfigByType(cardData.__type));
+                /*eslint-enable */
 
                 if (!colors.length) {
                     return $cardEl;
