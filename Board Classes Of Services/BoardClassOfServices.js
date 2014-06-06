@@ -26,6 +26,15 @@ tau.mashups
             }
         };
 
+        var whenList = function(defs) {
+            return $.whenList(defs).then(function() {
+                var items = _.toArray(arguments).reduce(function(res, v) {
+                    return res.concat(v);
+                }, []);
+                return items;
+            });
+        };
+
         var Colorer = Class.extend({
 
             options: config,
@@ -72,6 +81,11 @@ tau.mashups
                 if (cf) {
                     fields = _.without(fields, cf);
                     fields.push('customFields');
+                }
+                if (typeName !== 'user' && typeName !== 'projectmember') {
+                    fields.push({
+                        'entityType': ['id', 'name']
+                    });
                 }
 
                 return fields;
@@ -168,23 +182,34 @@ tau.mashups
                 ids = this.mergeTypes(ids);
 
                 var defs = _.map(ids, function(ids, entityTypeName) {
-                    return configurator.getStore()
-                        .getDef(entityTypeName, {
-                            fields: this.getFieldsConfigByType(entityTypeName),
-                            $query: {
-                                id: {
-                                    $in: ids
-                                }
-                            }
-                        });
+                    var fields = this.getFieldsConfigByType(entityTypeName);
+                    if (!fields.length) {
+                        return [];
+                    } else {
+                        // prevent too large request error if many cards
+                        var i = 0;
+                        var defs = [];
+                        var take = 50;
+                        var part = ids.slice(i, i + take);
+                        while (part.length) {
+                            defs.push(configurator.getStore()
+                                .getDef(entityTypeName, {
+                                    fields: this.getFieldsConfigByType(entityTypeName),
+                                    $query: {
+                                        id: {
+                                            $in: part
+                                        }
+                                    }
+                                }));
+                            i += take;
+                            part = ids.slice(i, i + take);
+                        }
+
+                        return whenList(defs);
+                    }
                 }.bind(this));
 
-                return $.whenList(defs).then(function() {
-                    var items = _.toArray(arguments).reduce(function(res, v) {
-                        return res.concat(v);
-                    }, []);
-                    return items;
-                });
+                return whenList(defs);
             },
 
             applyToCards: function(data, $cards) {
@@ -201,9 +226,10 @@ tau.mashups
             },
 
             applyToCard: function(cardData, $cardEl) {
-
-                $cardEl.addClass('coloredByMashup');
-                return this.applyBackgroundByValues(cardData, $cardEl);
+                if (cardData) {
+                    $cardEl.addClass('coloredByMashup');
+                    return this.applyBackgroundByValues(cardData, $cardEl);
+                }
             },
 
             applyBackgroundByValues: function(cardData, $cardEl) {
