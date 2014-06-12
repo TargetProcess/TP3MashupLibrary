@@ -3,10 +3,16 @@ tau.mashups
     .addDependency('Underscore')
     .addDependency("jQuery")
     .addDependency('tau/configurator')
+    .addDependency('QuickFilters.config')
     .addCSS('QuickFilters.css')
-    .addMashup(function(_, $, configurator) {
+    .addMashup(function(_, $, configurator, config) {
 
         'use strict';
+
+        var predefinedFilters = config.predefinedFilters.map(function(v) {
+            v.isReadonly = true;
+            return v;
+        });
 
         var tableCSS = {
             'overflow': 'hidden',
@@ -67,7 +73,11 @@ tau.mashups
                 });
         };
 
-        var addFilterToList = function(filter, desc, $table, $rowTemplate, filterID) {
+        var addFilterToList = function(item, $table, $rowTemplate) {
+
+            var filter = item.Filter;
+            var desc = item.Desc;
+            var filterID = item.ID;
 
             var lastFilterClone = $rowTemplate.clone();
             lastFilterClone.find('.i-role-predefined-filter').data('value', filter);
@@ -75,35 +85,39 @@ tau.mashups
             lastFilterClone.find('.i-role-output-filter').text(filter);
             lastFilterClone.find('td:last').html('');
 
-            var descTD = $("<td class='filter-description'><span>" + desc + "</span></td>").click(function() {
+            var descTD = $("<td class='filter-description " + (item.isReadonly ? '' : 'editable') + "''><span>" + desc + "</span></td>");
 
-                if ($(this).children(":first").hasClass('placeholder')) {
+            if (!item.isReadonly) {
+                descTD.click(function() {
 
-                    $(this).children(":first").removeClass('placeholder');
-                    $(this).children(":first").text('');
-                }
+                    if ($(this).children(":first").hasClass('placeholder')) {
 
-                $(this).addClass('edit-mode');
-                $(this).children(":first").attr('contentEditable', true);
-                $(this).children(":first").focus();
+                        $(this).children(":first").removeClass('placeholder');
+                        $(this).children(":first").text('');
+                    }
 
-            }).focusout(function() {
+                    $(this).addClass('edit-mode');
+                    $(this).children(":first").attr('contentEditable', true);
+                    $(this).children(":first").focus();
 
-                $(this).removeClass('edit-mode');
-                $(this).children(":first").attr('contentEditable', false);
-                //console.log(">> " + filterID);
-                saveDesc($(this).children().text(), $(this).parents('tr').find('.i-role-predefined-filter').data('value'), filterID);
-            }).keypress(function(e) {
+                }).focusout(function() {
 
-                //when enter is pressed save as well.
-                if (e.which === 13) {
                     $(this).removeClass('edit-mode');
                     $(this).children(":first").attr('contentEditable', false);
                     //console.log(">> " + filterID);
-                    $(this).scrollTop();
                     saveDesc($(this).children().text(), $(this).parents('tr').find('.i-role-predefined-filter').data('value'), filterID);
-                }
-            });
+                }).keypress(function(e) {
+
+                    //when enter is pressed save as well.
+                    if (e.which === 13) {
+                        $(this).removeClass('edit-mode');
+                        $(this).children(":first").attr('contentEditable', false);
+                        //console.log(">> " + filterID);
+                        $(this).scrollTop();
+                        saveDesc($(this).children().text(), $(this).parents('tr').find('.i-role-predefined-filter').data('value'), filterID);
+                    }
+                });
+            }
 
             if (!desc.length) {
                 descTD.children().addClass('placeholder');
@@ -113,21 +127,24 @@ tau.mashups
             lastFilterClone.find('td:last').replaceWith(descTD);
             lastFilterClone.find('td:last').css(tableCSS);
 
-            var removebtn = $('<td><span class="tau-icon_name_close" style="cursor: pointer;display:block;width:10px; background-position:-1067px -103px;">&nbsp;</span</td>');
-            removebtn.click(function() {
+            if (!item.isReadonly) {
+                var removebtn = $('<td><span class="tau-icon_name_close" style="cursor: pointer;display:block;width:10px; background-position:-1067px -103px;">&nbsp;</span</td>');
+                removebtn.click(function() {
 
-                $(this).parents('tr:first').remove();
-                $
-                    .when(getinfo())
-                    .then(function(items) {
-                        items = items.filter(function(v) {
-                            return v.ID !== filterID;
+                    $(this).parents('tr:first').remove();
+                    $
+                        .when(getinfo())
+                        .then(function(items) {
+                            items = items.filter(function(v) {
+                                return v.ID !== filterID;
+                            });
+                            return saveinfo(items);
                         });
-                        return saveinfo(items);
-                    });
-            });
+                });
 
-            lastFilterClone.append(removebtn);
+                lastFilterClone.append(removebtn);
+
+            }
             $table.find('tbody').prepend(lastFilterClone);
         };
 
@@ -136,8 +153,9 @@ tau.mashups
             return $
                 .when(getinfo())
                 .then(function(items) {
+                    items = predefinedFilters.concat(items);
                     items.forEach(function(item) {
-                        addFilterToList(item.Filter, item.Desc, $table, $rowTemplate, item.ID);
+                        addFilterToList(item, $table, $rowTemplate);
                     });
                 });
         };
@@ -186,7 +204,7 @@ tau.mashups
                         return $.when(item, saveinfo(items));
                     })
                     .then(function(item) {
-                        addFilterToList(item.Filter, item.Desc, $savedTable, $rowTemplate, item.ID);
+                        addFilterToList(item, $savedTable, $rowTemplate);
                     });
             });
 
