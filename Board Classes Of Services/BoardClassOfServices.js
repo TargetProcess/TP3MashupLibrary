@@ -165,6 +165,10 @@ tau.mashups
             getCardsData: function($cards) {
 
                 var ids = $cards.map(function() {
+                    if (!$(this).data('entity-type')) {
+                        return null;
+                    }
+
                     return {
                         entityTypeName: $(this).data('entity-type'),
                         id: $(this).data('entity-id')
