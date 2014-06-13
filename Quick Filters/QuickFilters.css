@@ -1,4 +1,4 @@
-.i-role-complex-filter-example .filter-description:hover span {
+.i-role-complex-filter-example .filter-description.editable:hover span {
 	background-color: #fff;
 	border: solid 1px #cbd1d6;
 	border-top-color: #a3a7ab;
@@ -9,7 +9,7 @@
 	height: 18px;
 	line-height: 18px;
 	}
-               
+
 .i-role-complex-filter-example .filter-description.edit-mode span,
 .i-role-complex-filter-example:hover .filter-description.edit-mode span {
 	background-color: #fff;
@@ -22,6 +22,6 @@
 	display: inline-block;
 	height: 18px;
 	line-height: 18px;
-	
+
 	}
-	
+
