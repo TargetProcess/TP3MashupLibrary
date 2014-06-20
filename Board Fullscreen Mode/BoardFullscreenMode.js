@@ -35,11 +35,13 @@ tau
         var eventName;
         var isFullScreenName;
         var requestFullScreenName;
+        var args = [];
 
         if (document.body.webkitRequestFullScreen) {
             requestFullScreenName = 'webkitRequestFullScreen';
             eventName = 'webkitfullscreenchange';
             isFullScreenName = 'webkitIsFullScreen';
+            args = [Element.ALLOW_KEYBOARD_INPUT];
         } else if (document.body.mozRequestFullScreen) {
             requestFullScreenName = 'mozRequestFullScreen';
             eventName = 'mozfullscreenchange';
@@ -70,7 +72,10 @@ tau
             $button.click(function() {
 
                 if (requestFullScreenName) {
-                    document.body[requestFullScreenName]();
+                    var el = document.body;
+                    if (requestFullScreenName in el) {
+                        el[requestFullScreenName].apply(el, args);
+                    }
                 }
 
                 $(document.body).toggleClass('fullscreen');
