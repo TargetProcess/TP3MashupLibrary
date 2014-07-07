@@ -59,14 +59,14 @@ tau
         addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
             var $el = renderData.element;
 
-            var $button = $('<button id="btnFullScreen" data-title="Fullscreen" ' +
-                'class="tau-extension-board-tooltip tau-btn" ' +
-                'style="float: right; width: 24px; padding: 0; text-align: center; ' +
-                'background: url(\'../javascript/tau/css.board/images/icons-general.svg?v=2.15.0.15001\') ' +
-                'no-repeat -815px -155px;" alt="Toggle full screen"></button>');
+            var $button = $(
+            '<button class="tau-btn tau-extension-board-tooltip tau-btn-fullscreen" id="btnFullScreen" ' +
+                'data-title="Fullscreen" alt="Toggle full screen">' +
+                '<i class="icon icon-fullscreen"></i>' +
+            '</button>');
 
             if (!$el.find('#btnFullScreen').length) {
-                $el.find('.tau-board-name').before($button);
+                $el.find('[role=actions-button]').before($button);
             }
 
             $button.click(function() {
