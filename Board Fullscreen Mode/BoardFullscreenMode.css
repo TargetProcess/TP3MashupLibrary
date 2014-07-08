@@ -21,3 +21,16 @@ body.fullscreen .tau-board {
     height: 100% !important;
 }
 
+.tau-btn-fullscreen {
+    float: right;
+    padding: 0;
+    margin-left: 12px;
+}
+
+.icon-fullscreen {
+    margin: 5px;
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    background:  url('../../../JavaScript/tau/css.board/images/icons-general.svg') no-repeat -820px -159px;
+}
