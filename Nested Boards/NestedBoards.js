@@ -1,18 +1,46 @@
 /*globals require */
 /*eslint max-len: 0, no-underscore-dangle: 0 */
-tau.mashups.addDependency('jQuery')
+tau.mashups
+    .addDependency('jQuery')
     .addDependency('Underscore')
-    .addDependency('tp3/mashups/topmenu')
-    .addDependency('tp3/mashups/popup')
-    .addDependency('app.bus')
-    .addDependency('app.path')
+    .addDependency('libs/parseUri')
+    .addDependency('tau/core/class')
+
     .addDependency('tau/configurator')
-    .addDependency('all.components')
-    .addMashup(function($, _, topmenu, Popup, $deferred, path, configurator) {
+
+    .addDependency('tp3/mashups/popup')
+    .addDependency('tau/storage/api.nocache')
+    .addCSS('NestedBoards.css')
+    .addMashup(function($, _, parseUri, Class, configurator, Popup, storeapi) {
 
         'use strict';
 
-        var boards = {
+        var reg = configurator.getBusRegistry();
+
+        var addBusListener = function(busName, eventName, listener) {
+
+            reg.on('create', function(e, data) {
+
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.on(eventName, listener);
+                }
+            });
+
+            reg.on('destroy', function(e, data) {
+
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.removeListener(eventName, listener);
+                }
+            });
+
+            reg.getByName(busName).done(function(bus) {
+                bus.on(eventName, listener);
+            });
+        };
+
+        var nestedBoardsConfig = {
             userstory: [{
                 type: 'bug',
                 name: 'Bugs Board'
@@ -57,92 +85,185 @@ tau.mashups.addDependency('jQuery')
                 type: 'userstory',
                 name: 'Stories Board (TI)'
             }]
-
         };
 
-        var acid = '';
-        var isInnerBoard = document.location.href.indexOf('boardlink_inner_board') > 0;
+        var typesByParent = _.reduce(nestedBoardsConfig, function(res, v, k) {
 
-        var getParameterByName = function(name) {
-
-            var match = new RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
-            return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-        };
-
-        var toggleFullScreen = function(data, element) {
-
-            $('.tau-app-header', element).hide();
-            $('.tau-board-header', element).hide();
-            $('.tau-board-settings', element).hide();
-            $('.tau-app-secondary-pane', element).hide();
-            $('.tau-app-main-pane', element).css({
-                top: 0,
-                left: 0
+            v.forEach(function(type) {
+                res[type.type] = res[type.type] || [];
+                res[type.type].push(k);
+                return res;
             });
-            $('.tau-board', element).css({
-                height: '100%'
-            });
-            $('.tau-boardclipboard', element).hide();
-            $('.tau-boardtools', element).hide();
-            $('.i-role-axis-mark-selector').hide();
-            $('.tau-board-view-switch', element).hide();
-            $('.tau-board-body-wrapper', element).css({
-                top: 0
-            });
-            $('body').css({
-                background: '#e5e9ee'
-            });
-        };
 
-        var onLoadLibs = function(registry, eventHelper, storeapi, sliceapi) {
+            return res;
+        }, {});
 
-            var loadBoard = function() {
+        var Mashup = Class.extend({
 
-                var cardsArray = $(this).data().cards;
+            init: function() {
+
+                var uri = parseUri(window.location.href);
+                this.request = uri.queryKey;
+
+                addBusListener('application board', 'configurator.ready', function(e, appConfigurator) {
+                    configurator = appConfigurator;
+                }.bind(this));
+
+                if (this.request.isNestedBoard) {
+                    $('body').addClass('fullscreen');
+                    this.patchSlice();
+
+                    addBusListener('board_plus', 'board.configuration.ready', function(e, boardConfig) {
+                        this.updateConfiguration(boardConfig);
+                    }.bind(this));
+                } else {
+
+                    addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
+                        this.renderToolbar($el);
+                    }.bind(this));
+
+                }
+            },
+
+            renderToolbar: function($el) {
+
+                var $toolbar = $el.find('.i-role-nestedboardstoolbar');
+
+                if (!$toolbar.length) {
+                    $toolbar = $('<div class="tau-inline-group-nestedboardstoolbar i-role-nestedboardstoolbar"></div>')
+                        .appendTo($el.find('.tau-select-block'));
+                }
+
+                $toolbar.children().remove();
+
+                var renderButton = this.renderButton.bind(this);
+
+                _.forEach(nestedBoardsConfig, function(config, entityTypeName) {
+                    var $cards = $el.find('.tau-card-v2_type_' + entityTypeName);
+                    if ($cards.length) {
+                        _.forEach(config, function(subEntityConfig) {
+                            $toolbar.append(renderButton(entityTypeName, subEntityConfig));
+                        });
+                    }
+                });
+            },
+
+            renderButton: function(entityTypeName, subEntityConfig) {
+                return $('<button class="tau-btn ' + '">' + subEntityConfig.name + '</button>')
+                    .on('click', this.handleButton.bind(this, entityTypeName, subEntityConfig.type));
+            },
+
+            handleButton: function(entityTypeName, type) {
+
                 var activityPopup = new Popup();
                 activityPopup.show();
                 activityPopup.showLoading();
-
                 var $container = activityPopup.$container;
 
-                var ids = [];
+                var clipboardManager = configurator.getClipboardManager();
+                var acidStore = configurator.getAppStateStore();
 
-                _.each(cardsArray, function(card) {
-                    ids.push(card.entityId);
-                });
+                acidStore.get({
+                    fields: ['acid']
+                }).then(function(data) {
 
-                var url = path.get() + "/restui/board.aspx?boardlink_inner_board=true&acid=" + acid + "&ids=" + ids.join("_") + "&parent=" + $(this).data().parent + "&child=" + $(this).data().child;
-                var $frame = $('<iframe id="inner-board" style="width:100%; height:100%;margin:0;border:0;" src="' + url + '"></iframe>');
+                    var acid = data.acid;
 
-                $frame.load(function() {
-                    activityPopup.hideLoading();
-                });
+                    clipboardManager.getAll(function(err, cards) {
+                        var clipboardData = cards.reduce(function(res, item) {
+                            res[item.data.type] = res[item.data.type] || [];
+                            res[item.data.type].push(item.data.id);
 
-                $container.append($frame);
-                $container.css({
-                    padding: 0
-                });
-            };
+                            return res;
+                        }, {});
 
-            if (isInnerBoard) {
+                        var url = configurator.getApplicationPath() + "/restui/board.aspx?" +
+                            "isNestedBoard=1" +
+                            "&acid=" + acid +
+                            "&clipboardData=" + encodeURIComponent(JSON.stringify(clipboardData)) +
+                            "&axisType=" + entityTypeName +
+                            "&cellType=" + type;
 
-                var lane = getParameterByName('parent');
-                var card = getParameterByName('child');
+                        var $frame = $('<iframe class="nestedboardsframe" src="' + url + '"></iframe>');
 
-                var prevY = sliceapi.prototype.axis;
-
-                sliceapi.prototype.axis = function() {
-                    return prevY.apply(this, arguments).done(function(r) {
-
-                        _.each(r.data.items.concat([]), function(v, i) {
-                            if (v.y && v.dynamic && v.dynamic.items && v.dynamic.items.length > 0 && v.dynamic.items[0].data.empty === true) {
-                                r.data.items.splice(i, 1);
-
-                            }
+                        $frame.load(function() {
+                            activityPopup.hideLoading();
                         });
 
+                        $container.append($frame);
+                        $container.css({
+                            padding: 0
+                        });
                     });
+                });
+            },
+
+            updateConfiguration: function(boardConfig) {
+
+                var clipboardData = JSON.parse(decodeURIComponent(this.request.clipboardData));
+                var cellType = this.request.cellType;
+                var axisType = this.request.axisType;
+
+                var axisIds = [];
+                var cellIds = [];
+
+                _.forEach(clipboardData, function(ids, entityType) {
+
+                    if (axisType === entityType) {
+                        axisIds = axisIds.concat(ids);
+                    }
+
+                    // if in clipboard entities, which should be shown in cells on nested board, then
+                    // we show no-specified axis and ask cards in cells by this ids
+                    if (typesByParent[entityType].indexOf(axisType) >= 0) {
+                        axisIds = axisIds.concat(null);
+                        cellIds = cellIds.concat(ids);
+                    }
+                });
+
+                var cellFilter = '?' + _.compact(axisIds.map(function(v) {
+                    if (v) {
+                        return axisType + '.Id == ' + v;
+                    }
+                })).concat(cellIds.map(function(v) {
+                    return 'Id == ' + v;
+                })).join(' or ');
+
+                var axisFilter = _.compact(axisIds.map(function(v) {
+                    if (v) {
+                        return 'Id == ' + v;
+                    }
+                })).join(' or ');
+
+                if (axisIds.indexOf(null) >= 0) {
+                    axisFilter += ' or Id is None';
+                } else {
+                    axisFilter = '(' + axisFilter + ') and It is not None';
+                }
+                axisFilter = '?' + axisFilter;
+
+                delete boardConfig.focus;
+                delete boardConfig.selectedMarks;
+
+                boardConfig.cells = {
+                    filter: cellFilter,
+                    types: [cellType]
                 };
+
+                boardConfig.x = {
+                    types: ['entitystate']
+                };
+
+                boardConfig.y = {
+                    filter: axisFilter,
+                    types: [axisType]
+                };
+            },
+
+            patchSlice: function() {
+
+                var cellType = this.request.cellType;
+                var axisType = this.request.axisType;
 
                 var prevFn = storeapi.prototype._makeServiceCall;
 
@@ -152,120 +273,15 @@ tau.mashups.addDependency('jQuery')
                         var matched = ajaxConfig.url.match(/\/(\d+)/);
                         if (matched) {
                             var boardId = ajaxConfig.url.match(/\/(\d+)/)[1];
-                            ajaxConfig.url = configurator.getApplicationPath() + '/storage/v1/boards_private_' + lane + "_" + card + '_boardlink/' + boardId;
+                            ajaxConfig.url = configurator.getApplicationPath() + '/storage/v1/boards_private_' + axisType + "_" + cellType + '_boardlink/' + boardId;
                         }
                     }
                     return prevFn.apply(this, arguments);
                 };
-
-                registry.getByName('board_plus', function(boardBus) {
-
-                    var listener = {
-                        bus: configurator.getGlobalBus(),
-
-                        "bus board.configuration.ready": function(evt, data) {
-
-                            var ids = getParameterByName("ids").split("_");
-                            var query = [];
-                            var cardsQuery = [];
-
-                            _.each(ids, function(id) {
-                                cardsQuery.push(lane + '.id == ' + id);
-                                query.push("id == " + id);
-                            });
-
-                            data.cells = {
-                                filter: "?" + cardsQuery.join(" or "),
-                                types: [card]
-                            };
-                            delete data.focus;
-                            delete data.selectedMarks;
-                            data.x = {
-                                types: ['entitystate']
-                            };
-                            data.y = {
-                                filter: "?" + query.join(" or "),
-                                types: [lane]
-                            };
-
-                        }
-                    };
-
-                    eventHelper.subscribeOn(listener);
-
-                });
             }
 
-            var processCards = function(data, type, boards) {
+        });
 
-                var cardsSelector = '.tau-card-v2_type_' + type;
-                var $cards = $(cardsSelector, data);
+        return new Mashup();
 
-                _.each(boards, function(innerBoard) {
-                    var buttonClass = type + "_" + innerBoard.type + '-inner-board-btn';
-                    var buttonSelector = '.' + buttonClass;
-
-                    if ($cards.length > 0) {
-
-                        var cardsData = [];
-
-                        if ($(buttonSelector, data).length === 0) {
-                            var $title = $('.tau-select-block', data);
-                            var $button = $('<button class="tau-btn ' + buttonClass + '">' + innerBoard.name + '</button>');
-                            $button.appendTo($title);
-                            $button.click(loadBoard);
-                        }
-
-                        $cards.each(function(i, card) {
-                            cardsData.push($(card).data());
-                        });
-
-                        $(buttonSelector, data).data({
-                            cards: cardsData,
-                            parent: type,
-                            child: innerBoard.type
-                        });
-                    } else {
-                        $(buttonSelector, data).remove();
-                    }
-                });
-            };
-
-            var startMashup = function(bus) {
-
-                if (isInnerBoard) {
-                    bus.on('overview.board.ready', function(evt, data) {
-                        toggleFullScreen(data.element);
-                    });
-
-                    bus.on('contentRendered', function(evt, data) {
-                        toggleFullScreen(data.element);
-                    });
-                    return;
-                }
-
-                bus.on('acid.ready', function(evt, data) {
-                    acid = data;
-                });
-
-                bus.on('$el.readyToLayout', function(evt, data) {
-                    if (evt.caller.name !== 'board.clipboard') {
-                        return;
-                    }
-
-                    _.each(_.keys(boards), function(key) {
-                        processCards(data, key, boards[key]);
-                    });
-
-                });
-            };
-
-            $deferred.done(startMashup);
-        };
-
-        require(['tau/core/bus.reg',
-            'tau/core/event',
-            'tau/storage/api.nocache',
-            'tau/slice/api'
-        ], onLoadLibs);
     });
