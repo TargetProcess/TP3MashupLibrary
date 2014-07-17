@@ -215,7 +215,7 @@ tau.mashups
 
                     // if in clipboard entities, which should be shown in cells on nested board, then
                     // we show no-specified axis and ask cards in cells by this ids
-                    if (typesByParent[entityType].indexOf(axisType) >= 0) {
+                    if (typesByParent[entityType] && typesByParent[entityType].indexOf(axisType) >= 0) {
                         axisIds = axisIds.concat(null);
                         cellIds = cellIds.concat(ids);
                     }
