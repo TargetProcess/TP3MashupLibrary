@@ -79,7 +79,7 @@ tau.mashups
 	function getUrl(entityType) {
 		 return {
 		    People  : "/api/v1/Users?take=1000&format=json&where=(IsActive%20eq%20'true')%20and%20(DeleteDate%20is%20null)&callback=?",
-		    ProjectAllocation  : "/api/v1/ProjectMembers?take=1000&format=json&callback=?",
+		    ProjectAllocation  : "/api/v1/ProjectMembers?take=1000&where=Allocation%20gt%200&format=json&callback=?",
 		  }[entityType] || null
 	}
   
@@ -88,7 +88,9 @@ tau.mashups
           for (i = 0; i < data.Items.length; i++) {
                 var a = data.Items[i];
             if (allocations[a.User.Id]) {
-	        allocations[a.User.Id].push({Start: fixDate(a.MembershipStartDate), End: fixDate(a.MembershipEndDate), Project: a.Project.Name, Allocation: a.Allocation}); 		
+                if (a.Allocation > 0) {                          
+	        	allocations[a.User.Id].push({Start: fixDate(a.MembershipStartDate), End: fixDate(a.MembershipEndDate), Project: a.Project.Name, Allocation: a.Allocation}); 		
+      		}
             }
           }
           
