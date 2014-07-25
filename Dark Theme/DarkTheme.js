@@ -3,7 +3,7 @@ tau
     .addDependency('tp3/mashups/topmenu')
     .addMashup(function(topMenu) {
 
-        'use strict';;
+        'use strict';
 
         var init = function() {
 
@@ -54,8 +54,8 @@ tau
             addCSSRule('.t3-views-navigator>.t3-search', 'border: 1px solid #555960 !important;');
             addCSSRule('.tau-sp-collapsed .t3-search, .tp3-active', 'border-color: transparent !important;');
             addCSSRule('.tau-sp-collapsed .t3-views-navigator>.t3-search', 'border-color: transparent !important;');
-            addCSSRule('.tau-grid .tau-quick-add, .tau-timeline-grid .tau-quick-add', 'background: transparent !important;');
-            addCSSRule('.tau-grid .tau-quick-add button, .tau-timeline-grid .tau-quick-add button', 'background: #8fBf4d !important; border: none !important; box-shadow: none !important;');
+            addCSSRule('.tau-grid .tau-quick-add, .tau-timeline-grid .tau-quick-add, .tau-cols-header .tau-quick-add', 'background: transparent !important;');
+            addCSSRule('.tau-grid .tau-quick-add button, .tau-timeline-grid .tau-quick-add button, .tau-cols-header .tau-quick-add button', 'background: #8fBf4d !important; border: none !important; box-shadow: none !important;');
             addCSSRule('.tau-feedback-btn', 'display: none !important;');
             addCSSRule('.tau-axis-limit_overhead_x.tau-cellholder, .tau-axis-limit_overhead_y.tau-cellholder', 'background: #594747 !important;');
             addCSSRule('.tau-axis-limit_warning_x.tau-cellholder, .tau-axis-limit_warning_y.tau-cellholder', 'background: #595247 !important;');
@@ -64,7 +64,7 @@ tau
             addCSSRule('._tc-timeline-navigator>.tc-histogram:not(.tc-histogram-empty)', 'background: transparent !important; opacity: .5 !important; ');
             addCSSRule('.tau-board-grid-view .tau-cellholder.tau-selected.tau-selected_x.tau-selected_y', 'background: #525866 !important;');
             addCSSRule('.tau-selection-counter', 'background: transparent !important;');
-            addCSSRule('.tau-selection-counter.tau-selected', 'background: #FFF2B2 !important;');
+            addCSSRule('.tau-selection-counter.tau-selected', 'background: #FFF2B2 !important;'); 
             addCSSRule('.tau-boardclipboard .i-role-action-clear', 'height: 26px !important; border-radius: 2px !important; background: transparent !important; border-color: #555960 !important;');
             addCSSRule('.tau-boardclipboard .i-role-action-clear::before', 'top: 9px !important;');
             addCSSRule('.tau-no-data-in-slice h2, .tau-no-data-in-slice .tau-txt', 'font-weight: 400 !important; color: #fff !important; text-shadow: none !important;');
@@ -74,6 +74,8 @@ tau
             addCSSRule('.tau-page-items, .tau-page-items .tau-count', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-page-items .tau-count:hover', 'color: #fff !important;');
             addCSSRule('.tau-page-items .tau-count.tau-active', 'color: #fff !important; background: #989CA6 !important');
+            addCSSRule('.tau-board-view .tau-label__date', 'color: #A1A7B3 !important; opacity: 1 !important');
+            addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
             };
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
