@@ -3,7 +3,7 @@ tau
     .addDependency('tp3/mashups/topmenu')
     .addMashup(function(topMenu) {
 
-        'use strict';
+        'use strict';;
 
         var init = function() {
 
