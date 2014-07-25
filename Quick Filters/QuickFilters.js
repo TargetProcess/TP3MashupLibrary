@@ -33,7 +33,10 @@ tau.mashups
                 contentType: 'application/json; charset=utf8',
                 dataType: 'json'
             }).then(function(data) {
-                var storageData = _.first(data.items);
+
+                var storageData = _.findWhere(data.items, {
+                    key: String(loggedUser.id)
+                });
                 var items = storageData && storageData.userData && storageData.userData.filters ? JSON.parse(storageData.userData.filters) : [];
                 return items;
             });
