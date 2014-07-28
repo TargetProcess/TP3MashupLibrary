@@ -1,0 +1,67 @@
+table.board-timeline tr:hover {
+    background: #E3F5D7 !important
+}
+table.board-timeline tr {
+    border-bottom: 1px dotted #eee !important
+}
+table.board-timeline td {
+    height: 20px;
+    /*border-left: 1px dotted #eee !important*/
+}
+table.board-timeline {
+    border-collapse: collapse
+}
+
+.board-timeline .total {
+    color: #bbb;
+}
+
+.board-timeline .total-over {
+    color: red;
+}
+
+.board-timeline .total-zero {
+    color: orange;
+}
+
+.board-timeline .total-normal {
+    color: green;
+}
+
+
+.board-timeline .avatar {
+    float: left;
+    margin: 0 10px;
+}
+
+.board-timeline .current-month {
+    border-left: 1px solid red;
+    color: red !important;
+}
+
+.board-timeline__line {
+    background-size: 8.33%;
+    background-image: repeating-linear-gradient(to right, #eee 0, #eee 1px, transparent 1px, transparent);
+}
+
+.timeline-card {
+    box-sizing: border-box;
+    background: #ACD473;
+    border: 1px solid #8ACB29;
+    color: white;
+    overflow: hidden;
+    font: 11px Arial;
+    border-radius: 3px;
+    padding: 2px;
+    font-weight: bold;
+    font-size: 11px;
+    margin-bottom: 3px;
+}
+
+.timeline-card:last-of-type {
+    margin-bottom: 0;
+}
+
+.timeline-card i {
+    color: #333;
+}
