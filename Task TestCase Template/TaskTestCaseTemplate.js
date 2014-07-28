@@ -583,7 +583,8 @@ var applyTemplate = function() {
 
                                                 //testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Description</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
 
-                                        testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true"></div><div class="note">Success</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
+                                        // testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true"></div><div class="note">Success</div><div class="tm-description" contenteditable="true"></div><div class="action-buttons"></div></div></div>');
+                                        testcaseline.append('<div class="view-mode active"><div class="entity-name tm-placeholder"></div><div class="edit-block"><div class="action-buttons"></div></div></div>');
 
                                         $(this).parent().parent().children('.tm-body').prepend(testcaseline);
 
@@ -724,7 +725,8 @@ var applyTemplate = function() {
 
             });
 
-                    var desc = $('<div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true">' + testcase.Steps + '</div><div class="note">Success</div><div class="tm-description" contenteditable="true">' + testcase.Success + '</div><div class="action-buttons"></div></div>');
+                    // var desc = $('<div class="edit-block"><div class="note">Steps</div><div class="tm-description" contenteditable="true">' + testcase.Steps + '</div><div class="note">Success</div><div class="tm-description" contenteditable="true">' + testcase.Success + '</div><div class="action-buttons"></div></div>');
+                    var desc = $('<div class="edit-block"><div class="action-buttons"></div></div>');
 
                         testcaseitem.find('.view-mode').append(name);
                         testcaseitem.find('.view-mode').append(desc);
