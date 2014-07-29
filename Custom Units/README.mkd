@@ -5,7 +5,7 @@ This mashup provide an example how to add a unit to a library on Customize cards
 
 ![Attachment unit](AttachmentUnit.png?raw=true)
 
-```json
+```javascript
 {
        id: 'attachment_thumbnail',
        classId: 'tau-board-unit_type_attachment-thumbnail',
