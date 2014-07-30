@@ -1,0 +1,38 @@
+# Custom units for Customize cards
+
+This mashup provide an example how to add a unit to a library on Customize cards tab.
+
+![Attachment unit](https://github.com/TargetProcess/TP3MashupLibrary/raw/27f8f8d647987cccf001316f3e8a93823eebef72/Custom%20Units/AttachmentUnit.png?raw=true)
+
+```javascript
+{
+       id: 'attachment_thumbnail',
+       classId: 'tau-board-unit_type_attachment-thumbnail',
+       hideIf: function(data) {
+           return !data.attachments.length;
+       },
+       name: 'Attachment thumbnail',
+       types: [
+               et.FEATURE, et.STORY, et.TASK, et.BUG, et.REQUEST, et.TEST_CASE, et.IMPEDIMENT, et.ITERATION,
+               et.TEAM_ITERATION, et.RELEASE, et.TEST_PLAN, et.TEST_PLAN_RUN, et.BUILD
+       ],
+       sizes: [sz.XS, sz.S, sz.M, sz.L],
+       template: [
+           '<div class="tau-board-unit__value" style=" max-width: 100%; max-height: 100%; width: 100%;">',
+              '<img style="width: 100%;" src="<%! this.data.attachments[0].thumbnailUri.replace("width=100", "width=200").replace("height=200", "height=100") %>">',
+           '</div>'
+       ],
+       sampleData: { attachments: [ { thumbnailUri: helper.url('/Javascript/tau/css/images/icons/users/karat.png?size=') } ] },
+       model: 'attachments:attachments.Select({thumbnailUri})'
+}
+```
+
+* `id` - an unique Id of the unit
+* `classId` - id of the css class that will be applyed to the unit
+* `hideIf` - if a function returns `true`, the unit will be hidden on card
+* `name` - name of the unit in Library
+* `types` - an array of applicable card types
+* `sizes` - an array of applicable car sizes
+* `template` - an HTML template of the unit. Targetprocess use [jqote2](http://aefxx.com/api/jqote2-reference/) as template engine.
+* `sampleData` - a json object with sample data that will be used when the unit is displayed in Library
+* `model` - a data model of the unit. 

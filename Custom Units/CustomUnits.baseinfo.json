@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "Custom units for customized cards",
+    "CompatibleTpVersion": {
+        "Minimum": "3.2.8"
+    }
+}
