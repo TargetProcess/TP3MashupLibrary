@@ -76,7 +76,9 @@ tau
             addCSSRule('.tau-page-items .tau-count.tau-active', 'color: #fff !important; background: #989CA6 !important');
             addCSSRule('.tau-board-view .tau-label__date', 'color: #A1A7B3 !important; opacity: 1 !important');
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
-            };
+            addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
+            
+        };
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
             if ($st.length) {
