@@ -185,7 +185,7 @@
     background-color: #f8e4ce;
     color: #dd7709;
 }
-.tm-grid .edit-line td {
+.tm-grid .edit-line > td {
     background-color: #f2f6fb;
     padding: 15px 15px 15px 18px;
 }
@@ -289,17 +289,25 @@
     color: #acb6bf;
 }
 .tm-grid .edit-line .tm-description {
-    background-color: #fff;
-    border: solid 1px #cbd1d6;
-    border-top-color: #a3a7ab;
+
+    border: solid 1px transparent;
     padding: 7px;
-    min-width: 150px;
     color: #16343b;
     display: block;
     line-height: 16px;
-    min-height: 55px;
     font-weight: normal;
 }
+
+.edit-block > .tm-description {
+    min-height: 55px;
+}
+
+.tm-grid .edit-line .tm-description[contenteditable] {
+    border-color: #cbd1d6;
+    border-top-color: #a3a7ab;
+    background-color: #fff;
+}
+
 .tm-grid .edit-line .note {
     font-size: 11px;
     color: #acb6bf;
@@ -329,4 +337,38 @@
 
 .tm-grid .tm-name-edit {
     width: 100%;
+}
+
+.tm-stepeditor table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+.tm-stepeditor td {
+    width: 50%;
+    padding: 2px 3px;
+    background: white;
+    border-top: 1px solid #e8e8e8;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+}
+
+.tm-stepeditor .tm-stepeditor__row:hover td {
+    background: #FFFFE0;
+}
+
+
+.tm-stepeditor .tm-stepeditor__inner-dragging .tm-stepeditor__row:hover td {
+    background: white;
+}
+
+.tm-stepeditor__row-dragging td {
+    opacity: 0.1;
+
+}
+
+.tm-stepeditor__row-dragging {
+    max-height: 50px;
+    overflow: hidden;
 }

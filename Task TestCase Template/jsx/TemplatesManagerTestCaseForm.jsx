@@ -4,8 +4,9 @@
 
 tau
     .mashups
-    .addDependency('libs/react/react-ex')
-    .addModule('TaskTestCaseTemplate/TemplatesManagerTestCaseForm', function(React) {
+    .addDependency('react')
+    .addDependency('TaskTestCaseTemplate/StepEditor')
+    .addModule('TaskTestCaseTemplate/TemplatesManagerTestCaseForm', function(React, StepEditor) {
 
         'use strict';
 
@@ -32,31 +33,34 @@ tau
 
                 var description = this.props.store.getTestCaseDescription(item);
 
-
                 return (
+                    <div className="view-mode active">
+                        <div className="entity-name">
+                            <input type="text" ref="name" defaultValue={item.Name}
+                                placeholder="Name" autoFocus={true} />
+                        </div>
 
-                        <div className="view-mode active">
-                            <div className="entity-name">
-                                <input type="text" ref="name" defaultValue={item.Name}
-                                    placeholder="Name" autoFocus={true} />
-                            </div>
-                            <div className="edit-block">
-                                <div className="note">Description</div>
-                                <div className="tm-description" ref="description" contentEditable={true}
-                                dangerouslySetInnerHTML={{'__html': description}} ></div>
+                        <div className="edit-block">
+                            <div className="note">Description</div>
+                            <div className="tm-description" ref="description" contentEditable={true}
+                            dangerouslySetInnerHTML={{'__html': description}} ></div>
+                        </div>
 
-                                <div className="action-buttons">
-                                    <button type="button" className="tau-btn tau-success left"
-                                        onClick={this.handleSave}>
-                                        {item.Id ? 'Save Test Case' : 'Add Test Case'}
-                                    </button>
-                                    <button type="button" className="tau-btn tau-attention right"
-                                        onClick={this.handleRemove}>
-                                        {item.Id ? 'Delete' : 'Cancel'}
-                                    </button>
-                                </div>
+                        <div className="edit-block">
+                            <StepEditor item={item} store={this.props.store} />
+
+                            <div className="action-buttons">
+                                <button type="button" className="tau-btn tau-success left"
+                                    onClick={this.handleSave}>
+                                    {item.Id ? 'Save Test Case' : 'Add Test Case'}
+                                </button>
+                                <button type="button" className="tau-btn tau-attention right"
+                                    onClick={this.handleRemove}>
+                                    {item.Id ? 'Delete' : 'Cancel'}
+                                </button>
                             </div>
                         </div>
+                    </div>
                 );
             }
         });
