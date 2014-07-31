@@ -6,4 +6,17 @@ The Assigned Effort Report is a simple report that shows the total amount of ope
 
 Navigate to ```Reports > Other Reports > (People) > Assigned Effort Report``` to see the report.
 
+## Development
+
+Built with [ReactJS](http://facebook.github.io/react/index.html)
+
+Edit `.jsx` modules instead of `.js` with the same name.
+
+Use `react-tools` to build.
+
+```
+cd Assigned\ Effort\ Report
+jsx -x jsx ./jsx .
+```
+
 
