@@ -80,8 +80,6 @@ tau
 
                         v.testCases.forEach(function(v) {
                             if (v.status === 'edit') {
-                                v.steps = v.originalSteps || [];
-                                delete v.originalSteps;
                                 v.status = '';
                             }
                         });
@@ -200,7 +198,7 @@ tau
                 .then(function(res) {
 
                     var id = res.data.id;
-                    var steps = testCase.originalSteps || testCase.steps;
+                    var steps = testCase.steps;
 
                     var saves = steps.map(function(v) {
 
@@ -305,15 +303,11 @@ tau
                 });
 
                 template.testCases.forEach(function(v) {
-                    // should be more pretty
+
                     if (v.status === 'edit') {
-                        v.steps = v.originalSteps || [];
-                        delete v.originalSteps;
                         v.status = '';
                     }
                 });
-
-                testCase.originalSteps = _.deepClone(testCase.steps);
 
                 testCase.status = 'edit';
                 this.fire('update');
@@ -359,66 +353,6 @@ tau
                     });
                     this.fire('update');
                 }
-            },
-
-            getParentTestCase: function(step) {
-
-                var testCase;
-                _.forEach(this.items, function(item) {
-                    _.forEach(item.testCases, function(v) {
-                        if (v.steps.indexOf(step) >= 0) {
-                            testCase = v;
-                        }
-                    });
-                });
-
-                return testCase;
-            },
-
-            addStep: function(testCase) {
-
-                testCase.steps.push({
-                    Description: 'Do something',
-                    Result: 'Get something'
-                });
-                this.fire('update');
-            },
-
-            editStep: function(step) {
-
-                if (step.isEditing) {
-                    return;
-                }
-
-                var testCase = this.getParentTestCase(step);
-                testCase.steps.forEach(function(v) {
-                    v.isEditing = false;
-                });
-
-                step.isEditing = true;
-                this.fire('update');
-            },
-
-            saveStep: function(step) {
-
-                step.isEditing = false;
-                this.fire('update');
-            },
-
-            reorderSteps: function(testcase, steps, lastMovedTo) {
-
-                testcase.steps = steps;
-                testcase.lastMovedTo = lastMovedTo;
-                this.fire('update');
-            },
-
-            removeStep: function(step) {
-
-                var testCase = this.getParentTestCase(step);
-
-                testCase.steps = _.without(testCase.steps, step);
-
-                this.fire('update');
             },
 
             write: function(template) {

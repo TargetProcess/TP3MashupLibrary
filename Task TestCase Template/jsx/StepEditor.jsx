@@ -14,31 +14,49 @@ tau
 
         var StepEditor = React.createClass({
 
+            getDefaultProps: function() {
+                return {
+                    store: null
+                };
+            },
+
             getInitialState: function() {
                 return {
                     isDragging: false
                 };
             },
 
-            sort: function(steps, lastMovedTo) {
+            componentDidMount: function() {
 
-                this.props.store.reorderSteps(this.props.item, steps, lastMovedTo);
+                this.updateHandler = function() {
+                    this.forceUpdate();
+                }.bind(this);
+
+                this.props.store.on('update', this.updateHandler);
+                this.props.store.read();
+            },
+
+            componentWillUnmount: function() {
+                this.props.store.removeListener('update', this.updateHandler);
+            },
+
+            sort: function(steps, lastMovedTo) {
+                this.props.store.reorderSteps(steps, lastMovedTo);
             },
 
             render: function() {
 
                 var dragData = {
-                    items: this.props.item.steps,
-                    dragging: this.props.item.lastMovedTo
+                    items: this.props.store.items,
+                    dragging: this.props.store.lastMovedTo
                 };
 
-                var steps = this.props.item.steps.map(function(v, k) {
+                var steps = this.props.store.items.map(function(v, k) {
                     return (
                         <StepEditorRow key={k} item={v} data={dragData} store={this.props.store}
                             sort={this.sort} />
                     );
                 }.bind(this));
-
 
                 var header;
 
@@ -74,7 +92,7 @@ tau
             },
 
             handleAddStep: function() {
-                this.props.store.addStep(this.props.item);
+                this.props.store.createStep();
             },
 
             handleDragOver: function() {

@@ -6,25 +6,17 @@ tau
     .mashups
     .addDependency('react')
     .addDependency('TaskTestCaseTemplate/StepEditor')
-    .addModule('TaskTestCaseTemplate/TemplatesManagerTestCaseForm', function(React, StepEditor) {
+    .addDependency('TaskTestCaseTemplate/stepsStore')
+    .addModule('TaskTestCaseTemplate/TemplatesManagerTestCaseForm', function(React, StepEditor, StepsStore) {
 
         'use strict';
 
         var TemplatesManagerTestCaseForm = React.createClass({displayName: 'TemplatesManagerTestCaseForm',
 
-            handleSave: function() {
-
-                var item = this.props.item;
-                var val = this.refs.name.getDOMNode().value.trim();
-                if (val) {
-                    item.Name = val;
-                    item.Description = this.refs.description.getDOMNode().innerHTML || '';
-                    this.props.store.saveTestCase(this.props.item);
-                }
-            },
-
-            handleRemove: function() {
-                this.props.store.removeTestCase(this.props.item);
+            getInitialState: function() {
+                return {
+                    stepsStore: new StepsStore(this.props.item)
+                };
             },
 
             render: function() {
@@ -47,7 +39,7 @@ tau
                         ), 
 
                         React.DOM.div({className: "edit-block"}, 
-                            StepEditor({item: item, store: this.props.store}), 
+                            StepEditor({store: this.state.stepsStore}), 
 
                             React.DOM.div({className: "action-buttons"}, 
                                 React.DOM.button({type: "button", className: "tau-btn tau-success left", 
@@ -62,6 +54,22 @@ tau
                         )
                     )
                 );
+            },
+
+            handleSave: function() {
+
+                var item = this.props.item;
+                var val = this.refs.name.getDOMNode().value.trim();
+                if (val) {
+                    item.Name = val;
+                    item.Description = this.refs.description.getDOMNode().innerHTML || '';
+                    item.steps = this.state.stepsStore.items;
+                    this.props.store.saveTestCase(this.props.item);
+                }
+            },
+
+            handleRemove: function() {
+                this.props.store.removeTestCase(this.props.item);
             }
         });
 
