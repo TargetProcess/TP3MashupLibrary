@@ -198,22 +198,24 @@ tau
                 .then(function(res) {
 
                     var id = res.data.id;
-                    var steps = testCase.steps;
+                    var stepsToSave = testCase.steps;
 
-                    var saves = steps.map(function(v) {
-
-                        return store.saveDef('testSteps', {
-                            $set: {
-                                TestCase: {
-                                    Id: id
-                                },
-                                Description: v.Description,
-                                Result: v.Result
-                            }
+                    var steps = stepsToSave.reduce(function(res, item, k) {
+                        return res.then(function() {
+                            return store.saveDef('testSteps', {
+                                $set: {
+                                    TestCase: {
+                                        Id: id
+                                    },
+                                    Description: item.Description,
+                                    Result: item.Result,
+                                    RunOrder: k + 1
+                                }
+                            });
                         });
-                    });
+                    }.bind(this), $.when(true));
 
-                    return $.when.apply(null, saves);
+                    return steps;
                 });
             },
 
