@@ -70,15 +70,16 @@ tau.mashups
                 return v.User.Id;
             });
 
-            return users.map(function(user) {
+            users = users.map(function(user) {
 
                 var allocations = allocationsByUser[user.Id] || [];
+
                 user.ProjectMembers = allocations;
                 user.totalAllocation = 0;
 
                 user.avatarUrl = configurator.getApplicationPath() + '/avatar.ashx?size=30&UserId=' + user.Id;
 
-                allocations.forEach(function(project) {
+                user.ProjectMembers = _.filter(user.ProjectMembers, function(project) {
 
                     project.Start = project.MembershipStartDate ?
                         new Date(parseInt(project.MembershipStartDate.substr(6), 10)) :
@@ -87,9 +88,10 @@ tau.mashups
                         new Date(parseInt(project.MembershipEndDate.substr(6), 10)) :
                         null;
 
-                    if (!project.End || project.End.getFullYear() < today.getFullYear()) {
-                        return;
-                    }
+                    return (project.End && project.End.getFullYear() >= today.getFullYear());
+                });
+
+                user.ProjectMembers = user.ProjectMembers.map(function(project) {
 
                     var startMonth = 0; // take first month
                     var startDate = 1;
@@ -110,23 +112,20 @@ tau.mashups
                         endDate = 31;
                     }
 
-                    project.Start = {
-                        day: Math.round(startMonth * 30.5) + startDate
-                    };
+                    var startDay = Math.round(startMonth * 30.5) + startDate;
+                    var endDay = Math.round(endMonth * 30.5) + endDate;
+                    var lengthInDays = endDay - startDay;
+                    lengthInDays = lengthInDays ? lengthInDays : 15;
 
-                    project.End = {
-                        day: Math.round(endMonth * 30.5) + endDate
-                    };
-
-                    project.lengthInDays = project.End.day - project.Start.day;
-                    project.lengthByPercents = project.lengthInDays / 365 * 100;
-                    project.startByPercents = project.Start.day / 365 * 100;
+                    project.lengthByPercents = lengthInDays / 365 * 100;
+                    project.startByPercents = startDay / 365 * 100;
 
                     if (project.startByPercents + project.lengthByPercents > 100) {
                         project.lengthByPercents = 100 - project.startByPercents;
                     }
 
                     user.totalAllocation += project.Allocation;
+                    return project;
                 });
 
                 if (user.totalAllocation > 100) {
@@ -139,6 +138,14 @@ tau.mashups
 
                 return user;
             });
+
+            if (SHOW_ZERO_ALLOCATIONS === false) {
+                users = _.filter(users, function(v) {
+                    return v.totalAllocation > 0;
+                });
+            }
+
+            return users;
         });
     };
 
@@ -171,7 +178,6 @@ tau.mashups
                                 '<br /><span style="color: #bbb;"><%= user.Role.Name %></span> ',
                                 '<span class="total <%= user.totalClassName %>"><%= user.totalAllocation %>%</span>',
                             '</td>',
-                            // '<% this.months.forEach(function(v) { %>',
                             '<td colspan="12" class="board-timeline__line">',
                                 '<% user.ProjectMembers.forEach(function(member) { %>',
                                     '<div class="timeline-card" style="',
