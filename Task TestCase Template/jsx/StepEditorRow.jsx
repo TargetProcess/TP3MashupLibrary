@@ -13,16 +13,6 @@ tau
 
         var Sortable = {
 
-            getDefaultProps: function() {
-                return {
-                    "data-id": this.props.key,
-                    draggable: true,
-                    onDragEnd: this.sortEnd.bind(this),
-                    onDragOver: this.dragOver.bind(this),
-                    onDragStart: this.sortStart.bind(this)
-                };
-            },
-
             update: function(to, from) {
                 var data = this.props.data.items;
                 data.splice(to, 0, data.splice(from, 1)[0]);
@@ -91,7 +81,13 @@ tau
                 });
 
                 var tr = (
-                    <tr className={className}>
+                    <tr className={className}
+                        data-id={this.props.key}
+                        draggable={this.props.item.isEditing ? null : true}
+                        onDragEnd={this.sortEnd}
+                        onDragOver={this.dragOver}
+                        onDragStart={this.sortStart}>
+
                         <td  onClick={this.handleEdit}>
                             <div className="tm-description" ref="description"
                                 contentEditable={this.props.item.isEditing || null}
@@ -115,11 +111,7 @@ tau
                     </tr>
                 );
 
-                if (this.props.item.isEditing) {
-                    return tr;
-                } else {
-                    return this.transferPropsTo(tr);
-                }
+                return tr;
 
             },
 
