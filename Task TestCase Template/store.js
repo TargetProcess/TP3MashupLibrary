@@ -2,9 +2,8 @@ tau
     .mashups
     .addDependency('jQuery')
     .addDependency('Underscore')
-    .addDependency('tau/configurator')
     .addDependency('tau/core/event')
-    .addModule('TaskTestCaseTemplate/store', function($, _, configurator, Event) {
+    .addModule('TaskTestCaseTemplate/store', function($, _, Event) {
 
         'use strict';
 
@@ -21,7 +20,7 @@ tau
                 $
                     .ajax({
                         type: 'GET',
-                        url: configurator.getApplicationPath() + '/storage/v1/ApplyTemplateMashup/' +
+                        url: this.configurator.getApplicationPath() + '/storage/v1/ApplyTemplateMashup/' +
                             '?where=(scope == "Public")&select={publicData,key}',
                         contentType: 'application/json; charset=utf8'
                     })
@@ -30,11 +29,19 @@ tau
                         var items = data.items;
 
                         this.items = items.map(function(v) {
+
+                            var testCases = _.compact(JSON.parse(v.publicData.testCases) || []);
+                            testCases = testCases.map(function(v) {
+                                v.steps = v.steps || [];
+                                return v;
+                            });
+
                             return {
                                 key: v.key,
+                                isExpanded: v.isExpanded,
                                 name: v.publicData.name,
-                                tasks: JSON.parse(v.publicData.tasks) || [],
-                                testCases: JSON.parse(v.publicData.testCases) || []
+                                tasks: _.compact(JSON.parse(v.publicData.tasks) || []),
+                                testCases: testCases
                             };
                         });
 
@@ -72,7 +79,9 @@ tau
                         });
 
                         v.testCases.forEach(function(v) {
-                            v.status = '';
+                            if (v.status === 'edit') {
+                                v.status = '';
+                            }
                         });
 
                     }
@@ -101,7 +110,7 @@ tau
 
                 $.ajax({
                     type: 'POST',
-                    url: configurator.getApplicationPath() + '/storage/v1/ApplyTemplateMashup/' + item.key,
+                    url: this.configurator.getApplicationPath() + '/storage/v1/ApplyTemplateMashup/' + item.key,
                     contentType: 'application/json; charset=utf8',
                     beforeSend: function(xhr) {
                         xhr.setRequestHeader('X-HTTP-Method-Override', 'DELETE');
@@ -139,7 +148,7 @@ tau
 
             createTaskByTemplate: function(task, userStory) {
 
-                return configurator.getStore().saveDef('tasks', {
+                return this.configurator.getStore().saveDef('tasks', {
                     $set: {
                         Name: task.Name,
                         Description: task.Description,
@@ -149,13 +158,23 @@ tau
                         Project: {
                             Id: userStory.project.id
                         }
-                    }
+                    },
+                    fields: [
+                        'id',
+                        'name',
+                        {
+                            'userStory': [
+                                'id'
+                            ]
+                        }
+                    ]
                 });
             },
 
             createTestCaseByTemplate: function(testCase, userStory) {
 
-                return configurator.getStore().saveDef('testCases', {
+                var store = this.configurator.getStore();
+                return store.saveDef('testCases', {
                     $set: {
                         Name: testCase.Name,
                         Description: this.getTestCaseDescription(testCase),
@@ -165,7 +184,38 @@ tau
                         Project: {
                             Id: userStory.project.id
                         }
-                    }
+                    },
+                    fields: [
+                        'id',
+                        'name',
+                        {
+                            'userStory': [
+                                'id'
+                            ]
+                        }
+                    ]
+                })
+                .then(function(res) {
+
+                    var id = res.data.id;
+                    var stepsToSave = testCase.steps;
+
+                    var steps = stepsToSave.reduce(function(res, item, k) {
+                        return res.then(function() {
+                            return store.saveDef('testSteps', {
+                                $set: {
+                                    TestCase: {
+                                        Id: id
+                                    },
+                                    Description: item.Description,
+                                    Result: item.Result,
+                                    RunOrder: k + 1
+                                }
+                            });
+                        });
+                    }.bind(this), $.when(true));
+
+                    return steps;
                 });
             },
 
@@ -184,7 +234,7 @@ tau
 
                 var id = this.entity.id;
 
-                return configurator.getStore().getDef('UserStory', {
+                return this.configurator.getStore().getDef('UserStory', {
                     id: id,
                     fields: [{
                         'project': ['id']
@@ -248,17 +298,20 @@ tau
                 }
             },
 
-            editTestCase: function(task) {
+            editTestCase: function(testCase) {
 
                 var template = _.find(this.items, function(item) {
-                    return _.indexOf(item.testCases, task) >= 0;
+                    return _.indexOf(item.testCases, testCase) >= 0;
                 });
 
                 template.testCases.forEach(function(v) {
-                    v.status = '';
+
+                    if (v.status === 'edit') {
+                        v.status = '';
+                    }
                 });
 
-                task.status = 'edit';
+                testCase.status = 'edit';
                 this.fire('update');
             },
 
@@ -270,22 +323,20 @@ tau
 
                 template.testCases = _.without(template.testCases, task);
 
-                this.write(template);
                 this.fire('update');
-                // this.write();
+                this.write(template);
             },
 
-            saveTestCase: function(task) {
+            saveTestCase: function(testcase) {
 
                 var template = _.find(this.items, function(item) {
-                    return _.indexOf(item.testCases, task) >= 0;
+                    return _.indexOf(item.testCases, testcase) >= 0;
                 });
-                task.Id = task.Id || Number(new Date());
-                task.status = '';
+                testcase.Id = testcase.Id || Number(new Date());
+                testcase.status = '';
 
-                this.write(template);
                 this.fire('update');
-                // this.write();
+                this.write(template);
             },
 
             createTestCase: function(template) {
@@ -299,7 +350,8 @@ tau
                         Id: 0,
                         Name: '',
                         Description: '',
-                        status: 'edit'
+                        status: 'edit',
+                        steps: []
                     });
                     this.fire('update');
                 }
@@ -312,7 +364,7 @@ tau
                 ['tasks', 'testCases'].forEach(function(key) {
                     templateData[key] = JSON.stringify(_.compact(template[key].map(function(v) {
 
-                        if (!v.Id) {
+                        if (!v.Id || v.status === 'edit') {
                             return null;
                         }
 
@@ -325,7 +377,7 @@ tau
 
                 return $.ajax({
                     type: 'POST',
-                    url: configurator.getApplicationPath() + '/storage/v1/ApplyTemplateMashup/',
+                    url: this.configurator.getApplicationPath() + '/storage/v1/ApplyTemplateMashup/',
                     contentType: 'application/json; charset=utf8',
                     data: JSON.stringify({
                         'key': template.key || '',
