@@ -32,7 +32,7 @@ You can create your custom units. The following properties can be used:
 * `id` - a unique unit ID
 * `classId` - an ID of the css class which will be applied to the unit
 * `hideIf` - if a function returns 'true', the unit will be hidden on card
-* `name` - naname of a unit in the Library
+* `name` - a name of a unit in the Library
 * `types` - applicable entity types
 * `sizes` - applicable card sizes
 * `template` - an HTML template of a unit. Targetprocess uses jqote2 [jqote2](http://aefxx.com/api/jqote2-reference/) as a template engine.
