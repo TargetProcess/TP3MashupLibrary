@@ -1,6 +1,6 @@
-# Custom units for Customize cards
+# Custom Units
 
-This mashup provides an example of how to add a unit to a library on Customize cards tab.
+The mashup allows to add custom units to the Units Library on a Customize Cards tab. After the mashup installation, you'll find a new ‘Attachment’ custom unit on the Customise Cards tab in a View Setup area by default. This allows to see the first attached to an entity file as a picture on a card. Only one available line on a card is required to add the unit.
 
 ![Attachment unit](https://github.com/TargetProcess/TP3MashupLibrary/raw/27f8f8d647987cccf001316f3e8a93823eebef72/Custom%20Units/AttachmentUnit.png?raw=true)
 
@@ -27,12 +27,14 @@ This mashup provides an example of how to add a unit to a library on Customize c
 }
 ```
 
-* `id` - a unique Id of the unit
-* `classId` - id of the css class that will be applied to the unit
-* `hideIf` - if a function returns `true`, the unit will be hidden on a card
-* `name` - name of the unit in Library
-* `types` - an array of applicable card types
-* `sizes` - an array of applicable card sizes
-* `template` - an HTML template of the unit. Targetprocess uses [jqote2](http://aefxx.com/api/jqote2-reference/) as a template engine.
-* `sampleData` - a json object with sample data that will be used when the unit is displayed in Library
-* `model` - a data model of the unit. 
+You can create your custom units. The following properties can be used:
+
+* `id` - a unique unit ID
+* `classId` - an ID of the css class which will be applied to the unit
+* `hideIf` - if a function returns 'true', the unit will be hidden on card
+* `name` - naname of a unit in the Library
+* `types` - applicable entity types
+* `sizes` - applicable card sizes
+* `template` - an HTML template of a unit. Targetprocess uses jqote2 [jqote2](http://aefxx.com/api/jqote2-reference/) as a template engine.
+* `sampleData` - a json object with sample data, which will be used when a unit is displayed in Library
+* `model` - a unit data model
