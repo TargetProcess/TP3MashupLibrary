@@ -1,5 +1,5 @@
 {
-    "ShortDescription": "Custom units for customized cards",
+    "ShortDescription": "Adds a new 'Attachment' unit to the Customise Cards.",
     "CompatibleTpVersion": {
         "Minimum": "3.2.8"
     }
