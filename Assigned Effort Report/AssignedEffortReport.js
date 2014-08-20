@@ -1,16 +1,13 @@
 tau.mashups
-
     .addDependency('jQuery')
     .addDependency('react')
+    .addDependency('AssignedEffortReport.config')
     .addDependency('AssignedEffortReport/Report')
     .addDependency('AssignedEffortReport/store')
-    .addDependency('tau/configurator')
     .addCSS('style.css')
-    .addMashup(function($, React, Report, store) {
+    .addMashup(function($, React, config, Report, store) {
 
-        var SHOW_ONLY_CURRENT_ITERATION = false;
-
-        store.options.showOnlyCurrentIteration = SHOW_ONLY_CURRENT_ITERATION;
+        store.options.showOnlyCurrentIteration = config.SHOW_ONLY_CURRENT_ITERATION;
 
         $(document).ready(function() {
             $('a:contains("Time By Person")').after($('<a id="allocation-link" href="#">Assigned Effort</a>').click(function() {
