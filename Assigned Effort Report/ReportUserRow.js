@@ -2,10 +2,10 @@
  * @jsx React.DOM
  */
 
- tau.mashups
-     .addDependency('react')
-     .addDependency('AssignedEffortReport/ReportEntityRow')
-     .addModule('AssignedEffortReport/ReportUserRow', function(React, ReportEntityRow) {
+tau.mashups
+    .addDependency('react')
+    .addDependency('AssignedEffortReport/ReportEntityRow')
+    .addModule('AssignedEffortReport/ReportUserRow', function(React, ReportEntityRow) {
 
         'use strict';
 

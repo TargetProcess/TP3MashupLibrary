@@ -3,10 +3,10 @@
  * @jsx React.DOM
  */
 
- tau.mashups
-     .addDependency('react')
-     .addDependency('tau/configurator')
-     .addModule('AssignedEffortReport/ReportEntityRow', function(React, configurator) {
+tau.mashups
+    .addDependency('react')
+    .addDependency('tau/configurator')
+    .addModule('AssignedEffortReport/ReportEntityRow', function(React, configurator) {
 
         'use strict';
 
