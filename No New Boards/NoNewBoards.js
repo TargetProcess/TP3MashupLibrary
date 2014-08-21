@@ -4,8 +4,10 @@ var listAccessDenied = {
 };
 tau.mashups
     .addDependency('Underscore')
+    .addDependency('jQuery')
     .addDependency('tau/core/bus.reg')
-    .addMashup(function(_, reg) {
+    .addCSS('style.css')
+    .addMashup(function(_, $, reg) {
 
         'use strict';
 
@@ -26,10 +28,10 @@ tau.mashups
                     bus.removeListener(eventName, listener);
                 }
             });
+        };
 
-            reg.getByName(busName).done(function(bus) {
-                bus.on(eventName, listener);
-            });
+        var hideByCSS = function() {
+            $('body').addClass('nonewboards');
         };
 
         var hideCreateViewButton = function() {
@@ -60,6 +62,7 @@ tau.mashups
             _.contains(listAccessDenied.ids, loggedUser.id);
 
         if (isAccessDenied) {
+            hideByCSS();
             hideCreateViewButton();
             hideTemplatesTab();
             hideActionButtons();
