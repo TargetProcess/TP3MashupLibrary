@@ -6,16 +6,38 @@ tau.mashups
         'use strict';
 
         $(document).ready(function() {
+            var $target = $('#ctl00_mainArea_pnlUpd');
 
-            $('div#ctl00_mainArea_pnlUpd > table:first').find('tr.dataRow').each(function() {
-                var id = $(this).find('td:eq(2) > a:first').attr('href').match(/#(\w+)\/(\d+)/);
-                if (id) {
-                    id = id[2];
-                    $(this).find('td:eq(2)').prepend(
-                        '<div style="font-size: smaller; float: left; margin-right: 6px;">#' +
+            if (!$target.length) {
+                return;
+            }
+
+            var apply = function() {
+
+                $target.find('tr.dataRow td:nth-of-type(3) a:first-of-type').each(function(k, v) {
+                    var $link = $(v);
+                    var id = $link.attr('href').match(/#(\w+)\/(\d+)/);
+                    if (id) {
+                        id = id[2];
+                        $link.parent().prepend(
+                            '<div style="font-size: smaller; float: left; margin-right: 6px;">#' +
                             id +
-                        '</div>');
-                }
-            });
+                            '</div>');
+                    }
+                });
+            };
+
+            if (window.MutationObserver) {
+
+                var observer = new MutationObserver(function() {
+                    apply();
+                });
+                var config = {
+                    childList: true
+                };
+                observer.observe($target[0], config);
+            }
+
+            apply();
         });
     });
