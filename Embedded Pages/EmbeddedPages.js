@@ -5,9 +5,10 @@ tau
     .addDependency('tau/core/class')
     .addDependency('tp/general/view')
     .addDependency('tau/configurator')
+    .addDependency('tau/models/page.entity/entity.context.factory')
     .addDependency('EmbeddedPages.config')
     .addCSS('EmbeddedPages.css')
-    .addMashup(function($, _, Class, generalView, configurator, config) {
+    .addMashup(function($, _, Class, generalView, configurator, ContextFactory, config) {
 
         'use strict';
 
@@ -46,7 +47,8 @@ tau
                 this.config = config;
 
                 if (!this.config.customFieldName) {
-                    throw new Error('Embedded Pages mashup: Option "customFieldName" is required.');
+                    this._error('\'Embedded Pages\' mashup misconfiguration: \'customFieldName\' is required');
+                    return;
                 }
 
                 this.config.entityTypeName = String(this.config.entityTypeName).toLowerCase();
@@ -57,24 +59,13 @@ tau
 
             addToView: function(view) {
 
-                view.addTab(this.getLabelText(), this.onContentReady.bind(this), this.onHeaderReady.bind(this), {
+                view.addTab(this.getLabelText(), this.onContentReady.bind(this), $.noop, {
                     getViewIsSuitablePromiseCallback: this.preAdd.bind(this)
                 });
             },
 
             getLabelText: function() {
                 return this.config.customFieldName;
-            },
-
-            onHeaderReady: function($el) {
-
-                return $
-                    .when(this.checkByCustomField())
-                    .then(function(hasField) {
-                        if (!hasField) {
-                            this.removeHeader($el);
-                        }
-                    }.bind(this));
             },
 
             onContentReady: function($el) {
@@ -107,10 +98,16 @@ tau
                     id: context.entity.id,
                     entityType: {
                         name: (context.entity.type ? context.entity.type : context.entity.entityType.name).toLowerCase()
-                    }
+                    },
+                    projectId: context.entity.projectId,
+                    teamId: context.entity.teamId
                 };
 
-                return $.when(this.checkByType());
+                if (!this.checkByType()){
+                    return $.when(false);
+                }
+
+                return $.when(this.checkByCustomField());
             },
 
             checkByType: function() {
@@ -134,137 +131,48 @@ tau
                 }
 
                 return $
-                    .when(this.getCustomFieldByProcess())
+                    .when(this.getCustomFieldByContext())
                     .then(function cacheFieldAndStartListenChanges(field) {
-
-                        this.customField = field;
-                        this.subscribeOnChanges(field);
+                        try {
+                            this.customField = field;
+                            this.subscribeOnChanges(field);
+                        } catch (e) {
+                            this._error(e);
+                        }
                         return field;
                     }.bind(this));
             },
 
-            getCustomFieldByProcess: function() {
+            getCustomFieldByContext: function() {
+                var fieldDeferred = $.Deferred();
 
-                return $
-                    .when(this.getProcess())
-                    .then(function(process) {
-
-                        if (this.config.processName && process.name !== this.config.processName) {
-                            return null;
+                try{
+                    ContextFactory.create(this.entity, configurator).done(function(appContext) {
+                        var field = null;
+                        try {
+                            if (appContext.getProcess().name === this.config.processName){
+                                field = this.findField(appContext.getCustomFields());
+                            }
+                            fieldDeferred.resolve(field);
                         }
-                        return this.findFieldInProcess(process);
-                    }.bind(this));
-            },
-
-            getProcess: function() {
-
-                return $
-                    .when((function() {
-                        if (this.entity.entityType.name === 'project') {
-                            return this.getProjectProcess();
-                        } else {
-                            return this.getEntityProcess();
-                        }
-                    }.bind(this))())
-                    .then(function(process) {
-                        if (!process) {
-                            return this.getDefaultProcess();
-                        } else {
-                            return process;
+                        catch (e){
+                            fieldDeferred.reject(e);
+                            this._error(e);
                         }
                     }.bind(this));
+                } catch (e){
+                    fieldDeferred.reject(e);
+                    this._error(e);
+                }
+
+                return fieldDeferred.promise();
             },
 
-            getProjectProcess: function() {
-
-                var fields = [
-                    'customFields', {
-                        process: [
-                            'name', {
-                                customFields: [
-                                    'name',
-                                    'value',
-                                    'fieldType', {
-                                        entityType: ['name']
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ];
-
-                return getData(this.entity.entityType.name, {
-                    id: this.entity.id,
-                    fields: fields
-                })
-                    .then(function(res) {
-                        return res.process;
-                    });
-            },
-
-            getEntityProcess: function() {
-
-                var fields = [
-                    'customFields', {
-                        project: [
-                            {
-                                process: [
-                                    'name', {
-                                        customFields: [
-                                            'name',
-                                            'value',
-                                            'fieldType', {
-                                                entityType: ['name']
-                                            }
-                                        ]
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ];
-
-                return getData(this.entity.entityType.name, {
-                            id: this.entity.id,
-                            fields: fields
-                        })
-                        .then(function(res) {
-                            return res.project ? res.project.process : null;
-                        });
-            },
-
-            getDefaultProcess: function() {
-
-                var fields = [
-                    'name', {
-                        customFields: [
-                            'name',
-                            'value',
-                            'fieldType', {
-                                entityType: ['name']
-                            }
-                        ]
-                    }
-                ];
-
-                return getData('process', {
-                            fields: fields,
-                            $query: {
-                                isDefault: 1
-                            }
-                        })
-                        .then(function(res) {
-                            return res[0];
-                        });
-            },
-
-            findFieldInProcess: function(process) {
-
-                return _.find(process.customFields, function(field) {
-
+            findField: function(customFields) {
+                return _.find(customFields, function(field) {
                     return field.name === this.config.customFieldName &&
-                        this.checkCustomFieldType(field.fieldType) &&
-                        field.entityType.name.toLowerCase() === this.config.entityTypeName;
+                        this.checkCustomFieldType(field.type) &&
+                        field.entityKind.toLowerCase() === this.config.entityTypeName;
                 }.bind(this));
             },
 
@@ -284,12 +192,12 @@ tau
                 ];
 
                 return getData(this.entity.entityType.name, {
-                            id: this.entity.id,
-                            fields: fields
-                        })
-                        .then(function(entity) {
-                            return this.findFieldInEntity(entity);
-                        }.bind(this));
+                    id: this.entity.id,
+                    fields: fields
+                })
+                    .then(function(entity) {
+                        return this.findFieldInEntity(entity);
+                    }.bind(this));
             },
 
             findFieldInEntity: function(entity) {
@@ -306,7 +214,7 @@ tau
             renderContent: function(field, value) {
 
                 var url = null;
-                switch (field.fieldType.toLowerCase()) {
+                switch (field.type.toLowerCase()) {
 
                     case 'url':
                         url = (value && value.url) ? value.url : null;
@@ -327,35 +235,10 @@ tau
                 }
             },
 
-            removeHeader: function($labelEl) {
-
-                var $header = $labelEl.parents('.i-role-tabheader:first');
-                if ($header.hasClass('selected')) {
-                    $header.prevAll('.i-role-tabheader:first').click();
-                }
-
-                var label = $header.data('label');
-                this.disableHeaderElement($header);
-
-                var $more = $header.parent().find('.i-role-moretrigger');
-                var $moreBubble = $more.data('ui-tauBubble') ?
-                    $more.tauBubble('option', 'content') :
-                    null;
-                if ($moreBubble) {
-                    var $moreHeader = $moreBubble.find('.i-role-tabheader[data-label="' + label + '"]');
-                    this.disableHeaderElement($moreHeader);
-                }
-            },
-
-            disableHeaderElement: function($el) {
-
-                $el.data('label', '__disabled');
-                $el.attr('data-label', '__disabled');
-                $el.addClass('disabled');
-            },
-
             subscribeOnChanges: function(customField) {
-
+                if (!customField){
+                    return;
+                }
                 configurator.getStore().unbind(this);
                 configurator.getStore().on({
                     eventName: 'afterSave',
@@ -372,6 +255,10 @@ tau
                         this.$el.html(this.renderContent(customField, field.value));
                     }
                 }.bind(this));
+            },
+
+            _error: function(e) {
+                console && console.error && console.error(e);
             }
         });
 
