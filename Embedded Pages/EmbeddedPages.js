@@ -150,7 +150,7 @@ tau
                     ContextFactory.create(this.entity, configurator).done(function(appContext) {
                         var field = null;
                         try {
-                            if (appContext.getProcess().name === this.config.processName){
+                            if (!this.config.processName || appContext.getProcess().name === this.config.processName){
                                 field = this.findField(appContext.getCustomFields());
                             }
                             fieldDeferred.resolve(field);
