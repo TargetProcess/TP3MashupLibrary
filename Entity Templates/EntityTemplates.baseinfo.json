@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "This Mashup allows for the creation of templates to be used as a starting point for the description of the different TargetProcess entities.",
+    "CompatibleTpVersion": {
+        "Minimum": "3.3.0"
+    }
+}
