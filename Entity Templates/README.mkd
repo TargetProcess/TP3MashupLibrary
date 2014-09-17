@@ -1,0 +1,101 @@
+# Entity Templates Mashup
+
+The Entity Templates Mashup allows for the creation of templates to be used as a starting point for the description of the following entities in TargetProcess:
+
+1. User Stories
+2. Bugs
+3. Features
+4. Tasks
+5. Requests
+6. Test Cases
+
+## How to activate it
+
+1. Install the mashup from the Targetprocess Mashups Library
+2. Edit the settings by opening the mashup in the Mashups Manager.  On-site users can also edit the `EntityTemplates.config.js` file.
+
+## Configuration
+
+### templates
+
+The Templates collection is a key-value dictionary, which uses an HTML string as a template for a particular entity type.
+
+### switchResult
+
+This switch indicates what templates should be used and when they should be used.
+Here you list the entity names **in the [terminology](https://guide.targetprocess.com/settings/how-can-i-give-a-new-name-to-an-entity.html) of your project**.  This gives you the freedom to use different templates for different projects.
+
+#### Examples
+
+##### Development project
+
+```js
+        this.templates = {
+            'UserStory': 'As a <i>type of user</i>, I want <i>some goal</i> so that <i>some reason</i>',
+            'Feature': '<table border="1"><caption>Features and Benefits matrix</caption>' +
+				'<thead><tr><th scope="col">Features</th><th scope="col">Benefits</th></tr></thead>' +
+				'<tbody><tr>' +
+				'<td><em>A short phrase, giving a name and some implied context to the feature</em></td>' +
+				'<td><em>A short description which describes the benefit to the user and the business. There may be multiple benefits per feature which are highlighted here</em></td>' +
+				'</tr>' +
+				'<tr><td><em>...</em></td><td><em>...</em></td></tr>' +
+				'<tr><td>...</td><td>...</td></tr>' +
+				'</tbody></table>',
+            'Task': null,
+            'Bug': '<p><strong>Steps to Reproduce:</strong><em> Minimized, easy-to-follow steps that will trigger the bug. Include any special setup steps.</em></p>' +
+				'<p><strong>Actual Results:</strong><em> What the application did after performing the above steps.</em></p>' +
+				'<p><strong>Expected Results:</strong><em> What the application should have done, were the bug not present.</em></p>'
+        };
+        var switchResult = function(a) {
+            switch (a) {
+                case 'User Story':
+                    return this.templates.UserStory;
+                case 'Feature':
+                    return this.templates.Feature;
+                case 'Task':
+                    return this.templates.Task;
+                case 'Bug':
+                    return this.templates.Bug;
+                default:
+                    return '';
+            }
+        };
+```
+![New Bug](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Entity%20Templates/new-bug.png)
+
+##### Marketing project
+
+![Terms](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Entity%20Templates/terms.png)
+
+```js
+        this.templates = {
+            'Campaign': '<table border="1"><caption>Main goals of the campaign</caption>' +
+				'<thead><tr><th scope="col">Goals</th><th scope="col">Notes</th></tr></thead>' +
+				'<tbody><tr>' +
+				'<td><em>A short description of a goal</em></td>' +
+				'<td><em>Notes</em></td>' +
+				'</tr>' +
+				'<tr><td><em>...</em></td><td><em>...</em></td></tr>' +
+				'<tr><td>...</td><td>...</td></tr>' +
+				'</tbody></table>',
+            'Advertisement': '<p><strong>Main idea:</strong><em> Breif description of the main idea.</em></p>' +
+				'<p><strong>Target Audience:</strong><em> Who do we want to reach with it.</em></p>' +
+				'<p><strong>Expected Results:</strong><em> What results do we expect from it.</em></p>',
+            'Blocker': '<p>As a <i>type of user</i>, I cannot proceed with <i>a task</i> because of <i>some reason</i></p>'+
+              	'<p>If the issue is not urgently resolved, it will cause <i>the consequences</i>'
+        };
+        var switchResult = function(a) {
+            switch (a) {
+                case 'Campaign':
+                    return this.templates.Campaign;
+                case 'Advertisement':
+                    return this.templates.Advertisement;
+                case 'Blocker':
+                    return this.templates.Blocker;
+                default:
+                    return '';
+            }
+        };
+```
+
+![New Blocker](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Entity%20Templates/new-blocker.png)
