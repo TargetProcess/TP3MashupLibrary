@@ -1,6 +1,7 @@
 # Entity Templates Mashup
 
 The Entity Templates Mashup allows for the creation of templates to be used as a starting point for the description of the following entities in TargetProcess:
+
 1. User Stories
 2. Bugs
 3. Features
@@ -38,7 +39,7 @@ Here you list the entity names **in the [terminology](https://guide.targetproces
 				'<td><em>A short description which describes the benefit to the user and the business. There may be multiple benefits per feature which are highlighted here</em></td>' +
 				'</tr>' +
 				'<tr><td><em>...</em></td><td><em>...</em></td></tr>' +
-				'<tr><td>...</td><td>...</td></tr>
+				'<tr><td>...</td><td>...</td></tr>' +
 				'</tbody></table>',
             'Task': null,
             'Bug': '<p><strong>Steps to Reproduce:</strong><em> Minimized, easy-to-follow steps that will trigger the bug. Include any special setup steps.</em></p>' +
