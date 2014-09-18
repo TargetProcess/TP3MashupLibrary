@@ -1,5 +1,5 @@
 {
-    "ShortDescription": "This Mashup allows for the creation of templates to be used as a starting point for the description of the different TargetProcess entities.",
+    "ShortDescription": "The Entity Templates Mashup adds the option to set a default description, which is automatically applied when a new entity is created.",
     "CompatibleTpVersion": {
         "Minimum": "3.2.8"
     }
