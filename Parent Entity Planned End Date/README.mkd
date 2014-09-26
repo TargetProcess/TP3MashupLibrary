@@ -20,7 +20,3 @@ As a result you'll see the planned end date for the parent of the current card, 
 
 ![Parent Entity Planned End Date](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Parent%20Entity%20Planned%20End%20Date/screen.jpg)
 
-
-## Requirements
-
-TP version >=3.3.2
