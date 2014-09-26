@@ -1,0 +1,23 @@
+# Parent Entity Planned End Date
+
+## Description
+
+The mashup shows a parent feature (or user story) planned end date on a user story (or task) card.
+
+It may be quite useful to see when a parent feature is planned to be completed when look at a user story card on a board or in list.
+
+The mashup add a custom Planned End Date unit, which can be added via customise cards option to be shown on cards in a board or a list mode.
+
+![Parent Entity Planned End Date](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Parent%20Entity%20Planned%20End%20Date/screen.png)
+
+How to activate it:
+
+1. Install a mashup
+2. Go to a view (in a board or list mode) with User Stories selected as cards -> open Customize Cards tab in  setup area -> find the Feature Planned End Date unit -> drag and drop it to add to a User Story card
+3. Now you can see a Feature planned end date on a User Story card
+
+Note: A User Story planned end date can be shown on a Task card in the same way
+
+## Requirements
+
+TP version >=2.23.0
