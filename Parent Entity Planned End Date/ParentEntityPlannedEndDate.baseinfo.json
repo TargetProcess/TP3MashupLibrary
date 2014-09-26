@@ -1,5 +1,5 @@
 {
-    "ShortDescription": "Show a parent feature (or user story) planned end date on a user story (or task) card",
+    "ShortDescription": "Shows a parent feature planned end date on a user story card.",
     "CompatibleTpVersion": {
         "Minimum": "2.23.0"
     }
