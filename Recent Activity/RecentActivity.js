@@ -1,4 +1,4 @@
-/* globals tau, moment */
+/* globals tau */
 tau
     .mashups
     .addDependency('jQuery')
@@ -60,13 +60,8 @@ tau
                     this.projects = ctx.selectedProjects;
                 }.bind(this));
 
-                var def = $.Deferred();
-                require(['https://rawgit.com/timrwood/moment/2.0.0/min/moment.min.js'], function() {
-                    def.resolve();
-                });
-
                 return $
-                    .when(context.getApplicationPath(), def)
+                    .when(context.getApplicationPath())
                     .then(function(appPath) {
                         this.appPath = appPath;
 
@@ -298,8 +293,13 @@ tau
 
             buildDateCondition: function(dateFieldName) {
 
-                var from = moment().subtract('days', this.DAYS_AGO).format('YYYY-MM-DD');
-                var to = moment().format('YYYY-MM-DD');
+                var format = function(date) {
+                    return _.lpad(date.getFullYear(), 2, 0) + '-' + _.lpad(date.getMonth() + 1, 2, 0) + '-' + date.getDate();
+                };
+
+                var from = format(new Date(new Date() - this.DAYS_AGO * 24 * 3600000));
+                var to = format(new Date());
+
                 return _.sprintf('(%s >= DateTime.Parse("%s")) and (%s <= DateTime.Parse("%s"))', dateFieldName, from, dateFieldName, to);
             },
 
@@ -311,8 +311,27 @@ tau
 
                 items.reverse();
 
+                var format = function(date) {
+                    var months = [
+                        'Jan',
+                        'Feb',
+                        'Mar',
+                        'Apr',
+                        'May',
+                        'Jun',
+                        'Jul',
+                        'Aug',
+                        'Sep',
+                        'Oct',
+                        'Nov',
+                        'Dec'
+                    ];
+
+                    return (months[date.getMonth()]) + '-' + date.getDate();
+                };
+
                 var grouped = _.groupBy(items, function(item) {
-                    return moment(item.EventDate).format('MMM-DD');
+                    return format(item.EventDate);
                 });
 
                 this.$el.find('#ac_filter').remove();
@@ -340,7 +359,7 @@ tau
                         html += $.jqote(
                             tmpl, {
                                 path: this.appPath,
-                                date: moment(item.EventDate).format('HH:mm'),
+                                date: _.lpad(item.EventDate.getHours(), 2, 0) + ':' + _.lpad(item.EventDate.getMinutes(), 2, 0),
                                 state: item.State,
                                 entityType: item.EntityType.toString(),
                                 entityId: item.Id,
