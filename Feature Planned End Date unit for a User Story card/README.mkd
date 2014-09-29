@@ -18,5 +18,5 @@ How to activate it:
 
 As a result you'll see the planned end date for the parent of the current card, either user stories or tasks.
 
-![Parent Entity Planned End Date](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Parent%20Entity%20Planned%20End%20Date/screen.jpg)
+![Feature Planned End Date unit for a User Story card](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Feature%20Planned%20End%20Date%20unit%20for%20a%20User%20Story%20card/screen.jpg)
 
