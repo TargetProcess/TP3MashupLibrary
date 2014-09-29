@@ -1,4 +1,4 @@
-# Parent Entity Planned End Date Unit
+# Feature (User Story) Planned End Date unit for a User Story (Task) card
 
 ## Description
 
