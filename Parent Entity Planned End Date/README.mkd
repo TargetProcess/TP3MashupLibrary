@@ -1,4 +1,4 @@
-# Feature (User Story) Planned End Date unit for a User Story (Task) card
+# Feature Planned End Date unit for a User Story card
 
 ## Description
 
