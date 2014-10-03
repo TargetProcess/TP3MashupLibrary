@@ -16,7 +16,7 @@ How to activate it:
 1. Install the mashup
 2. Create a view where Features (or User Stories) are selected as cards
 3. In the view setup go to the Customize Cards tab 
-4. Add the Feature Planned End Date (or User Story Planned End Date) unit to the approriate card
+4. Add the required unit (Feature Planned End Date, User Story Planned End Date or Release Finish Date) to the approriate card
 
 As a result you'll see the planned end date for the parent of the current card, either user stories or tasks.
 
