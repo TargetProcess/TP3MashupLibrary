@@ -4,8 +4,8 @@
 
 This mashup adds two new custom units:
 
-* Feature Planned End Date unit for a user story card
-* User Story Planned End Date unit for a task card
+* Feature Planned End Date unit for a User Story card
+* User Story Planned End Date unit for a Task card
 * Release Planned End Date for a Feature card
 * Release Planned End Date for a User Story card
 
