@@ -61,6 +61,33 @@ tau.mashups
                 endDate: '\/Date(1385350733000-0500)\/'
             },
             model: 'endDate:userstory.plannedEndDate'
+        }, {
+            id: 'release_endDate',
+            classId: 'tau-board-unit_type_date',
+            hideIf: function(data) {
+                return !data.endDate;
+            },
+            sortConfig: {
+                field: 'release.plannedEndDate'
+            },
+            name: '${Release,capital} finish date',
+            header: '${Release,capital} finish date',
+            types: [
+                types.STORY, types.FEATURE
+            ],
+            term: 'release',
+            sizes: [sizes.XS, sizes.S, sizes.M, sizes.L, sizes.LIST],
+            template: [
+                '<div class="tau-board-unit__value">&rarr;',
+                '<div class="tau-board-unit__value_type_day"><%=fn.formatDayShort(this.data.endDate)%></div>',
+                '<div class="tau-board-unit__value_type_month"><%=fn.formatDate(this.data.endDate, "MMM")%></div>',
+                '<div class="tau-board-unit__value_type_year"><%=fn.formatDate(this.data.endDate, "yyyy")%></div>',
+                '</div>'
+            ],
+            sampleData: {
+                endDate: '\/Date(1385350733000-0500)\/'
+            },
+            model: 'endDate:release.endDate'
         }];
 
         function addUnits(configurator) {
