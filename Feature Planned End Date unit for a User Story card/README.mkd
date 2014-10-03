@@ -1,4 +1,4 @@
-# Planned End Date unit for a child entity card
+# Parent Planned End Date units 
 
 ## Description
 
