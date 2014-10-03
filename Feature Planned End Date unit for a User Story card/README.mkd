@@ -1,4 +1,4 @@
-# Feature Planned End Date unit for a User Story card
+# Planned End Date unit for a child entity card
 
 ## Description
 
@@ -6,8 +6,10 @@ This mashup adds two new custom units:
 
 * Feature Planned End Date unit for a user story card
 * User Story Planned End Date unit for a task card
+* Release Planned End Date for a Feature card
+* Release Planned End Date for a User Story card
 
-With this mashup you can easily see when a parent feature is planned to be completed when looking at a user story card, as well as to see when a parent user story is planned to be completed when looking at a task card.
+With this mashup you can easily see when a parent feature is planned to be completed when looking at a user story card, as well as to see when a parent user story is planned to be completed when looking at a task card. You can aslo quickly understand when a parent Release is planned to be completed looking at a Feature or a User Story card.
 
 How to activate it:
 
