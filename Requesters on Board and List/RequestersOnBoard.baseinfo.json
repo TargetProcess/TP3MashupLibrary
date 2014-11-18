@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "Add Requesters unit to Board and List view",
+    "CompatibleTpVersion": {
+        "Minimum": "3.2.8"
+    }
+}
