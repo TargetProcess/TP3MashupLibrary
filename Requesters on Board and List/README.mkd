@@ -2,4 +2,4 @@
 
 This mashup adds custom Requesters unit to Board and List view
 
-![Attachment unit](Requesters.png?raw=true)
+![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/Requesters.png?raw=true)
