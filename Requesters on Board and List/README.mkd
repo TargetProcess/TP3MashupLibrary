@@ -1,4 +1,4 @@
-# Requesters on Cards and in Lists
+# Requesters on Boards and in Lists
 
 ## Description
 
