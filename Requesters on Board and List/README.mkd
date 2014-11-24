@@ -13,7 +13,10 @@ How to activate it:
 3. In the view setup go to the Customize Cards tab
 4. Add the "Requesters" unit to the approriate card
 
-As a result you'll see Requesters on cards when use the Board mode or in a column when use the List mode.
+As a result you'll see Requesters on cards when use the Board mode:
 
 ![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/requesters_in_lists.png?raw=true)
+
+Also you can see Requesters in a column when use the List mode:
+
 ![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/requesters_on_cards.png?raw=true)
