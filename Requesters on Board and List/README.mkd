@@ -15,4 +15,5 @@ How to activate it:
 
 As a result you'll see Requesters on cards when use the Board mode or in a column when use the List mode.
 
-![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/Requesters.png?raw=true)
+![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/requesters_in_lists.png?raw=true)
+![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/requesters_on_cards.png?raw=true)
