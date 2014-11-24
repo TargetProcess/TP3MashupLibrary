@@ -12,6 +12,7 @@ How to activate it:
 2. Create a view where Requests are selected as cards
 3. In the view setup go to the Customize Cards tab
 4. Add the "Requesters" unit to the approriate card
-5. As a result you'll see Requesters on cards when use the Board mode or in a column when use the List mode.
+
+As a result you'll see Requesters on cards when use the Board mode or in a column when use the List mode.
 
 ![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/Requesters.png?raw=true)
