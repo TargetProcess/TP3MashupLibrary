@@ -1,5 +1,15 @@
-# Custom units for Customize cards
+# Requesters on Cards and in Lists
 
-This mashup adds custom Requesters unit to Board and List view
+This mashup adds a "Requesters" custom unit to the units library.
+
+With this mashup you can easily see who requested a Request when looking at a Request card on a Board or at a Request line in a List.
+
+How to activate it:
+
+Install the mashup
+Create a view where Requests are selected as cards
+In the view setup go to the Customize Cards tab
+Add the "Requesters" unit to the approriate card
+As a result you'll see Requesters on cards when use the Board mode or in a column when use the List mode.
 
 ![Attachment unit](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Requesters%20on%20Board%20and%20List/Requesters.png?raw=true)
