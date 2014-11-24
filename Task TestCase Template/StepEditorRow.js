@@ -66,6 +66,22 @@ tau
 
             mixins: [Sortable],
 
+            componentDidMount: function() {
+                this.documentListener = function(e) {
+
+                    if (this.isMounted() && !this.refs.row.getDOMNode().contains(e.target) &&
+                        this.props.item.isEditing) {
+                        this.props.store.saveStep(this.props.item);
+                    }
+                }.bind(this);
+
+                document.addEventListener('click', this.documentListener);
+            },
+
+            componentWillUnmount: function() {
+                document.removeEventListener('click', this.documentListener);
+            },
+
             componentDidUpdate: function() {
 
                 if (this.refs.description) {
@@ -82,6 +98,7 @@ tau
 
                 var tr = (
                     React.DOM.tr({className: className, 
+                        ref: "row", 
                         'data-id': this.props.key, 
                         draggable: this.props.item.isEditing ? null : true, 
                         onDragEnd: this.sortEnd, 
@@ -115,8 +132,14 @@ tau
 
             },
 
+            handleStopEdit: function() {
+               this.props.store.saveStep(this.props.item);
+            },
+
             handleEdit: function() {
-                this.props.store.editStep(this.props.item);
+                if (!this.props.item.isEditing) {
+                    this.props.store.editStep(this.props.item);
+                }
             },
 
             handleRemove: function(e) {
@@ -133,11 +156,8 @@ tau
                     return;
                 }
 
-                e.preventDefault();
-
                 this.props.item.Description = this.refs.description.getDOMNode().innerHTML;
                 this.props.item.Result = this.refs.result.getDOMNode().innerHTML;
-                this.props.store.saveStep(this.props.item);
             }
 
         });
