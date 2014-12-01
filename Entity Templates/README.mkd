@@ -1,13 +1,6 @@
 # Entity Templates Mashup
 
-The Entity Templates Mashup adds the option to set a default description, which is automatically applied when a new entity is created.  This mashup is designed to work for the following entity types:
-
-1. User Stories
-2. Bugs
-3. Features
-4. Tasks
-5. Requests
-6. Test Cases
+The Entity Templates Mashup adds the option to set a default description, which is automatically applied when a new entity is created.
 
 ## How to activate it
 
@@ -18,19 +11,15 @@ The Entity Templates Mashup adds the option to set a default description, which 
 
 ### templates
 
-The Templates collection is a key-value dictionary, which uses an HTML string as a template for a particular entity type.
+The Templates collection is a key-value dictionary, which uses an HTML string as a template for a particular entity type or [term](https://guide.targetprocess.com/settings/how-can-i-give-a-new-name-to-an-entity.html). This gives you the freedom to use different templates for different projects. To skip template of entity type for special term set its value to `null`.
 
-### switchResult
-
-This switch indicates what templates should be used and when they should be used.
-Here you list the entity names **in the [terminology](https://guide.targetprocess.com/settings/how-can-i-give-a-new-name-to-an-entity.html) of your project**.  This gives you the freedom to use different templates for different projects.
 
 #### Examples
 
 ##### Development project
 
 ```js
-        this.templates = {
+        var templates = {
             'UserStory': 'As a <i>type of user</i>, I want <i>some goal</i> so that <i>some reason</i>',
             'Feature': '<table border="1"><caption>Features and Benefits matrix</caption>' +
 				'<thead><tr><th scope="col">Features</th><th scope="col">Benefits</th></tr></thead>' +
@@ -41,24 +30,10 @@ Here you list the entity names **in the [terminology](https://guide.targetproces
 				'<tr><td><em>...</em></td><td><em>...</em></td></tr>' +
 				'<tr><td>...</td><td>...</td></tr>' +
 				'</tbody></table>',
-            'Task': null,
             'Bug': '<p><strong>Steps to Reproduce:</strong><em> Minimized, easy-to-follow steps that will trigger the bug. Include any special setup steps.</em></p>' +
 				'<p><strong>Actual Results:</strong><em> What the application did after performing the above steps.</em></p>' +
-				'<p><strong>Expected Results:</strong><em> What the application should have done, were the bug not present.</em></p>'
-        };
-        var switchResult = function(a) {
-            switch (a) {
-                case 'User Story':
-                    return this.templates.UserStory;
-                case 'Feature':
-                    return this.templates.Feature;
-                case 'Task':
-                    return this.templates.Task;
-                case 'Bug':
-                    return this.templates.Bug;
-                default:
-                    return '';
-            }
+				'<p><strong>Expected Results:</strong><em> What the application should have done, were the bug not present.</em></p>',
+            'Scrum Bug': null
         };
 ```
 ![New Bug](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Entity%20Templates/new-bug.png)
@@ -68,7 +43,7 @@ Here you list the entity names **in the [terminology](https://guide.targetproces
 ![Terms](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Entity%20Templates/terms.png)
 
 ```js
-        this.templates = {
+        var templates = {
             'Campaign': '<table border="1"><caption>Main goals of the campaign</caption>' +
 				'<thead><tr><th scope="col">Goals</th><th scope="col">Notes</th></tr></thead>' +
 				'<tbody><tr>' +
@@ -83,18 +58,6 @@ Here you list the entity names **in the [terminology](https://guide.targetproces
 				'<p><strong>Expected Results:</strong><em> What results do we expect from it.</em></p>',
             'Blocker': '<p>As a <i>type of user</i>, I cannot proceed with <i>a task</i> because of <i>some reason</i></p>'+
               	'<p>If the issue is not urgently resolved, it will cause <i>the consequences</i>'
-        };
-        var switchResult = function(a) {
-            switch (a) {
-                case 'Campaign':
-                    return this.templates.Campaign;
-                case 'Advertisement':
-                    return this.templates.Advertisement;
-                case 'Blocker':
-                    return this.templates.Blocker;
-                default:
-                    return '';
-            }
         };
 ```
 
