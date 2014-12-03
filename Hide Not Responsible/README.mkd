@@ -10,8 +10,8 @@ When this button is pressed, only the cards which each person is responsible for
 
 As a result, instead of a board with a lot of duplicated cards:
 
-![Board without mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide Not Responsible/without-mashup.png)
+![Board without mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide%20Not%20Responsible/without-mashup.png)
 
 You'll see a board with only cards for which the persons from each lane is responsible:
 
-![Board with mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide Not Responsible/with-mashup.png)
+![Board with mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide%20Not%20Responsible/with-mashup.png)
