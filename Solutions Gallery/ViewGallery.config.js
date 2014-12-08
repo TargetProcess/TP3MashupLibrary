@@ -1,4 +1,4 @@
-/* v1.2.0 Build Fri Dec 05 2014 14:40:28 GMT+0300 (FET) */
+/* v1.2.1 Build Mon Dec 08 2014 14:47:30 GMT+0300 (FET) */
 /*globals tau*/
 tau
     .mashups
