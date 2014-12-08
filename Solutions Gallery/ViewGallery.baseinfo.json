@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "Gives access to the Solutions Gallery",
+    "CompatibleTpVersion": {
+        "Minimum": "3.5.0"
+    }
+}
