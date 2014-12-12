@@ -1,8 +1,11 @@
 tau.mashups
-    .addDependency('tp/general/view')
-    .addMashup(function(view) {
+    .addDependency('Underscore')
+    .addDependency('tau/configurator')
+    .addMashup(function(_, configurator) {
 
-        this.templates = {
+        'use strict';
+
+        var templates = {
             'UserStory': 'As a <I>(insert job title i.e. Planner)</I> I need <I>(insert description of what is required i.e. a ' +
                 'report)</I> so I can <I>(insert benefit i.e. so I can order material.)</I>.' +
                 '<BR><BR><BR>Links as needed:<BR><a href="http://it.woodgrain.com/sites/Programs/' +
@@ -43,40 +46,49 @@ tau.mashups
             'Bug': '', //put an HTML-formatted template into quotes
             'TestCase': ''
         };
-        var switchResult = function(a) {
-            switch (a) {
-                case 'User Story':
-                    return this.templates.UserStory;
-                case 'Feature':
-                    return this.templates.Feature;
-                case 'Task':
-                    return this.templates.Task;
-                case 'Request':
-                    return this.templates.Request;
-                case 'Bug':
-                    return this.templates.Bug;
-                case 'Test Case':
-                    return this.templates.TestCase;
-                default:
-                    return '';
-            }
+
+        var reg = configurator.getBusRegistry();
+
+        var addBusListener = function(busName, eventName, listener) {
+
+            reg.on('create', function(e, data) {
+
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.once(eventName, listener);
+                }
+            });
+
+            reg.on('destroy', function(e, data) {
+
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.removeListener(eventName, listener);
+                }
+            });
         };
 
-        var onViewRendered = function($element) {
+        addBusListener('description', 'afterRender', function(e, renderData) {
 
-            var entityName = $element.find('.tau-entity-icon:first').text();
+            var $el = renderData.element;
+            var $description = $el.find('.ui-description__inner');
 
-            var description = $element.find(".ui-description__inner");
-            if (description) {
-                if (description.find('div').length === 0) {
-                    description.attr("data-placeholder", "");
-                    var newDescription = switchResult(entityName);
-                    if (newDescription) {
-                        description.append('<div>' + newDescription + '</div>');
-                    }
+            if ($description.length && !$description.find('div').length) {
+
+                var entityTypeName = renderData.view.config.context.entity.entityType.name.toLowerCase();
+                var term = _.find(renderData.view.config.context.getTerms(), function(v) {
+                    return (v.wordKey || v.name).toLowerCase() === entityTypeName;
+                });
+                var termValue = term ? term.value.toLowerCase() : null;
+
+                var template = _.find(templates, function(v, k) {
+                    return k.toLowerCase() === entityTypeName || k.toLowerCase() === termValue;
+                });
+
+                if (template) {
+                    $description.attr('data-placeholder', '');
+                    $description.append('<div>' + template + '</div>');
                 }
             }
-
-        };
-        view.onRender(onViewRendered);
+        });
     });
