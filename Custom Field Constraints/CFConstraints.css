@@ -52,3 +52,11 @@
 .cf-constraints-customFields .ui-customfield_editable_true:hover .ui-customfield__label {
     background: #fff;
 }
+
+.cf-constraints-customFields .ui-customfield-richtext .ui-customfield__value.editable:hover {
+    background: #FFFFE1;
+}
+
+.cf-constraints-richText .ui_custom_field_value_container {
+    padding: 0;
+}
