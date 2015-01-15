@@ -10,7 +10,7 @@ tau
 
         'use strict';
 
-        var TemplatesManagerTestCase = React.createClass({displayName: 'TemplatesManagerTestCase',
+        var TemplatesManagerTestCase = React.createClass({displayName: "TemplatesManagerTestCase",
 
             handleStartEdit: function() {
                 this.props.store.editTestCase(this.props.item);
@@ -23,20 +23,20 @@ tau
 
                 if (item.status === 'edit') {
                     inner = (
-                        Form({item: item, store: this.props.store})
+                        React.createElement(Form, {item: item, store: this.props.store})
                     );
                 } else {
                     inner = (
-                        React.DOM.div({className: "view-mode"}, 
-                            React.DOM.div({className: "entity-name", onClick: this.handleStartEdit}, 
-                                React.DOM.span(null, item.Name)
+                        React.createElement("div", {className: "view-mode"}, 
+                            React.createElement("div", {className: "entity-name", onClick: this.handleStartEdit}, 
+                                React.createElement("span", null, item.Name)
                             )
                         )
                     );
                 }
 
                 return (
-                    React.DOM.div({className: "tm-item"}, 
+                    React.createElement("div", {className: "tm-item"}, 
                         inner
                     )
                 );

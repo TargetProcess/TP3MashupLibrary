@@ -58,11 +58,11 @@ tau
             },
 
             isDragging: function() {
-                return this.props.data.dragging === this.props.key;
+                return this.props.data.dragging === this.props.id;
             }
         };
 
-        var StepEditorRow = React.createClass({displayName: 'StepEditorRow',
+        var StepEditorRow = React.createClass({displayName: "StepEditorRow",
 
             mixins: [Sortable],
 
@@ -97,30 +97,30 @@ tau
                 });
 
                 var tr = (
-                    React.DOM.tr({className: className, 
+                    React.createElement("tr", {className: className, 
                         ref: "row", 
-                        'data-id': this.props.key, 
+                        "data-id": this.props.id, 
                         draggable: this.props.item.isEditing ? null : true, 
                         onDragEnd: this.sortEnd, 
                         onDragOver: this.dragOver, 
                         onDragStart: this.sortStart}, 
 
-                        React.DOM.td({onClick: this.handleEdit}, 
-                            React.DOM.div({className: "tm-description", ref: "description", 
+                        React.createElement("td", {onClick: this.handleEdit}, 
+                            React.createElement("div", {className: "tm-description", ref: "description", 
                                 contentEditable: this.props.item.isEditing || null, 
                                 dangerouslySetInnerHTML: {'__html': this.props.item.Description}, 
                                 onBlur: this.handleSubmit}
                             )
                         ), 
-                        React.DOM.td({onClick: this.handleEdit}, 
-                            React.DOM.div({className: "tm-description", ref: "result", 
+                        React.createElement("td", {onClick: this.handleEdit}, 
+                            React.createElement("div", {className: "tm-description", ref: "result", 
                                 contentEditable: this.props.item.isEditing || null, 
                                 dangerouslySetInnerHTML: {'__html': this.props.item.Result}, 
                                 onBlur: this.handleSubmit}
                             )
                         ), 
-                        React.DOM.td({style: {width: 57}}, 
-                            React.DOM.button({type: "button", className: "tau-btn tau-attention tau-btn-small", 
+                        React.createElement("td", {style: {width: 57}}, 
+                            React.createElement("button", {type: "button", className: "tau-btn tau-attention tau-btn-small", 
                                 onClick: this.handleRemove}, 
                                 "Delete"
                             )

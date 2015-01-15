@@ -9,7 +9,7 @@ tau
 
         'use strict';
 
-        var TemplatesManagerTaskForm = React.createClass({displayName: 'TemplatesManagerTaskForm',
+        var TemplatesManagerTaskForm = React.createClass({displayName: "TemplatesManagerTaskForm",
 
             handleSave: function() {
 
@@ -33,22 +33,22 @@ tau
 
                 return (
 
-                        React.DOM.div({className: "view-mode active"}, 
-                            React.DOM.div({className: "entity-name"}, 
-                                React.DOM.input({type: "text", ref: "name", placeholder: "Name", 
+                        React.createElement("div", {className: "view-mode active"}, 
+                            React.createElement("div", {className: "entity-name"}, 
+                                React.createElement("input", {type: "text", ref: "name", placeholder: "Name", 
                                     defaultValue: item.Name, autoFocus: true})
                             ), 
-                            React.DOM.div({className: "edit-block"}, 
-                                React.DOM.div({className: "note"}, "Description"), 
-                                React.DOM.div({className: "tm-description", ref: "description", contentEditable: true, 
+                            React.createElement("div", {className: "edit-block"}, 
+                                React.createElement("div", {className: "note"}, "Description"), 
+                                React.createElement("div", {className: "tm-description", ref: "description", contentEditable: true, 
                                 dangerouslySetInnerHTML: {'__html': item.Description}}), 
 
-                                React.DOM.div({className: "action-buttons"}, 
-                                    React.DOM.button({type: "button", 
+                                React.createElement("div", {className: "action-buttons"}, 
+                                    React.createElement("button", {type: "button", 
                                         className: "tau-btn tau-success left", onClick: this.handleSave}, 
                                         item.Id ? 'Save Task' : 'Add Task'
                                     ), 
-                                    React.DOM.button({type: "button", 
+                                    React.createElement("button", {type: "button", 
                                         className: "tau-btn tau-attention right", onClick: this.handleRemove}, 
                                         item.Id ? 'Delete' : 'Cancel'
                                     )
