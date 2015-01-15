@@ -53,7 +53,7 @@ tau
 
                 var steps = this.props.store.items.map(function(v, k) {
                     return (
-                        <StepEditorRow key={k} item={v} data={dragData} store={this.props.store}
+                        <StepEditorRow key={k} id={k} item={v} data={dragData} store={this.props.store}
                             sort={this.sort} />
                     );
                 }.bind(this));

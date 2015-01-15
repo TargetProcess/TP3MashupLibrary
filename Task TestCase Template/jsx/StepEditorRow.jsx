@@ -58,7 +58,7 @@ tau
             },
 
             isDragging: function() {
-                return this.props.data.dragging === this.props.key;
+                return this.props.data.dragging === this.props.id;
             }
         };
 
@@ -99,7 +99,7 @@ tau
                 var tr = (
                     <tr className={className}
                         ref="row"
-                        data-id={this.props.key}
+                        data-id={this.props.id}
                         draggable={this.props.item.isEditing ? null : true}
                         onDragEnd={this.sortEnd}
                         onDragOver={this.dragOver}

@@ -12,7 +12,7 @@ tau
 
         var cx = React.addons.classSet;
 
-        var StepEditor = React.createClass({displayName: 'StepEditor',
+        var StepEditor = React.createClass({displayName: "StepEditor",
 
             getDefaultProps: function() {
                 return {
@@ -53,7 +53,7 @@ tau
 
                 var steps = this.props.store.items.map(function(v, k) {
                     return (
-                        StepEditorRow({key: k, item: v, data: dragData, store: this.props.store, 
+                        React.createElement(StepEditorRow, {key: k, id: k, item: v, data: dragData, store: this.props.store, 
                             sort: this.sort})
                     );
                 }.bind(this));
@@ -68,13 +68,13 @@ tau
                     });
 
                     header = (
-                        React.DOM.table(null, 
-                            React.DOM.tr({className: "tm-stepeditor__header"}, 
-                                React.DOM.th(null, "Step"), 
-                                React.DOM.th(null, "Result"), 
-                                React.DOM.th({style: {width: 57}})
+                        React.createElement("table", null, 
+                            React.createElement("tr", {className: "tm-stepeditor__header"}, 
+                                React.createElement("th", null, "Step"), 
+                                React.createElement("th", null, "Result"), 
+                                React.createElement("th", {style: {width: 57}})
                             ), 
-                            React.DOM.tbody({className: className, 
+                            React.createElement("tbody", {className: className, 
                                 onDragOver: this.handleDragOver, 
                                 onDrop: this.handleDrop}, 
                                 steps
@@ -84,9 +84,9 @@ tau
                 }
 
                 return (
-                    React.DOM.div({className: "tm-stepeditor"}, 
+                    React.createElement("div", {className: "tm-stepeditor"}, 
                         header, 
-                        React.DOM.button({className: "tau-btn", onClick: this.handleAddStep}, "Add step")
+                        React.createElement("button", {className: "tau-btn", onClick: this.handleAddStep}, "Add step")
                     )
                 );
             },
