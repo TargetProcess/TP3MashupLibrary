@@ -7,7 +7,7 @@ tau.mashups
     .addCSS('style.css')
     .addMashup(function($, React, config, Report, store) {
 
-        store.options.showOnlyCurrentIteration = config.SHOW_ONLY_CURRENT_ITERATION;
+        store.options.condition = config.CONDITION;
 
         $(document).ready(function() {
             $('a:contains("Time By Person")').after($('<a id="allocation-link" href="#">Assigned Effort</a>').click(function() {

@@ -71,7 +71,7 @@ tau.mashups
         var store = {
 
             options: {
-                showOnlyCurrentIteration: false
+                condition: null
             },
 
             data: {
@@ -87,8 +87,8 @@ tau.mashups
                     'Effort gt 0'
                 ];
 
-                if (this.options.showOnlyCurrentIteration) {
-                    query.push('Iteration.IsCurrent eq "true"');
+                if (this.options.condition) {
+                    query.push(this.options.condition);
                 }
 
                 return load('assignables', {
