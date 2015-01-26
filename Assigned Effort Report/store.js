@@ -119,7 +119,7 @@ tau.mashups
                         }
                     ]) + ']',
                     take: 1000,
-                    where: query.join(' and ')
+                    where: '(' + query.join(')and(') + ')'
                 });
             },
 
