@@ -14,22 +14,16 @@ tau.mashups
             return v;
         });
 
-        var tableCSS = {
-            'overflow': 'hidden',
-            'text-overflow': 'ellipsis',
-            'max-width': '200px',
-            'min-width': '200px'
-        };
-
         var getNewID = function() {
             return (new Date()).getTime();
         };
 
-        var getinfo = function() {
+        var getItems = function() {
 
             return $.ajax({
                 type: 'GET',
-                url: configurator.getApplicationPath() + '/storage/v1/QuickFilters/?where=(scope == "Private")&select={UserData,key}',
+                url: configurator.getApplicationPath() +
+                    '/storage/v1/QuickFilters/?where=(scope == "Private")&select={UserData,key}',
                 contentType: 'application/json; charset=utf8',
                 dataType: 'json'
             }).then(function(data) {
@@ -37,15 +31,16 @@ tau.mashups
                 var storageData = _.findWhere(data.items, {
                     key: String(loggedUser.id)
                 });
-                var items = storageData && storageData.userData && storageData.userData.filters ? JSON.parse(storageData.userData.filters) : [];
+                var items = storageData && storageData.userData && storageData.userData.filters ?
+                    JSON.parse(storageData.userData.filters) : [];
                 return items;
             });
         };
 
-        var saveinfo = function(savedata) {
+        var saveItems = function(items) {
 
             var data = {
-                filters: JSON.stringify(savedata)
+                filters: JSON.stringify(items)
             };
 
             return $.ajax({
@@ -61,10 +56,22 @@ tau.mashups
             });
         };
 
-        var saveDesc = function(desc, filter, key) {
+        var removeItem = function(item) {
+            $
+                .when(getItems())
+                .then(function(items) {
+                    items = items.filter(function(v) {
+                        return v.ID !== item.ID;
+                    });
+                    return saveItems(items);
+                });
+        };
 
+        var saveItem = function(item, desc) {
+
+            var key = item.ID;
             return $
-                .when(getinfo())
+                .when(getItems())
                 .then(function(items) {
                     items = items.map(function(v) {
                         if (key === v.ID) {
@@ -72,148 +79,167 @@ tau.mashups
                         }
                         return v;
                     });
-                    return saveinfo(items);
+                    return saveItems(items);
                 });
         };
 
-        var addFilterToList = function(item, $table, $rowTemplate) {
+        var addItem = function(filter, desc) {
 
-            var filter = item.Filter;
-            var desc = item.Desc;
-            var filterID = item.ID;
-
-            var lastFilterClone = $rowTemplate.clone();
-            lastFilterClone.find('.i-role-predefined-filter').data('value', filter);
-            lastFilterClone.find('.i-role-output-filter').css(tableCSS);
-            lastFilterClone.find('.i-role-output-filter').text(filter);
-            lastFilterClone.find('td:last').html('');
-
-            var descTD = $("<td class='filter-description " + (item.isReadonly ? '' : 'editable') + "''><span>" + desc + "</span></td>");
-
-            if (!item.isReadonly) {
-                descTD.click(function() {
-
-                    if ($(this).children(":first").hasClass('placeholder')) {
-
-                        $(this).children(":first").removeClass('placeholder');
-                        $(this).children(":first").text('');
-                    }
-
-                    $(this).addClass('edit-mode');
-                    $(this).children(":first").attr('contentEditable', true);
-                    $(this).children(":first").focus();
-
-                }).focusout(function() {
-
-                    $(this).removeClass('edit-mode');
-                    $(this).children(":first").attr('contentEditable', false);
-                    //console.log(">> " + filterID);
-                    saveDesc($(this).children().text(), $(this).parents('tr').find('.i-role-predefined-filter').data('value'), filterID);
-                }).keypress(function(e) {
-
-                    //when enter is pressed save as well.
-                    if (e.which === 13) {
-                        $(this).removeClass('edit-mode');
-                        $(this).children(":first").attr('contentEditable', false);
-                        //console.log(">> " + filterID);
-                        $(this).scrollTop();
-                        saveDesc($(this).children().text(), $(this).parents('tr').find('.i-role-predefined-filter').data('value'), filterID);
-                    }
-                });
-            }
-
-            if (!desc.length) {
-                descTD.children().addClass('placeholder');
-                descTD.children().text('add description');
-            }
-
-            lastFilterClone.find('td:last').replaceWith(descTD);
-            lastFilterClone.find('td:last').css(tableCSS);
-
-            if (!item.isReadonly) {
-                var removebtn = $('<td><span class="tau-icon_name_close" style="cursor: pointer;display:block;width:10px; background-position:-1067px -103px;">&nbsp;</span</td>');
-                removebtn.click(function() {
-
-                    $(this).parents('tr:first').remove();
-                    $
-                        .when(getinfo())
-                        .then(function(items) {
-                            items = items.filter(function(v) {
-                                return v.ID !== filterID;
-                            });
-                            return saveinfo(items);
-                        });
-                });
-
-                lastFilterClone.append(removebtn);
-
-            }
-            $table.find('tbody').prepend(lastFilterClone);
-        };
-
-        var addSavedFilters = function($table, $rowTemplate) {
+            var item = {
+                "ID": getNewID(),
+                "Desc": desc,
+                "Filter": filter
+            };
 
             return $
-                .when(getinfo())
+                .when(getItems())
+                .then(function(items) {
+                    items.push(item);
+                    return $.when(item, saveItems(items));
+                });
+        };
+
+        var addFilter = function(item, $el, config) {
+
+            // var id = item.ID;
+            var filter = item.Filter;
+            var description = item.Desc;
+
+            var renderDescription = function(description) {
+                return [
+                    '<div class="quickfilters__description ',
+                        (item.isReadonly ? '' : 'quickfilters__description-editable'),
+                        '">',
+                        $.jqotenc(description) || 'add description',
+                    '</div>']
+                .join('');
+            };
+
+            var renderForm = function(description) {
+                return [
+                    '<form class="quickfilters__form">',
+                        '<input type="text" autofocus value="' + $.jqotenc(description) + '" />',
+                    '</form>'
+                ].join('');
+            };
+
+            var $row = $([
+                '<tr class="i-role-complex-filter-example">',
+                    '<td >',
+                        '<button type="button" class="tau-btn tau-primary i-role-predefined-filter" data-value="', $.jqotenc(filter), '">use</button>',
+                    '</td>',
+                    '<td class="filter-help-output">',
+                        // some fields by ace editor
+                        '<div class="filter-help-line" style="max-width: ' + (config.width.filter - 75) + 'px; min-width: ' + (config.width.filter - 75) + 'px;">',
+                            '<pre class="i-role-output-filter quickfilters__filter ace_editor ace-tomorrow">',
+                                $.jqotenc(filter),
+                            '</pre>',
+                        '</div>',
+                    '</td>',
+                    '<td class="filter-help-description">',
+                        '<div class="quickfilters__descriptionwrapper" style="max-width: ' + (config.width.description) + 'px; min-width: ' + (config.width.description) + 'px;">',
+                            renderDescription(description),
+
+                            (item.isReadonly ? '' : '<span class="tau-icon_name_close quickfilters__remove">&nbsp;</span>'),
+                        '</div>',
+                    '</td>',
+                '</tr>'
+            ].join(''));
+
+            $row.on('click', '.quickfilters__description', function() {
+
+                if (item.isReadonly) {
+                    return;
+                }
+
+                var $desc = $(this);
+                var $form = $(renderForm(item.Desc));
+                $desc.replaceWith($form);
+
+                $form.find(':text').focus();
+
+                $form.on('submit', function(e) {
+                    e.preventDefault();
+
+                    var val = $form.find(':text').val().trim();
+                    saveItem(item, val);
+                    $form.replaceWith(renderDescription(val));
+                });
+
+                $form.on('focusout', ':text', function() {
+
+                    var val = $form.find(':text').val().trim();
+                    saveItem(item, val);
+                    $form.replaceWith(renderDescription(val));
+                });
+
+            });
+
+            $row.on('click', '.quickfilters__remove', function() {
+
+                removeItem(item);
+                $(this).parents('tr:first').remove();
+            });
+
+            $el.find('.filter-help-heading').after($row);
+        };
+
+        var addFilters = function($el, config) {
+
+            return $
+                .when(getItems())
                 .then(function(items) {
                     items = predefinedFilters.concat(items);
                     items.forEach(function(item) {
-                        addFilterToList(item, $table, $rowTemplate);
+                        addFilter(item, $el, config);
                     });
                 });
         };
 
         var initFilterList = function($filter, $help) {
 
-            var $input = $filter.find('.i-role-filter-input');
-            var $table = $help.find('table:last');
-
-            $table.find('.filter-help-heading').remove();
-            $table.find('.i-role-output-filter').css(tableCSS);
-            $table.find('td:nth-child(3)').css(tableCSS);
-            var $rowTemplate = $table.find('tr:last').clone();
-
-            $help.find('#filter_wrapper').remove();
-
-            var $wrapper = $("<div id='filter_wrapper'></div>");
-
-            var $savedTable = $table.clone().addClass('i-role-savedfilters').attr('id', 'customfilters');
-            $savedTable.find('tr').remove();
-
-            var $actions = $([
-                "<div id='quickfilters_actions' style='height:23px;'>",
-                "<div style='margin-top:10px;margin-bottom:-25px;margin-left:10px;'>Saved Filters</div>",
-                "<div style='float:right;'><button class='tau-btn'>Save current filter</button></div>",
-                "</div>"
+            var $el = $([
+                '<tbody class="quickfilters">',
+                    '<tr class="filter-help-heading">',
+                        '<td colspan="3">',
+                            '<h2>',
+                                'Saved Filters',
+                                '<div class="quickfilters__tools">',
+                                    '<button class="tau-btn i-role-savecurrent">Save current filter</button>',
+                                '</div>',
+                            '</h2>',
+                        '</td>',
+                    '</tr>',
+                    '<tr class="i-role-delimiter quickfilters__delimiterrow">',
+                        '<td class="quickfilters__delimiter" colspan="3" />',
+                    '</tr>',
+                '</tbody>'
             ].join(''));
 
-            $wrapper.prepend("<div style='border-bottom-color: rgb(215, 215, 215); border-bottom-style: dashed; border-bottom-width: 1px;'></div>");
-            $wrapper.prepend($savedTable);
-            $wrapper.prepend($actions);
+            var $mainTable = $help.find('table');
+            $mainTable.find('.quickfilters').remove();
+            $mainTable.find('.filter-help-heading').remove();
 
-            var savebutton = $actions.find('button');
-            savebutton.click(function() {
+            var $tds = $mainTable.find('.i-role-complex-filter-example td');
+            var elConfig = {
+                width: {
+                    filter: $tds.eq(1).width(),
+                    description: $tds.eq(2).width()
+                }
+            };
 
-                var item = {
-                    "ID": getNewID(),
-                    "Desc": "",
-                    "Filter": $input.val() || ''
-                };
+            addFilters($el, elConfig);
+            $mainTable.prepend($el);
 
+            $el.on('click', '.i-role-savecurrent', function() {
+
+                var $input = $filter.find('.i-role-filter-input');
                 $
-                    .when(getinfo())
-                    .then(function(items) {
-                        items.push(item);
-                        return $.when(item, saveinfo(items));
-                    })
+                    .when(addItem($input.val() || '', ''))
                     .then(function(item) {
-                        addFilterToList(item, $savedTable, $rowTemplate);
+                        addFilter(item, $el, elConfig);
                     });
             });
-
-            $wrapper.insertBefore($table);
-
-            return addSavedFilters($savedTable, $rowTemplate);
         };
 
         configurator.getGlobalBus().on('content.$element.ready', function(evt, $help) {
