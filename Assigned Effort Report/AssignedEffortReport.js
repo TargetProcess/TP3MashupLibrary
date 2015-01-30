@@ -11,7 +11,7 @@ tau.mashups
 
         $(document).ready(function() {
             $('a:contains("Time By Person")').after($('<a id="allocation-link" href="#">Assigned Effort</a>').click(function() {
-                React.renderComponent(Report({
+                React.render(React.createFactory(Report)({
                     store: store
                 }), $('td.col-two > div:first')[0]);
             }));
