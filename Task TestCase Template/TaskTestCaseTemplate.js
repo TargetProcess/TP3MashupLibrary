@@ -15,7 +15,7 @@ tau.mashups
 
             store.entity = config.entity;
             store.configurator = configurator;
-            React.renderComponent(TemplatesManager({
+            React.render(React.createFactory(TemplatesManager)({
                 store: store
             }), $el[0]);
         });
