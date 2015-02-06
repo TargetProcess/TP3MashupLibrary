@@ -25,7 +25,7 @@ tau
             });
         };
 
-        var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release',
+        var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'epic',
             'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
         ];
 
