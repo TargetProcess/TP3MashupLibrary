@@ -223,8 +223,8 @@ tau.mashups
             var $tds = $mainTable.find('.i-role-complex-filter-example td');
             var elConfig = {
                 width: {
-                    filter: $tds.eq(1).width(),
-                    description: $tds.eq(2).width()
+                    filter: $tds.eq(1).width() || 430,
+                    description: $tds.eq(2).width() || 300
                 }
             };
 
