@@ -1,27 +1,70 @@
-.i-role-complex-filter-example .filter-description.editable:hover span {
-	background-color: #fff;
-	border: solid 1px #cbd1d6;
-	border-top-color: #a3a7ab;
-	padding: 2px 7px;
-	min-width: 200px;
-	color: #acb6bf;
-	display: inline-block;
-	height: 18px;
-	line-height: 18px;
-	}
+.quickfilters__delimiterrow {
+    background: none !important;
+}
 
-.i-role-complex-filter-example .filter-description.edit-mode span,
-.i-role-complex-filter-example:hover .filter-description.edit-mode span {
-	background-color: #fff;
-	border: solid 1px #cbd1d6;
-	border-top-color: #a3a7ab;
-	padding: 2px 7px;
-	min-width:200px;
-	color: #16343b;
-	font-weight: 600;
-	display: inline-block;
-	height: 18px;
-	line-height: 18px;
+.quickfilters__delimiter {
+    border: 0 dashed rgb(215, 215, 215);
+    border-bottom-width: 1px;
+    height: 0;
+    padding: 0 !important;
+}
 
-	}
+
+.quickfilters__remove {
+    cursor: pointer;
+    display:block;
+    width: 10px;
+    margin-left: 10px;
+    background-position:-1067px -103px;
+    -webkit-flex: 0 0 auto;
+    -ms-flex: 0 0 auto;
+    flex: 0 0 auto;
+}
+
+.quickfilters__descriptionwrapper {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.quickfilters__description,
+.quickfilters__form {
+    -webkit-flex: 1 1 auto;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+}
+
+.quickfilters__description-editable:hover,
+.quickfilters__form input {
+    background-color: #fff;
+    border: solid 1px #cbd1d6;
+    border-top-color: #a3a7ab;
+    padding: 2px 7px;
+    width: 100%;
+    color: #acb6bf;
+    display: inline-block;
+    /*height: 18px;*/
+    line-height: 18px;
+    font-size: 12px;
+    box-sizing: border-box;
+    }
+
+.quickfilters__filter,
+.quickfilters__description {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.quickfilters__tools {
+    float: right;
+}
+
+.quickfilters__tools .tau-btn {
+    visibility: visible !important;
+}
 
