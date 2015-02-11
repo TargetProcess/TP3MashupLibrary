@@ -34,7 +34,7 @@ tau.mashups
                 $target: $tooltipTarget,
                 getContentPromise: function() {
                     var contentDeferred = $.Deferred();
-                    contentDeferred.resolve($('<div><span>Go back to the TP2 interface</span></div>'));
+                    contentDeferred.resolve($('<div><span>Access TP2 pages</span></div>'));
                     return contentDeferred.promise();
                 }
             });
