@@ -377,7 +377,7 @@ tau.mashups
                     }.bind(this), []));
                 } else if (_.isObject(value) && _.isObject(fieldColorConfig)) {
 
-                    colors = colors.concat(_.keys(value).reduce(function(colors, fieldName) {
+                    colors = colors.concat(_.keys(fieldColorConfig).reduce(function(colors, fieldName) {
                         return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName]));
                     }.bind(this), []));
                 } else {
