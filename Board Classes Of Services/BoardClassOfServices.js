@@ -356,10 +356,14 @@ tau.mashups
                 return cardData;
             },
 
-            collectColors: function(value, fieldColorConfig) {
+            collectColors: function(value, fieldColorConfig, globalValue) {
+
+                if (!globalValue) {
+                    globalValue = value;
+                }
 
                 var colors = [];
-                if (!fieldColorConfig || (fieldColorConfig.match && !fieldColorConfig.match(value))) {
+                if (!fieldColorConfig || (fieldColorConfig.match && !fieldColorConfig.match(value, globalValue))) {
                     return colors;
                 }
 
@@ -367,18 +371,18 @@ tau.mashups
 
                     colors = fieldColorConfig.reduce(function matchInEntityArrayData(colors, colorsConfig) {
                         return colors.concat(value.reduce(function(colors, value) {
-                            return colors.concat(this.collectColors(value, colorsConfig));
+                            return colors.concat(this.collectColors(value, colorsConfig, globalValue));
                         }.bind(this), []));
                     }.bind(this), colors);
                 } else if (_.isArray(value) && _.isObject(fieldColorConfig)) {
 
                     colors = colors.concat(value.reduce(function(colors, value) {
-                        return colors.concat(this.collectColors(value, fieldColorConfig));
+                        return colors.concat(this.collectColors(value, fieldColorConfig, globalValue));
                     }.bind(this), []));
                 } else if (_.isObject(value) && _.isObject(fieldColorConfig)) {
 
                     colors = colors.concat(_.keys(fieldColorConfig).reduce(function(colors, fieldName) {
-                        return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName]));
+                        return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName], globalValue));
                     }.bind(this), []));
                 } else {
 
