@@ -7,7 +7,7 @@ define("ViewGallery/ExternalTrigger",function(require,exports,module){
 var React = require('react');
 var cx = React.addons.classSet;
 
-var ExternalTrigger = React.createClass({displayName: 'ExternalTrigger',
+var ExternalTrigger = React.createClass({displayName: "ExternalTrigger",
 
     componentDidMount: function() {
 
@@ -31,10 +31,10 @@ var ExternalTrigger = React.createClass({displayName: 'ExternalTrigger',
         });
 
         return (
-            React.DOM.div({className: className}, 
-                React.DOM.div({className: "t3-header", onClick: this.handleClick}, 
-                    React.DOM.i({className: "vg-icon vg-icon-gallery"}), 
-                    React.DOM.div({className: "t3-name vg-externaltrigger__name"}, 
+            React.createElement("div", {className: className}, 
+                React.createElement("div", {className: "t3-header", onClick: this.handleClick}, 
+                    React.createElement("i", {className: "vg-icon vg-icon-gallery"}), 
+                    React.createElement("div", {className: "t3-name vg-externaltrigger__name"}, 
                         this.props.children || 'Browse Solutions Gallery'
                     )
                 )
