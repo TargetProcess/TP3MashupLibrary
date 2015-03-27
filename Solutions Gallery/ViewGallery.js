@@ -97,11 +97,15 @@ tau
 
         var $toolbarEl;
 
-        addBusListener('board.toolbar', 'afterRender', makeCb(function(renderData) {
-            if (!$toolbarEl) {
-                $toolbarEl = renderData.element;
-            }
-        }));
+        var busNames = ['board.toolbar', 'customReport.toolbar', 'dashboard.toolbar']
+
+        busNames.forEach(function(busName) {
+            addBusListener(busName, 'afterRender', makeCb(function(renderData) {
+                if (!$toolbarEl) {
+                    $toolbarEl = renderData.element;
+                }
+            }));
+        });
 
         var initApp = function() {
 
@@ -117,15 +121,17 @@ tau
                     }
 
                     var store = new Store(config, settings);
-
-                    React.renderComponent(App({
+                    var appFactory = React.createFactory(App);
+                    React.render(appFactory({
                         store: store
                     }), holder);
 
-                    addBusListener('board.toolbar', 'afterRender', makeCb(function(renderData) {
-                        var $el = renderData.element;
-                        addToToolbar($el, store);
-                    }));
+                    busNames.forEach(function(busName) {
+                        addBusListener(busName, 'afterRender', makeCb(function(renderData) {
+                            var $el = renderData.element;
+                            addToToolbar($el, store);
+                        }));
+                    });
 
                     if ($toolbarEl) {
                         addToToolbar($toolbarEl, store);
@@ -184,7 +190,8 @@ tau
                     }.bind(this));
             };
 
-            trigger = ExternalTrigger({
+            var externalTriggerFactory = React.createFactory(ExternalTrigger);
+            trigger = externalTriggerFactory({
                 store: store
             }, config.triggerLabel);
 
