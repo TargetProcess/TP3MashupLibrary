@@ -2,7 +2,8 @@ tau.mashups
     .addDependency('Underscore')
     .addDependency('tau/core/class')
     .addDependency('tau/cf.constraints/ui/templates/ui.template.cf.constraints')
-    .addModule('tau/cf.constraints/configurations/configuration.cf.constraints', function(_, Class, Template) {
+    .addDependency('tau/services/service.customFields.cached')
+    .addModule('tau/cf.constraints/configurations/configuration.cf.constraints', function(_, Class, Template, CustomFieldService) {
 
         var ConfigurationCFConstraints = Class.extend({
 
@@ -44,7 +45,12 @@ tau.mashups
                     selector: customSelector || '.i-role-customFields',
                     type: 'customField.' + cfTypeLowered,
                     customField: customField,
-                    name: 'customField-' + customField.name
+                    name: 'customField-' + customField.name,
+                    getCustomFieldsService: function() {
+                        return new CustomFieldService({
+                            configurator: this.context.configurator
+                        });
+					}
                 };
             },
 
