@@ -1,0 +1,12 @@
+# Transparent CK Editor Panel
+The Transparent CK Editor Panel mashup makes a floating CK Editor panel transparent to help see the elements behind it.
+
+For example it helps to see the previous Test Step while editing another one.
+
+![Transparent CK Editor Panel in Test Steps](https://raw.githubusercontent.com/kruglik-alexey/TP3MashupLibrary/feature/us97121_transparent_cke_panel/Transparent%20CK%20Editor%20Panel/transaprent.png)
+
+When you hover mouse over the panel it becomes opaque.
+
+![Transparent CK Editor Panel in Test Steps](https://raw.githubusercontent.com/kruglik-alexey/TP3MashupLibrary/feature/us97121_transparent_cke_panel/Transparent%20CK%20Editor%20Panel/opaque.png)
+
+Please note that this mashup doesn't work in the Internet Explorer.
