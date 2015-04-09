@@ -9,7 +9,6 @@ tau
     .addDependency('EmbeddedPages.config')
     .addCSS('EmbeddedPages.css')
     .addMashup(function($, _, Class, generalView, configurator, ContextFactory, config) {
-
         'use strict';
 
         configurator.getGlobalBus().once('configurator.ready', function(e, appConfigurator) {
@@ -25,11 +24,15 @@ tau
             });
         };
 
-        var validTypes = ['bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'epic',
+        var validTypes = [
+            'bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'epic',
             'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
         ];
 
         var Tab = Class.extend({
+
+            customField: null,
+            customFieldRetrieved: false,
 
             validTypes: validTypes,
 
@@ -43,7 +46,6 @@ tau
             ].join(''),
 
             init: function(config) {
-
                 this.config = config;
 
                 if (!this.config.customFieldName) {
@@ -52,13 +54,11 @@ tau
                 }
 
                 this.config.entityTypeName = String(this.config.entityTypeName).toLowerCase();
-                this.customField = null;
                 this.template = this.config.frameTemplate || this.templateDefault;
                 this.templateEmpty = this.templateEmptyDefault;
             },
 
             addToView: function(view) {
-
                 view.addTab(this.getLabelText(), this.onContentReady.bind(this), $.noop, {
                     getViewIsSuitablePromiseCallback: this.preAdd.bind(this)
                 });
@@ -69,7 +69,6 @@ tau
             },
 
             onContentReady: function($el) {
-
                 this.$el = $el;
                 return $
                     .when(this.checkByCustomField())
@@ -87,36 +86,44 @@ tau
             },
 
             preAdd: function(context) {
-
-                this.customField = null;
-
-                if (!context.entity) {
+                var entity = context.entity;
+                if (!entity) {
                     return $.when(false);
+                }
+
+                var entityTypeName = (entity.type || entity.entityType.name).toLowerCase();
+                if (!this.checkByType(entityTypeName)) {
+                    return $.when(false);
+                }
+
+                if (
+                    !this.entity ||
+                    this.entity.id !== entity.id ||
+                    this.entity.entityType.name !== entityTypeName ||
+                    this.entity.projectId !== entity.projectId ||
+                    this.entity.teamId !== entity.teamId
+                ) {
+                    this.customField = null;
+                    this.customFieldRetrieved = false;
                 }
 
                 this.entity = {
-                    id: context.entity.id,
+                    id: entity.id,
                     entityType: {
-                        name: (context.entity.type ? context.entity.type : context.entity.entityType.name).toLowerCase()
+                        name: entityTypeName
                     },
-                    projectId: context.entity.projectId,
-                    teamId: context.entity.teamId
+                    projectId: entity.projectId,
+                    teamId: entity.teamId
                 };
-
-                if (!this.checkByType()){
-                    return $.when(false);
-                }
 
                 return $.when(this.checkByCustomField());
             },
 
-            checkByType: function() {
-                return _.contains(this.validTypes, this.entity.entityType.name) &&
-                    this.entity.entityType.name === this.config.entityTypeName;
+            checkByType: function(entityTypeName) {
+                return entityTypeName === this.config.entityTypeName && _.contains(this.validTypes, entityTypeName);
             },
 
             checkByCustomField: function() {
-
                 return $
                     .when(this.getCustomField())
                     .then(function(customField) {
@@ -125,8 +132,7 @@ tau
             },
 
             getCustomField: function() {
-
-                if (this.customField) {
+                if (this.customFieldRetrieved) {
                     return this.customField;
                 }
 
@@ -135,6 +141,7 @@ tau
                     .then(function cacheFieldAndStartListenChanges(field) {
                         try {
                             this.customField = field;
+                            this.customFieldRetrieved = true;
                             this.subscribeOnChanges(field);
                         } catch (e) {
                             this._error(e);
@@ -144,28 +151,28 @@ tau
             },
 
             getCustomFieldByContext: function() {
-                var fieldDeferred = $.Deferred();
+                var deferredField = $.Deferred()
+                    .fail(function(e) {
+                        this._error(e);
+                    }.bind(this));
 
-                try{
+                try {
                     ContextFactory.create(this.entity, configurator).done(function(appContext) {
                         var field = null;
                         try {
-                            if (!this.config.processName || appContext.getProcess().name === this.config.processName){
+                            if (!this.config.processName || appContext.getProcess().name === this.config.processName) {
                                 field = this.findField(appContext.getCustomFields());
                             }
-                            fieldDeferred.resolve(field);
-                        }
-                        catch (e){
-                            fieldDeferred.reject(e);
-                            this._error(e);
+                            deferredField.resolve(field);
+                        } catch (e) {
+                            deferredField.reject(e);
                         }
                     }.bind(this));
-                } catch (e){
-                    fieldDeferred.reject(e);
-                    this._error(e);
+                } catch (e) {
+                    deferredField.reject(e);
                 }
 
-                return fieldDeferred.promise();
+                return deferredField.promise();
             },
 
             findField: function(customFields) {
@@ -186,14 +193,9 @@ tau
             },
 
             getCustomFieldInEntity: function() {
-
-                var fields = [
-                    'customFields'
-                ];
-
                 return getData(this.entity.entityType.name, {
                     id: this.entity.id,
-                    fields: fields
+                    fields: ['customFields']
                 })
                     .then(function(entity) {
                         return this.findFieldInEntity(entity);
@@ -201,7 +203,6 @@ tau
             },
 
             findFieldInEntity: function(entity) {
-
                 return _.find(entity.customFields || [], function(field) {
                     return field.name === this.config.customFieldName && this.checkCustomFieldType(field.type);
                 }.bind(this));
@@ -212,10 +213,8 @@ tau
             },
 
             renderContent: function(field, value) {
-
                 var url = null;
                 switch (field.type.toLowerCase()) {
-
                     case 'url':
                         url = (value && value.url) ? value.url : null;
                         break;
@@ -228,28 +227,22 @@ tau
                     url: url,
                     name: field.name
                 };
-                if (url) {
-                    return $.tmpl(this.template, data);
-                } else {
-                    return $.tmpl(this.templateEmpty, data);
-                }
+
+                return $.tmpl(url ? this.template : this.templateEmpty, data);
             },
 
             subscribeOnChanges: function(customField) {
-                if (!customField){
+                if (!customField) {
                     return;
                 }
                 configurator.getStore().unbind(this);
                 configurator.getStore().on({
                     eventName: 'afterSave',
-                    hasChanges: ['customFields'],
                     type: this.entity.entityType.name,
-                    filter: {
-                        id: this.entity.id
-                    },
+                    filter: {id: this.entity.id},
+                    hasChanges: ['customFields'],
                     listener: this
                 }, function(e) {
-
                     var field = this.findFieldInEntity(e.data.changes);
                     if (field && this.$el) {
                         this.$el.html(this.renderContent(customField, field.value));
@@ -258,26 +251,24 @@ tau
             },
 
             _error: function(e) {
-                console && console.error && console.error(e);
+                if (typeof console !== 'undefined' && console.error) {
+                    console.error(e);
+                }
             }
         });
 
         var embedPages = function() {
-
             config.tabs.forEach(function(config) {
-
-                if (!config.entityTypeName) {
+                if (config.entityTypeName) {
+                    var tab = new Tab(config);
+                    tab.addToView(generalView);
+                } else {
                     validTypes.forEach(function(entityTypeName) {
-
                         var entityTab = new Tab(_.defaults({
                             entityTypeName: entityTypeName
                         }, config));
                         entityTab.addToView(generalView);
                     });
-                } else {
-
-                    var tab = new Tab(config);
-                    tab.addToView(generalView);
                 }
             });
         };
