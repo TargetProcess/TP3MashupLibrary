@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "The Custom Units mashup adds a new unit with initials of all assigned Users to the Customize Cards.",
+    "CompatibleTpVersion": {
+        "Minimum": "3.2.8"
+    }
+}
