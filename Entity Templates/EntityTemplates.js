@@ -47,8 +47,9 @@ tau.mashups
 
             var $el = renderData.element;
             var $description = $el.find('.ui-description__inner');
+            var value = renderData.data.value;
 
-            if ($description.length && !$description.find('div').length) {
+            if ($description.length && !value) {
 
                 var entityTypeName = renderData.view.config.context.entity.entityType.name.toLowerCase();
                 var term = _.find(renderData.view.config.context.getTerms(), function(v) {
