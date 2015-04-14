@@ -5,8 +5,8 @@ For example it helps to see the previous Test Step while editing another one.
 
 ![Transparent CK Editor Panel in Test Steps](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Transparent%20CK%20Editor%20Panel/transaprent.png)
 
-When you hover mouse over the panel it becomes opaque.
+When you hover your mouse over the panel it becomes opaque.
 
 ![Transparent CK Editor Panel in Test Steps](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Transparent%20CK%20Editor%20Panel/opaque.png)
 
-Please note that this mashup doesn't work in the Internet Explorer.
+Please note that this mashup doesn't work with Internet Explorer.
