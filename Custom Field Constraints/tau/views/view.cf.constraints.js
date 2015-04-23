@@ -3,7 +3,8 @@ tau.mashups
     .addDependency('tau/core/view-base')
     .addDependency('tau/components/component.container')
     .addDependency('tau/cf.constraints/configurations/configuration.cf.constraints')
-    .addModule('tau/cf.constraints/views/view.cf.constraints', function(_, ViewBase, ComponentContainer, ConfigurationCFConstraints) {
+    .addDependency('tau/services/service.customFields.cached')
+    .addModule('tau/cf.constraints/views/view.cf.constraints', function(_, ViewBase, ComponentContainer, ConfigurationCFConstraints, CustomFieldService) {
 
         return ViewBase.extend({
             init: function(config) {
@@ -15,11 +16,13 @@ tau.mashups
             },
 
             "bus beforeInit": function() {
-
                 var configurator = this.config.context.configurator;
                 configurator.getTitleManager().setTitle('CF Constraints');
                 var configService = configurator.service('cf.constraints.config');
                 var appConfig = this.config;
+
+                this.setCustomFieldService(configurator, configService);
+
                 var containerConfig = _.extend(appConfig, (new ConfigurationCFConstraints()).getConfig(configService));
 
                 this.container = ComponentContainer.create({
@@ -31,7 +34,7 @@ tau.mashups
                     extensions: _.union([], containerConfig.extensions || []),
                     context: _.extend(appConfig.context, {
                         getCustomFields: function() {
-                            return configService.customFields
+                            return configService.customFields;
                         },
                         entity: configService.entity,
                         applicationContext: configService.applicationContext
@@ -59,6 +62,15 @@ tau.mashups
                 this.fireAfterRender();
             },
 
+            setCustomFieldService: function(configurator, configService) {
+                this._customFieldsService = new CustomFieldService({
+                    configurator: configurator,
+                    entity: configService.entity,
+                    customFields: configService.customFields
+                });
+                configurator.registerService('customFieldServiceV2', this._customFieldsService);
+            },
+
             lifeCycleCleanUp: function() {
                 this.destroyContainer();
                 this._super();
@@ -74,6 +86,10 @@ tau.mashups
             },
 
             destroy: function() {
+                if (this._customFieldsService) {
+                    this._customFieldsService.destroy();
+                }
+
                 this.destroyContainer();
                 this._super();
             }
