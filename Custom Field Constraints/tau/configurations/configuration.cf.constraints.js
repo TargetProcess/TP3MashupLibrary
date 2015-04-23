@@ -2,13 +2,13 @@ tau.mashups
     .addDependency('Underscore')
     .addDependency('tau/core/class')
     .addDependency('tau/cf.constraints/ui/templates/ui.template.cf.constraints')
-    .addDependency('tau/services/service.customFields.cached')
-    .addModule('tau/cf.constraints/configurations/configuration.cf.constraints', function(_, Class, Template, CustomFieldService) {
+    .addModule('tau/cf.constraints/configurations/configuration.cf.constraints', function(_, Class, Template) {
 
         var ConfigurationCFConstraints = Class.extend({
 
             getConfig: function(config) {
                 var childControls = _.map(config.customFields, function(customField) {
+
                     var cfTypeLowered = customField.type.toLowerCase();
 
                     switch (cfTypeLowered) {
@@ -45,12 +45,7 @@ tau.mashups
                     selector: customSelector || '.i-role-customFields',
                     type: 'customField.' + cfTypeLowered,
                     customField: customField,
-                    name: 'customField-' + customField.name,
-                    getCustomFieldsService: function() {
-                        return new CustomFieldService({
-                            configurator: this.context.configurator
-                        });
-					}
+                    name: 'customField-' + customField.name
                 };
             },
 
