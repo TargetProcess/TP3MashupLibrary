@@ -1,0 +1,8 @@
+Visual Filters Preview
+======================
+
+This mashup enables an early preview version of Visual Filters feature which aims to help users with writing DSL queries to filter entities on a board.
+
+Requires TargetProcess of the version 3.7.1+
+
+![Visual Filters Preview](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Visual%20Filters%20Preview/VisualFiltersPreview.gif)
