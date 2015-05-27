@@ -43,28 +43,45 @@ tau.mashups
             });
         };
 
+        var getTemplate = function(context) {
+
+            var entityTypeName = context.entity.entityType.name.toLowerCase();
+            var term = _.find(context.getTerms(), function(v) {
+                return (v.wordKey || v.name).toLowerCase() === entityTypeName;
+            });
+            var termValue = term ? term.value.toLowerCase() : null;
+
+            var template = _.find(templates, function(v, k) {
+                return k.toLowerCase() === entityTypeName || k.toLowerCase() === termValue;
+            });
+            return template;
+        };
+
         addBusListener('description', 'afterRender', function(e, renderData) {
 
             var $el = renderData.element;
+
             var $description = $el.find('.ui-description__inner');
             var value = renderData.data.value;
 
             if ($description.length && !value) {
 
-                var entityTypeName = renderData.view.config.context.entity.entityType.name.toLowerCase();
-                var term = _.find(renderData.view.config.context.getTerms(), function(v) {
-                    return (v.wordKey || v.name).toLowerCase() === entityTypeName;
-                });
-                var termValue = term ? term.value.toLowerCase() : null;
-
-                var template = _.find(templates, function(v, k) {
-                    return k.toLowerCase() === entityTypeName || k.toLowerCase() === termValue;
-                });
+                var template = getTemplate(renderData.view.config.context);
 
                 if (template) {
                     $description.attr('data-placeholder', '');
                     $description.append('<div>' + template + '</div>');
                 }
+            }
+        });
+
+        addBusListener('description', 'afterRender:last + $editor.ready', function(e, renderData, $editor) {
+
+            var template = getTemplate(renderData.view.config.context);
+            var value = renderData.data.rawDescription;
+
+            if (!value && template && $editor.data('ui-richeditorMarkdown')) {
+                $editor.richeditorMarkdown('setText', template);
             }
         });
     });
