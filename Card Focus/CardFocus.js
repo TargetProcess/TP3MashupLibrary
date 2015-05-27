@@ -1,9 +1,10 @@
 tau.mashups
     .addDependency('jQuery')
+    .addDependency('Underscore')
     .addDependency('libs/parseUri')
     .addDependency('tau/core/class')
     .addDependency('tau/configurator')
-    .addMashup(function($, parseUri, Class, configurator) {
+    .addMashup(function($, _, parseUri, Class, configurator) {
 
         'use strict';
 
@@ -71,25 +72,24 @@ tau.mashups
             focusOnCards: function() {
                 var clipboardManager = configurator.getClipboardManager();
 
-                clipboardManager.getAll(function(err, cards) {
-                    var ids = cards.reduce(function(r, item) {
-                        r.push(item.data.id); return r;
-                    }, []);
+                var cards = _.values(clipboardManager._cache);
 
-                    this.boardSettings.set({
-                        set: {
-                            user: {
-                                cardFilter: ids.join(',')
-                            },
-                            viewMode: "list"
-                        }	
-                    });
+                var ids = cards.reduce(function(r, item) {
+                    r.push(item.data.id); return r;
+                }, []);
 
-                    $('.tau-resetable-input>input').val(ids.join(','))
-                    $('.tau-resetable-input>button').css('visibility','visible');
-                    $('.tau-role-filter-input').blur();
+                this.boardSettings.set({
+                    set: {
+                        user: {
+                            cardFilter: ids.join(',')
+                        },
+                        viewMode: "list"
+                    }
+                });
 
-                }.bind(this));
+                $('.tau-resetable-input>input').val(ids.join(','))
+                $('.tau-resetable-input>button').css('visibility','visible');
+                $('.tau-role-filter-input').blur();
             }
 
         });
