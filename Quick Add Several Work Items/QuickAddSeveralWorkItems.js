@@ -250,7 +250,10 @@ require([
 
                 reader.onload = function(e) {
                     var text = reader.result || '';
-                    var items = _.compact(text.split(/\r?\n/).map(function(v){
+                    var lines = _.compact(text.split(/\r?\n/).map(function(v) {
+                        return v.trim();
+                    }));
+                    var items = lines.map(function(v){
                         if (complexEntity == true) {
                             //allow commas in non-complex entities
                             return (v || '').split(',');
@@ -258,7 +261,7 @@ require([
                         else {
                             return [(v || '').trim()];
                         }
-                    }));
+                    });
                     processItems($cell, items);
                 };
 
