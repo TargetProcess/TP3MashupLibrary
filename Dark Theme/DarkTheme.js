@@ -25,13 +25,9 @@ tau
 
             // add rules here
             // add !important to make sure default rules will be overwritten
-            // addCSSRule('.i-role-card .tau-name', 'color: yellow !important;');
             addCSSRule('.tau-btn-active-highlight', 'box-shadow: 0px 0px 5px 0px #FFE6B3; border-color: #FFF2B2 !important; color: #FFF2B2 !important;');
             addCSSRule('.tau-app-body > header, .tau-btn-add-bg', 'background: #14161a !important;');
             addCSSRule('.tau-context-filter', 'background: #292c33 !important; box-shadow: none !important; padding: 2px 4px !important; margin-top: -1px !important; font-size: 12px !important; font-weight: 400 !important;');
-            addCSSRule('.tau-quick-add', 'background: #8fBf4d !important; box-shadow: none !important; border: none !important; padding: 2px !important;');
-            addCSSRule('.tau-quick-add span', 'font-size: 13px !important; text-shadow: 0px 1px 0px rgba(0,0,0,0.20) !important;');
-            addCSSRule('.tau-quick-add span::before', 'display: none !important;');
             addCSSRule('.tau-board', 'background: #292c33 !important;');
             addCSSRule('.tau-board-header .tau-board-name', 'color: #fff !important; font-weight: 400 !important; letter-spacing: .2px !important;');
             addCSSRule('.tau-board-header .tau-btn, .tau-board-header input, .tau-inline-group-nestedboardstoolbar .tau-btn, .tau-selection-counter', 'background: transparent !important; border-radius: 2px !important; border-color: #5c5f66 !important; font-weight: normal !important; text-shadow: none !important; color: #a1a7b3 !important; font-size: 12px !important; height: 26px !important; line-height: 18px !important;');
@@ -59,12 +55,11 @@ tau
             addCSSRule('.tau-feedback-btn', 'display: none !important;');
             addCSSRule('.tau-axis-limit_overhead_x.tau-cellholder, .tau-axis-limit_overhead_y.tau-cellholder', 'background: #594747 !important;');
             addCSSRule('.tau-axis-limit_warning_x.tau-cellholder, .tau-axis-limit_warning_y.tau-cellholder', 'background: #595247 !important;');
-            addCSSRule('.tau-board>.tau-board-header>.tau-btn', 'margin-top: 14px !important;');
             addCSSRule('.t3-views-navigator .t3-view.t3-active .t3-header', 'background:#3d424d; !important;');
             addCSSRule('._tc-timeline-navigator>.tc-histogram:not(.tc-histogram-empty)', 'background: transparent !important; opacity: .5 !important; ');
             addCSSRule('.tau-board-grid-view .tau-cellholder.tau-selected.tau-selected_x.tau-selected_y', 'background: #525866 !important;');
             addCSSRule('.tau-selection-counter', 'background: transparent !important;');
-            addCSSRule('.tau-selection-counter.tau-selected', 'background: #FFF2B2 !important;'); 
+            addCSSRule('.tau-selection-counter.tau-selected', 'background: #FFF2B2 !important;');
             addCSSRule('.tau-boardclipboard .i-role-action-clear', 'height: 26px !important; border-radius: 2px !important; background: transparent !important; border-color: #555960 !important;');
             addCSSRule('.tau-boardclipboard .i-role-action-clear::before', 'top: 9px !important;');
             addCSSRule('.tau-no-data-in-slice h2, .tau-no-data-in-slice .tau-txt', 'font-weight: 400 !important; color: #fff !important; text-shadow: none !important;');
@@ -77,7 +72,8 @@ tau
             addCSSRule('.tau-board-view .tau-label__date', 'color: #A1A7B3 !important; opacity: 1 !important');
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
-            
+            addCSSRule('.boardsettings-filter__contener:after', 'background: #292c33 !important; box-shadow: none !important;');
+
         };
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
