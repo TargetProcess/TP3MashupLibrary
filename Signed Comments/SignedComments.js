@@ -13,13 +13,20 @@ tau.mashups
 
         gb.on('comment.add.$editor.ready', function(e, $el) {
 
-            if (!window.CKEDITOR) {
-                return;
-            }
+            var type;
+            var editorInstance;
 
-            var editorInstance = window.CKEDITOR.instances[$el.attr('id')];
-
-            if (!editorInstance) {
+            if (window.CKEDITOR) {
+                editorInstance = window.CKEDITOR.instances[$el.attr('id')];
+                if (editorInstance) {
+                    type = 'ckeditor';
+                } else {
+                    return;
+                }
+            } else if ($el.richeditorMarkdown('instance')) {
+                editorInstance = $el;
+                type = 'markdown';
+            } else {
                 return;
             }
 
@@ -28,14 +35,26 @@ tau.mashups
                 url: configurator.getApplicationPath() + '/storage/v1/Signatures/' + loggedUser.id,
                 contentType: 'application/json; charset=utf8',
                 success: function(data) {
+                    var signature = unescape(data.userData.sig);
+                    if (type === 'ckeditor') {
+                        try {
+                            editorInstance = window.CKEDITOR.instances[$el.attr('id')];
+                            if (data.userData && editorInstance) {
+                                editorInstance.setData('<br/><br/>' + signature);
+                                editorInstance.focus();
+                            }
+                        } catch (err) {}
+                    } else {
+                        if (editorInstance.richeditorMarkdown('instance').$textarea.length) {
 
-                    try {
-                        editorInstance = window.CKEDITOR.instances[$el.attr('id')];
-                        if (data.userData && editorInstance) {
-                            editorInstance.setData('<br/><br/>' + unescape(data.userData.sig));
-                            editorInstance.focus();
+                            editorInstance.richeditorMarkdown('setText', '\n\n' + signature);
+                            var textarea = editorInstance.richeditorMarkdown('instance').$textarea[0];
+                            textarea.focus();
+                            if (textarea.setSelectionRange) {
+                                textarea.setSelectionRange(0, 0);
+                            }
                         }
-                    } catch (err) {}
+                    }
                 }
             });
         });
@@ -52,9 +71,14 @@ tau.mashups
             trBody.insertAfter(trHead);
             trBody.find('td:first').html('<textarea id="signature" cols="55" rows="6"></textarea>');
             /* make it a rich text editor */
-            require([appHostAndPath + '/ckeditor/ckeditor.js'], function() {
-                window.CKEDITOR.replace('signature', {
-                    toolbar: 'Basic'
+            require([configurator.getCkPath() + '/new/ckeditor/ckeditor.js'], function() {
+                require([configurator.getCkPath() + '/new/ckfinder/ckfinder.js'], function() {
+                    window.CKEDITOR.replace('signature', {
+                        toolbar: 'Basic',
+                        uploaderConfig: {
+
+                        }
+                    });
                 });
             });
             /* bind to save */
