@@ -135,11 +135,15 @@ tau
                         });
 
                         var tasks = tasksToSave.reduce(function(res, item) {
-                            return res.then(this.createTaskByTemplate(item, userStory));
+                            return res.then(function() {
+                                this.createTaskByTemplate(item, userStory);
+                            }.bind(this));
                         }.bind(this), $.when(true));
 
                         var testCases = testCasesToSave.reduce(function(res, item) {
-                            return res.then(this.createTestCaseByTemplate(item, userStory));
+                            return res.then(function() {
+                                return this.createTestCaseByTemplate(item, userStory);
+                            }.bind(this));
                         }.bind(this), $.when(true));
 
                         return $.when(tasks, testCases);
@@ -174,27 +178,55 @@ tau
             createTestCaseByTemplate: function(testCase, userStory) {
 
                 var store = this.configurator.getStore();
-                return store.saveDef('testCases', {
-                    $set: {
-                        Name: testCase.Name,
-                        Description: this.getTestCaseDescription(testCase),
-                        UserStory: {
-                            Id: userStory.id
+                var isLinkedTestCaseEnabled = Boolean(store.config.proxy.db.__types.assignable.refs.linkedTestPlan);
+
+                if (isLinkedTestCaseEnabled) {
+                    var saveTestCase = $
+                        .when(this.getOrCreateLinkedTestPlan(userStory))
+                        .then(function(linkedTestPlan) {
+
+                            return store.saveDef('testCases', {
+                                $set: {
+                                    Name: testCase.Name,
+                                    Description: this.getTestCaseDescription(testCase),
+                                    TestPlans: [{
+                                        Id: linkedTestPlan.id
+                                    }],
+                                    Project: {
+                                        Id: userStory.project.id
+                                    }
+                                },
+                                fields: [
+                                    'id',
+                                    'name'
+                                ]
+                            });
+                        }.bind(this));
+                } else {
+                    saveTestCase = store.saveDef('testCases', {
+                        $set: {
+                            Name: testCase.Name,
+                            Description: this.getTestCaseDescription(testCase),
+                            UserStory: {
+                                Id: userStory.id
+                            },
+                            Project: {
+                                Id: userStory.project.id
+                            }
                         },
-                        Project: {
-                            Id: userStory.project.id
-                        }
-                    },
-                    fields: [
-                        'id',
-                        'name',
-                        {
-                            'userStory': [
-                                'id'
-                            ]
-                        }
-                    ]
-                })
+                        fields: [
+                            'id',
+                            'name',
+                            {
+                                'userStory': [
+                                    'id'
+                                ]
+                            }
+                        ]
+                    });
+                }
+
+                return saveTestCase
                 .then(function(res) {
 
                     var id = res.data.id;
@@ -217,6 +249,42 @@ tau
 
                     return steps;
                 });
+            },
+
+            getOrCreateLinkedTestPlan: function(userStory) {
+
+                var store = this.configurator.getStore();
+                return store
+                    .getDef('UserStory', {
+                        id: userStory.id,
+                        fields: [{
+                            'linkedTestPlan': ['Id']
+                        }]
+                    })
+                    .then(function(res) {
+
+                        if (res.linkedTestPlan) {
+                            return res.linkedTestPlan;
+                        } else {
+                            return $
+                                .ajax({
+                                    type: 'post',
+                                    url: this.configurator.getApplicationPath() + '/linkedtestplan/v1/migrateUserStory',
+                                    contentType: 'application/json; charset=utf8',
+                                    data: JSON.stringify({
+                                        userStoryId: userStory.id
+                                    })
+                                })
+                                .then(function(testPlan) {
+                                    store.evictProperties(testPlan.linkedGeneral.id, testPlan.linkedGeneral.entityType.name, ['linkedTestPlan']);
+                                    store.registerWithEvents(_.extend(testPlan, {
+                                        __type: 'testplan'
+                                    }));
+
+                                    return testPlan;
+                                });
+                        }
+                    }.bind(this));
             },
 
             getTestCaseDescription: function(item) {
