@@ -179,8 +179,9 @@ tau
 
                 var store = this.configurator.getStore();
                 var isLinkedTestCaseEnabled = Boolean(store.config.proxy.db.__types.assignable.refs.linkedTestPlan);
+                var isBoard = this.configurator.isBoardEdition;
 
-                if (isLinkedTestCaseEnabled) {
+                if (isLinkedTestCaseEnabled && isBoard) {
                     var saveTestCase = $
                         .when(this.getOrCreateLinkedTestPlan(userStory))
                         .then(function(linkedTestPlan) {
@@ -223,7 +224,25 @@ tau
                                 ]
                             }
                         ]
-                    });
+                    })
+                    .then(function(res) {
+                        var savedEntity = res.data;
+                        var entity = userStory;
+                        var relationName = 'testCases';
+
+                        this.configurator.getGlobalBus().fire('testCase.items.added', {
+                            entity: {
+                                id: savedEntity.id
+                            },
+                            'evict-data': {
+                                entityId: entity.id,
+                                entityType: 'userStory',
+                                evictProperties: [relationName]
+                            }
+                        });
+
+                        return res;
+                    }.bind(this));
                 }
 
                 return saveTestCase
