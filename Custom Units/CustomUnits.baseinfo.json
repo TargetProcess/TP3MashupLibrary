@@ -1,5 +1,5 @@
 {
-    "ShortDescription": "Custom units for customized cards",
+    "ShortDescription": "The Custom Units mashup adds a new 'Attachment' unit to the Customise Cards.",
     "CompatibleTpVersion": {
         "Minimum": "3.2.8"
     }

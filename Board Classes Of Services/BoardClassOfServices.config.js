@@ -36,6 +36,13 @@ tau.mashups
                         }
                     },
 
+                    // leave empty config to have access in `match` function
+                    project: {
+                        process: {
+                            name: {}
+                        }
+                    },
+
                     customFields: [{
                         match: function(customField) {
                             return customField.name === 'document' && customField.type.toLowerCase() === 'checkbox';
@@ -49,6 +56,14 @@ tau.mashups
                         },
                         value: {
                             'no': '#ff0000'
+                        }
+                    }, {
+                        match: function(customField, data) {
+                            return data.project && data.project.process && data.project.process.name === 'Scrum' &&
+                                customField.name === 'areYouSure';
+                        },
+                        value: {
+                            'sure': '#ff0000'
                         }
                     }]
                 },

@@ -10,7 +10,7 @@ tau
 
         'use strict';
 
-        var TemplatesManager = React.createClass({displayName: 'TemplatesManager',
+        var TemplatesManager = React.createClass({displayName: "TemplatesManager",
 
             componentDidMount: function() {
 
@@ -34,14 +34,14 @@ tau
 
                 var inner = this.props.store.items.map(function(v){
                     return (
-                        TemplatesManagerRow({key: v.key, item: v, store: this.props.store})
+                        React.createElement(TemplatesManagerRow, {key: v.key, item: v, store: this.props.store})
                     );
                 }.bind(this));
 
                 return (
-                    React.DOM.div({className: "templates-mashap"}, 
-                        React.DOM.div({className: "tm-add-btn", onClick: this.handleCreateTemplate}, "Add template"), 
-                        React.DOM.table({className: "tm-grid"}, 
+                    React.createElement("div", {className: "templates-mashap"}, 
+                        React.createElement("div", {className: "tm-add-btn", onClick: this.handleCreateTemplate}, "Add template"), 
+                        React.createElement("table", {className: "tm-grid"}, 
                             inner
                         )
                     )

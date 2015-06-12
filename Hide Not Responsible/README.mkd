@@ -1,0 +1,17 @@
+# Hide Not Responsible Mashup
+
+This Mashup adds a button - 'Hide not Responsible' - on all boards where 'Person' is selected as a lane.
+When this button is pressed, only the cards which each person is responsible for will be shown.
+
+## How to activate it
+
+1. Install the mashup from the Targetprocess Mashups Library
+2. Open the board where 'Person' is selected as a lane, and press 'Hide not Responsible' button
+
+As a result, instead of a board with a lot of duplicated cards:
+
+![Board without mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide%20Not%20Responsible/without-mashup.png)
+
+You'll see a board with only cards for which the persons from each lane is responsible:
+
+![Board with mashup](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide%20Not%20Responsible/with-mashup.png)

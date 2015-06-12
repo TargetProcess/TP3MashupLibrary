@@ -1,0 +1,8 @@
+# Custom Units
+
+The mashup adds a new  custom unit with initials of all assigned Users to the Customise Cards tab in a View Setup area. 
+This unit works for Features, Epics, User Stories, Tasks, Bugs, Requests and Test Plan Runs.  
+
+![All Assigned Users](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Custom%20Unit%20All%20Assigned%20People/AllAssignedPeople.png?raw=true)
+
+

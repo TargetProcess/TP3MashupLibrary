@@ -1,0 +1,7 @@
+.cke_float {
+    opacity: 0.4;
+}
+
+.cke_float:hover {
+    opacity: 1;
+}

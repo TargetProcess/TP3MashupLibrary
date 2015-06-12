@@ -1,6 +1,0 @@
-{
-    "ShortDescription": "This mashup creates a link to Targetprocess 3 from the old Targetprocess 2 user interface.",
-    "CompatibleTpVersion": {
-        "Minimum": "2.23.13"
-    }
-}

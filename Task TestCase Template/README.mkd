@@ -1,5 +1,4 @@
-TaskTestCaseTemplate
-==================
+# TaskTestCaseTemplate
 
 This mashup adds a tab to the User Story view.  From this tab you can create templates that contain tasks or test cases you need to apply to multiple user stories.  After you create the template and the Tasks and/or Test Cases that you would like to use, they can be applied on any user story by going to the Template tab and selecting Apply Template.
 

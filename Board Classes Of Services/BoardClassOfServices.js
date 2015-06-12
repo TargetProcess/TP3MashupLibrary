@@ -15,6 +15,10 @@ tau.mashups
 
         var types = configurator.getStore().getTypes().getDictionary();
 
+        var getCollection = function(typeName) {
+            return types[typeName.toLowerCase()].resource;
+        };
+
         var getParents = function(typeName) {
 
             var type = types[typeName];
@@ -31,8 +35,86 @@ tau.mashups
                 var items = _.toArray(arguments).reduce(function(res, v) {
                     return res.concat(v);
                 }, []);
+
                 return items;
             });
+        };
+
+        var load = function(resource, params) {
+
+            var loadSimple = function(url, params) {
+                return $.ajax({
+                    type: 'get',
+                    url: url,
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    data: params
+                });
+            };
+
+            var loadPages = function loadPages(url, params) {
+
+                return loadSimple(url, params)
+                    .then(function(res) {
+                        var items = res.Items;
+                        if (res.Next) {
+                            return loadPages(res.Next)
+                                .then(function(nextItems) {
+                                    return items.concat(nextItems);
+                                });
+                        } else {
+                            return items;
+                        }
+                    });
+            };
+
+            return loadPages(configurator.getApplicationPath() + '/api/v1/' + resource, params);
+        };
+
+        var processResult = function(result) {
+
+            if (_.isArray(result)) {
+                return result.map(function(v) {
+                    return processResult(v);
+                });
+            } else if (_.isObject(result)) {
+
+                return _.object(_.map(result, function(v, k) {
+                    var key = k[0].toLowerCase() + k.slice(1);
+                    if (key === 'Items' && _.isArray(v)) {
+                        return processResult(v);
+                    }
+                    return [key, processResult(v)];
+                }));
+            } else {
+                return result;
+            }
+        };
+
+        var stringify = function(obj) {
+
+            var res = "";
+
+            if (obj) {
+                if (Array.isArray(obj)) {
+
+                    res = obj.map(stringify).join(",");
+                } else if (typeof obj === "object") {
+
+                    res = Object.keys(obj).map(function(key) {
+                        return key + "[" + stringify(obj[key]) + "]";
+                    }).join(",");
+                } else if (typeof obj !== "function") {
+
+                    res = String(obj);
+                }
+            }
+
+            return res;
+        };
+
+        var TreeFormat = {
+            stringify: stringify
         };
 
         var Colorer = Class.extend({
@@ -49,6 +131,8 @@ tau.mashups
             },
 
             getColorsConfigByType: function(typeName) {
+
+                typeName = typeName.toLowerCase();
 
                 if (this.colorsConfigCache[typeName]) {
                     return this.colorsConfigCache[typeName];
@@ -190,25 +274,23 @@ tau.mashups
                     if (!fields.length) {
                         return [];
                     } else {
+
                         // prevent too large request error if many cards
                         var i = 0;
                         var defs = [];
                         var take = 50;
                         var part = ids.slice(i, i + take);
+
                         while (part.length) {
-                            defs.push(configurator.getStore()
-                                .getDef(entityTypeName, {
-                                    fields: this.getFieldsConfigByType(entityTypeName),
-                                    $query: {
-                                        id: {
-                                            $in: part
-                                        }
-                                    }
-                                }));
+
+                            defs.push(load(getCollection(entityTypeName), {
+                                include: '[' + TreeFormat.stringify(fields) + ']',
+                                where: '(id in (' + part.join(',') + '))'
+                            }).then(processResult));
+
                             i += take;
                             part = ids.slice(i, i + take);
                         }
-
                         return whenList(defs);
                     }
                 }.bind(this));
@@ -240,7 +322,7 @@ tau.mashups
 
                 var values = this.collectValues(cardData);
                 /*eslint-disable */
-                var colors = this.collectColors(values, this.getColorsConfigByType(cardData.__type));
+                var colors = this.collectColors(values, this.getColorsConfigByType(cardData.entityType.name));
                 /*eslint-enable */
 
                 if (!colors.length) {
@@ -274,10 +356,14 @@ tau.mashups
                 return cardData;
             },
 
-            collectColors: function(value, fieldColorConfig) {
+            collectColors: function(value, fieldColorConfig, globalValue) {
+
+                if (!globalValue) {
+                    globalValue = value;
+                }
 
                 var colors = [];
-                if (!fieldColorConfig || (fieldColorConfig.match && !fieldColorConfig.match(value))) {
+                if (!fieldColorConfig || (fieldColorConfig.match && !fieldColorConfig.match(value, globalValue))) {
                     return colors;
                 }
 
@@ -285,18 +371,18 @@ tau.mashups
 
                     colors = fieldColorConfig.reduce(function matchInEntityArrayData(colors, colorsConfig) {
                         return colors.concat(value.reduce(function(colors, value) {
-                            return colors.concat(this.collectColors(value, colorsConfig));
+                            return colors.concat(this.collectColors(value, colorsConfig, globalValue));
                         }.bind(this), []));
                     }.bind(this), colors);
                 } else if (_.isArray(value) && _.isObject(fieldColorConfig)) {
 
                     colors = colors.concat(value.reduce(function(colors, value) {
-                        return colors.concat(this.collectColors(value, fieldColorConfig));
+                        return colors.concat(this.collectColors(value, fieldColorConfig, globalValue));
                     }.bind(this), []));
                 } else if (_.isObject(value) && _.isObject(fieldColorConfig)) {
 
-                    colors = colors.concat(_.keys(value).reduce(function(colors, fieldName) {
-                        return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName]));
+                    colors = colors.concat(_.keys(fieldColorConfig).reduce(function(colors, fieldName) {
+                        return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName], globalValue));
                     }.bind(this), []));
                 } else {
 

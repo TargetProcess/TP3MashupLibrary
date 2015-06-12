@@ -169,31 +169,31 @@ tau.mashups
 
                     var acid = data.acid;
 
-                    clipboardManager.getAll(function(err, cards) {
-                        var clipboardData = cards.reduce(function(res, item) {
-                            res[item.data.type] = res[item.data.type] || [];
-                            res[item.data.type].push(item.data.id);
+                    var cards = _.values(clipboardManager._cache);
 
-                            return res;
-                        }, {});
+                    var clipboardData = cards.reduce(function(res, item) {
+                        res[item.data.type] = res[item.data.type] || [];
+                        res[item.data.type].push(item.data.id);
 
-                        var url = configurator.getApplicationPath() + "/restui/board.aspx?" +
-                            "isNestedBoard=1" +
-                            "&acid=" + acid +
-                            "&clipboardData=" + encodeURIComponent(JSON.stringify(clipboardData)) +
-                            "&axisType=" + entityTypeName +
-                            "&cellType=" + type;
+                        return res;
+                    }, {});
 
-                        var $frame = $('<iframe class="nestedboardsframe" src="' + url + '"></iframe>');
+                    var url = configurator.getApplicationPath() + "/restui/board.aspx?" +
+                        "isNestedBoard=1" +
+                        "&acid=" + acid +
+                        "&clipboardData=" + encodeURIComponent(JSON.stringify(clipboardData)) +
+                        "&axisType=" + entityTypeName +
+                        "&cellType=" + type;
 
-                        $frame.load(function() {
-                            activityPopup.hideLoading();
-                        });
+                    var $frame = $('<iframe class="nestedboardsframe" src="' + url + '"></iframe>');
 
-                        $container.append($frame);
-                        $container.css({
-                            padding: 0
-                        });
+                    $frame.load(function() {
+                        activityPopup.hideLoading();
+                    });
+
+                    $container.append($frame);
+                    $container.css({
+                        padding: 0
                     });
                 });
             },

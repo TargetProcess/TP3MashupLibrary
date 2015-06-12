@@ -10,7 +10,7 @@
 
         'use strict';
 
-        var Report = React.createClass({displayName: 'Report',
+        var Report = React.createClass({displayName: "Report",
 
             componentDidMount: function() {
 
@@ -26,7 +26,7 @@
 
                 if (this.props.store.data.isLoading) {
                     inner = (
-                        React.DOM.div({className: "ui-wait-icon", style: {display: 'block !important'}})
+                        React.createElement("div", {className: "ui-wait-icon", style: {display: 'block !important'}})
                     );
                 } else {
 
@@ -34,15 +34,15 @@
 
                     users = _.map(users, function(v, k) {
                         return (
-                            ReportUserRow({key: 'u' + k, item: v, store: this.props.store})
+                            React.createElement(ReportUserRow, {key: 'u' + k, item: v, store: this.props.store})
                         );
                     }.bind(this));
 
                     inner = (
-                        React.DOM.table({className: "board-efforts", style: {width: '100%'}}, 
-                            React.DOM.tr(null, 
-                                React.DOM.th({colSpan: "2", style: {width: '25%'}}, "User"), 
-                                React.DOM.th({style: {width: '75%'}}, "Total Effort")
+                        React.createElement("table", {className: "board-efforts", style: {width: '100%'}}, 
+                            React.createElement("tr", null, 
+                                React.createElement("th", {colSpan: "2", style: {width: '25%'}}, "User"), 
+                                React.createElement("th", {style: {width: '75%'}}, "Total Effort")
                             ), 
                             users
                         )
@@ -50,10 +50,10 @@
                 }
 
                 return (
-                    React.DOM.div(null, 
-                        React.DOM.span({className: "tableTitle"}, "Total effort assigned to users"), 
-                        React.DOM.br(null), React.DOM.br(null), 
-                        React.DOM.div(null, 
+                    React.createElement("div", null, 
+                        React.createElement("span", {className: "tableTitle"}, "Total effort assigned to users"), 
+                        React.createElement("br", null), React.createElement("br", null), 
+                        React.createElement("div", null, 
                             inner
                         )
                     )

@@ -15,7 +15,7 @@ tau
 
         var cx = React.addons.classSet;
 
-        var TemplatesManagerRow = React.createClass({displayName: 'TemplatesManagerRow',
+        var TemplatesManagerRow = React.createClass({displayName: "TemplatesManagerRow",
 
             handleToggleRow: function() {
 
@@ -77,40 +77,40 @@ tau
                     var testCases = item.testCases.map(function(v) {
 
                         return (
-                            TemplatesManagerTestCase({key: "testcase" + v.Id, item: v, store: this.props.store})
+                            React.createElement(TemplatesManagerTestCase, {key: "testcase" + v.Id, item: v, store: this.props.store})
                         );
                     }.bind(this));
 
                     var tasks = item.tasks.map(function(v) {
 
                         return (
-                            TemplatesManagerTask({key: "task" + v.Id, item: v, store: this.props.store})
+                            React.createElement(TemplatesManagerTask, {key: "task" + v.Id, item: v, store: this.props.store})
                         );
                     }.bind(this));
 
                     expanded = (
-                        React.DOM.tr({className: "edit-line"}, 
-                            React.DOM.td({className: "td-task", colSpan: "3"}, 
-                                React.DOM.div({className: "tm-caption"}, 
-                                    React.DOM.b({className: "task"}, "Tasks"), 
-                                    React.DOM.span({className: "counter"}, tasksCount), 
-                                    React.DOM.button({className: "tau-btn tau-btn-small tau-success", 
+                        React.createElement("tr", {className: "edit-line"}, 
+                            React.createElement("td", {className: "td-task", colSpan: "3"}, 
+                                React.createElement("div", {className: "tm-caption"}, 
+                                    React.createElement("b", {className: "task"}, "Tasks"), 
+                                    React.createElement("span", {className: "counter"}, tasksCount), 
+                                    React.createElement("button", {className: "tau-btn tau-btn-small tau-success", 
                                         disabled: hasNewTask, 
                                         onClick: this.handleCreateTask})
                                 ), 
-                                React.DOM.div({className: "tm-body"}, 
+                                React.createElement("div", {className: "tm-body"}, 
                                     tasks
                                 )
                             ), 
-                            React.DOM.td({className: "td-test-case"}, 
-                                React.DOM.div({className: "tm-caption"}, 
-                                    React.DOM.b({className: "test-case"}, "Test Cases"), 
-                                    React.DOM.span({className: "counter"}, testCasesCount), 
-                                    React.DOM.button({className: "tau-btn tau-btn-small tau-success", 
+                            React.createElement("td", {className: "td-test-case"}, 
+                                React.createElement("div", {className: "tm-caption"}, 
+                                    React.createElement("b", {className: "test-case"}, "Test Cases"), 
+                                    React.createElement("span", {className: "counter"}, testCasesCount), 
+                                    React.createElement("button", {className: "tau-btn tau-btn-small tau-success", 
                                         disabled: hasNewTestCase, 
                                         onClick: this.handleCreateTestCase})
                                 ), 
-                                React.DOM.div({className: "tm-body"}, 
+                                React.createElement("div", {className: "tm-body"}, 
                                     testCases
                                 )
                             )
@@ -122,16 +122,16 @@ tau
 
                 if (item.status === 'edit') {
                     inner = (
-                        React.DOM.div({className: "tm-name tm-name-edit"}, 
-                            React.DOM.input({type: "text", ref: "name", defaultValue: item.name, 
+                        React.createElement("div", {className: "tm-name tm-name-edit"}, 
+                            React.createElement("input", {type: "text", ref: "name", defaultValue: item.name, 
                                 autoFocus: true, 
                                 onBlur: this.handleSave})
                         )
                     );
                 } else {
                     inner = (
-                        React.DOM.div({className: "tm-name", onClick: this.handleStartEdit}, 
-                            React.DOM.span(null, item.name)
+                        React.createElement("div", {className: "tm-name", onClick: this.handleStartEdit}, 
+                            React.createElement("span", null, item.name)
                         )
                     );
                 }
@@ -142,23 +142,23 @@ tau
                 });
 
                 return (
-                    React.DOM.tbody(null, 
-                        React.DOM.tr({className: className}, 
-                            React.DOM.td({className: "td-name", onClick: this.handleToggleRow}, 
+                    React.createElement("tbody", null, 
+                        React.createElement("tr", {className: className}, 
+                            React.createElement("td", {className: "td-name", onClick: this.handleToggleRow}, 
                                 inner
                             ), 
-                            React.DOM.td({className: "td-entities"}, 
-                                React.DOM.span({className: "entity-icon entity-task"}, "T"), 
-                                React.DOM.span({className: "counter"}, tasksCount)
+                            React.createElement("td", {className: "td-entities"}, 
+                                React.createElement("span", {className: "entity-icon entity-task"}, "T"), 
+                                React.createElement("span", {className: "counter"}, tasksCount)
                             ), 
-                            React.DOM.td({className: "td-entities"}, 
-                                React.DOM.span({className: "entity-icon entity-test-case"}, "TC"), 
-                                React.DOM.span({className: "counter"}, testCasesCount)
+                            React.createElement("td", {className: "td-entities"}, 
+                                React.createElement("span", {className: "entity-icon entity-test-case"}, "TC"), 
+                                React.createElement("span", {className: "counter"}, testCasesCount)
                             ), 
-                            React.DOM.td({className: "td-actions"}, 
-                                React.DOM.button({type: "button", className: "tau-btn tau-attention", 
+                            React.createElement("td", {className: "td-actions"}, 
+                                React.createElement("button", {type: "button", className: "tau-btn tau-attention", 
                                     onClick: this.handleRemove}, "Delete"), 
-                                React.DOM.button({type: "button", className: "tau-btn tau-primary", 
+                                React.createElement("button", {type: "button", className: "tau-btn tau-primary", 
                                     onClick: this.handleApply}, "Apply template")
                             )
                         ), 
