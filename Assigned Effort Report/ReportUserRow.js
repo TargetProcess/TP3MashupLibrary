@@ -63,7 +63,7 @@ tau.mashups
                 return (
                     React.createElement("tbody", null, 
                         React.createElement("tr", {className: "hoverHi"}, 
-                            React.createElement("td", {className: "more", onClick: this.handleExpand}), 
+                            React.createElement("td", {className: "more tau-icons-general", onClick: this.handleExpand}), 
                             React.createElement("td", null, item.FirstName, " ", item.LastName, 
                                 React.createElement("em", null, item.DefaultRole.Name)
                             ), 
