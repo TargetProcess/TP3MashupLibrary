@@ -94,7 +94,7 @@ tau
                                 <div className="tm-caption">
                                     <b className="task">Tasks</b>
                                     <span className="counter">{tasksCount}</span>
-                                    <button className="tau-btn tau-btn-small tau-success"
+                                    <button className="tau-btn tau-btn-small tau-success tau-icons-general-after"
                                         disabled={hasNewTask}
                                         onClick={this.handleCreateTask}></button>
                                 </div>
@@ -106,7 +106,7 @@ tau
                                 <div className="tm-caption">
                                     <b className="test-case">Test Cases</b>
                                     <span className="counter">{testCasesCount}</span>
-                                    <button className="tau-btn tau-btn-small tau-success"
+                                    <button className="tau-btn tau-btn-small tau-success tau-icons-general-after"
                                         disabled={hasNewTestCase}
                                         onClick={this.handleCreateTestCase}></button>
                                 </div>
@@ -122,7 +122,7 @@ tau
 
                 if (item.status === 'edit') {
                     inner = (
-                        <div className="tm-name tm-name-edit">
+                        <div className="tm-name tm-name-edit tau-icons-general-before editableText">
                             <input type="text" ref="name" defaultValue={item.name}
                                 autoFocus={true}
                                 onBlur={this.handleSave} />
@@ -130,7 +130,7 @@ tau
                     );
                 } else {
                     inner = (
-                        <div className="tm-name" onClick={this.handleStartEdit}>
+                        <div className="tm-name tau-icons-general-before editableText" onClick={this.handleStartEdit}>
                             <span>{item.name}</span>
                         </div>
                     );
