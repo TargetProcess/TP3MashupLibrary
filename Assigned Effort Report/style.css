@@ -14,12 +14,12 @@ table.board-efforts {
     border-collapse: collapse;
 }
 table.board-efforts td.more {
-    background: url("../../../img/icons/plus-small.png") center center no-repeat;
-    width: 10px;
+    background-position: -108px -153px;
+    width: 14px;
     cursor: pointer;
 }
 table.board-efforts td.more.less {
-    background: url("../../../img/icons/minus-small.png") center center no-repeat !important;
+    background-position: -60px -158px !important;
 }
 table.board-efforts td.bar {
     background: #819f56;

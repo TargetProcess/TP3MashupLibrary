@@ -63,7 +63,7 @@ tau.mashups
                 return (
                     <tbody>
                         <tr className="hoverHi">
-                            <td className="more" onClick={this.handleExpand}></td>
+                            <td className="more tau-icons-general" onClick={this.handleExpand}></td>
                             <td>{item.FirstName} {item.LastName}
                                 <em>{item.DefaultRole.Name}</em>
                             </td>
