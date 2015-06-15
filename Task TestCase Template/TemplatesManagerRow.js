@@ -94,7 +94,7 @@ tau
                                 React.createElement("div", {className: "tm-caption"}, 
                                     React.createElement("b", {className: "task"}, "Tasks"), 
                                     React.createElement("span", {className: "counter"}, tasksCount), 
-                                    React.createElement("button", {className: "tau-btn tau-btn-small tau-success tau-icons-general-after", 
+                                    React.createElement("button", {className: "tau-btn tau-btn-small tau-success", 
                                         disabled: hasNewTask, 
                                         onClick: this.handleCreateTask})
                                 ), 
@@ -106,7 +106,7 @@ tau
                                 React.createElement("div", {className: "tm-caption"}, 
                                     React.createElement("b", {className: "test-case"}, "Test Cases"), 
                                     React.createElement("span", {className: "counter"}, testCasesCount), 
-                                    React.createElement("button", {className: "tau-btn tau-btn-small tau-success tau-icons-general-after", 
+                                    React.createElement("button", {className: "tau-btn tau-btn-small tau-success", 
                                         disabled: hasNewTestCase, 
                                         onClick: this.handleCreateTestCase})
                                 ), 
@@ -122,7 +122,7 @@ tau
 
                 if (item.status === 'edit') {
                     inner = (
-                        React.createElement("div", {className: "tm-name tm-name-edit tau-icons-general-before editableText"}, 
+                        React.createElement("div", {className: "tm-name tm-name-edit"}, 
                             React.createElement("input", {type: "text", ref: "name", defaultValue: item.name, 
                                 autoFocus: true, 
                                 onBlur: this.handleSave})
@@ -130,7 +130,7 @@ tau
                     );
                 } else {
                     inner = (
-                        React.createElement("div", {className: "tm-name tau-icons-general-before editableText", onClick: this.handleStartEdit}, 
+                        React.createElement("div", {className: "tm-name", onClick: this.handleStartEdit}, 
                             React.createElement("span", null, item.name)
                         )
                     );

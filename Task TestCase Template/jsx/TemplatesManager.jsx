@@ -40,7 +40,7 @@ tau
 
                 return (
                     <div className="templates-mashap">
-                        <div className="tm-add-btn tau-icons-general-before" onClick={this.handleCreateTemplate}>Add template</div>
+                        <div className="tm-add-btn" onClick={this.handleCreateTemplate}>Add template</div>
                         <table className="tm-grid">
                             {inner}
                         </table>
