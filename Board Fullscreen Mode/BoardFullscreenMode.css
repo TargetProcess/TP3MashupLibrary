@@ -32,5 +32,5 @@ body.fullscreen .tau-board {
     width: 12px;
     height: 12px;
     display: inline-block;
-    background:  url('../../../JavaScript/tau/css.board/images/icons-general.svg') no-repeat -820px -159px;
+    background-position: -820px -159px;
 }

@@ -62,7 +62,7 @@ tau
             var $button = $(
             '<button class="tau-btn tau-extension-board-tooltip tau-btn-fullscreen" id="btnFullScreen" ' +
                 'data-title="Fullscreen" alt="Toggle full screen">' +
-                '<i class="icon icon-fullscreen"></i>' +
+                '<i class="icon icon-fullscreen tau-icons-general"></i>' +
             '</button>');
 
             if (!$el.find('#btnFullScreen').length) {
