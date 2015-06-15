@@ -40,7 +40,7 @@ tau
 
                 return (
                     React.createElement("div", {className: "templates-mashap"}, 
-                        React.createElement("div", {className: "tm-add-btn tau-icons-general-before", onClick: this.handleCreateTemplate}, "Add template"), 
+                        React.createElement("div", {className: "tm-add-btn", onClick: this.handleCreateTemplate}, "Add template"), 
                         React.createElement("table", {className: "tm-grid"}, 
                             inner
                         )

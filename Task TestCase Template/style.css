@@ -22,7 +22,7 @@
     display: block;
     width: 10px;
     height: 10px;
-    background-position: -60px -109px;
+    background: url("../../tau/css.board/images/icons-general.svg") -60px -109px no-repeat;
     position: absolute;
     top: 8px;
     left: 8px;
@@ -71,7 +71,6 @@
     display: inline-block;
     position: relative;
     padding: 7px 22px 6px 26px;
-    border: none;
     max-width: 100%;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
@@ -93,7 +92,7 @@
 .tm-grid .td-name .tm-name:before {
     content: "";
     display: block;
-    background-position: -110px -158px;
+    background: url("../../tau/css.board/images/icons-general.svg") -110px -160px no-repeat;
     width: 11px;
     height: 11px;
     position: absolute;
@@ -104,8 +103,6 @@
     background-position: -60px -160px;
 }
 .tm-grid .td-name .tm-name:hover {
-    background-color: initial;
-    background-position: 100% 0.9em;
     color: #8596a7;
 }
 .tm-grid .info-line.active .tm-name {
@@ -125,7 +122,7 @@
 }
 .tm-grid .info-line.active .tm-name:hover:after {
     content: "";
-    
+    background: url("../../tau/css.ui/images/edit.png") 0 0 no-repeat;
     width: 20px;
     height: 12px;
     position: absolute;
@@ -233,7 +230,7 @@
     position: absolute;
     top: 2px;
     left: 3px;
-    background-position: -10px -108px;
+    background: url("../../tau/css.board/images/icons-general.svg") -10px -108px no-repeat;
 }
 .tm-grid .edit-line .tm-item .view-mode:hover {
     background-color: #fff;
