@@ -1,4 +1,4 @@
-/* Build Tue Apr 28 2015 12:06:04 GMT+0300 (MSK) */
+/* Build Fri Jun 19 2015 14:55:07 GMT+0300 (MSK) */
 /*globals tau */
 tau.mashups
     .addModule('ShareBoard/ShareBoard.config', function() {
