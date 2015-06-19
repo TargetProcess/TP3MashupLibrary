@@ -8,8 +8,10 @@ tau.mashups
     .addDependency('CFConstraints.state.interrupter.slice')
     .addDependency('CFConstraints.cf.interrupter.slice')
     .addDependency('CFConstraints.quick.add')
+    .addDependency('tau/cf.constraints/application.cf.constraints')
     .addCSS('CFConstraints.css')
-    .addMashup(function(_, DataProvider, Requirements, config, StateInterrupterStore, CFInterrupterStore, StateInterrupterSlice, CFInterrupterSlice, QuickAddAdapter, mashupConfig) {
+    .addMashup(function(_, DataProvider, Requirements, config, StateInterrupterStore, CFInterrupterStore,
+        StateInterrupterSlice, CFInterrupterSlice, QuickAddAdapter, ApplicationCFConstraints, mashupConfig) {
         var CFConstraints = function() {
             this.entityStateName = 'entityState';
             this.init();
@@ -31,13 +33,12 @@ tau.mashups
             },
 
             _showPopUp: function(entityToRequire, entityDeferred) {
-                require(['tau/cf.constraints/application.cf.constraints'], function(ApplicationCFConstraints) {
-                    new ApplicationCFConstraints({
-                        placeholder: '#' + mashupConfig.placeholderId,
-                        customFields: entityToRequire.customFields,
-                        entity: entityToRequire.entity,
-                        entityDeferred: entityDeferred
-                    });
+
+                new ApplicationCFConstraints({
+                    placeholder: '#' + mashupConfig.placeholderId,
+                    customFields: entityToRequire.customFields,
+                    entity: entityToRequire.entity,
+                    entityDeferred: entityDeferred
                 });
             }
         };
