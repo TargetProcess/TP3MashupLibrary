@@ -1,9 +1,9 @@
 /*eslint quotes:[0, "single"] */
-require([
-    'Underscore',
-    'jQuery',
-    'app.bus'
-], function(_, $, appBusDeferred) {
+tau.mashups
+.addDependency('Underscore')
+.addDependency('jQuery')
+.addDependency('app.bus')
+.addMashup(function(_, $, appBusDeferred) {
 
     'use strict';
 
