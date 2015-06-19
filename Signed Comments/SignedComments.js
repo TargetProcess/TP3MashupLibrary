@@ -71,16 +71,18 @@ tau.mashups
             trBody.insertAfter(trHead);
             trBody.find('td:first').html('<textarea id="signature" cols="55" rows="6"></textarea>');
             /* make it a rich text editor */
-            require([configurator.getCkPath() + '/new/ckeditor/ckeditor.js'], function() {
-                require([configurator.getCkPath() + '/new/ckfinder/ckfinder.js'], function() {
-                    window.CKEDITOR.replace('signature', {
-                        toolbar: 'Basic',
-                        uploaderConfig: {
+            if (require) {
+                require([configurator.getCkPath() + '/new/ckeditor/ckeditor.js'], function() {
+                    require([configurator.getCkPath() + '/new/ckfinder/ckfinder.js'], function() {
+                        window.CKEDITOR.replace('signature', {
+                            toolbar: 'Basic',
+                            uploaderConfig: {
 
-                        }
+                            }
+                        });
                     });
                 });
-            });
+            }
             /* bind to save */
             $('input.button[value="Save changes"]').click(function() {
                 $.ajax({
