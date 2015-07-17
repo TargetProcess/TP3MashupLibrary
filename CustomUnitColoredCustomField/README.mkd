@@ -1,0 +1,17 @@
+# Custom Unit - Colored Custom Fields
+
+The mashup adds a new custom unit to the Customize Cards tab in a View Setup area, based on a custom field that needs to be specified in the mashup code. The values of that custom field are mapped to colors in the mashup code, which will the be used to color the values on the cards.
+
+In the mashup code, define your custom field in the name section `name` (e.g. "Risk"). The values of the custom field are added to the section `colors`. Each value must be created as pair of the value name (e.g. `"High Risk"`) and the color, which can be entered as plain text (e.g. `"red"` for red), as hex code (e.g. `"#00FF00"` for green) or rgb value (e.g. `"rgb(255,255,0)"` for yellow).
+
+```
+"name": "Risk",
+    "colors": {
+      "High Risk": "red",
+      "Low Risk": "#00FF00",
+      "Medium Risk": "rgb(255,255,0)"
+    }
+  }
+```
+
+![Colored Custom Fields on Cards](https://raw.githubusercontent.com/TargetProcess/CustomUnitColoredCustomFieldMashup/master/src/traffic-light.png)
