@@ -35,10 +35,11 @@ tau.mashups
                             isRootCF = this._isRootCF(rootCFs, cfNameLowered, processId, entityTypeName);
                             if (!isRootCF) {
                                 //noinspection JSUnfilteredForInLoop
-                                cascadeCF = this._findCFDefinition(cfDefinitions, cfNameLowered, processId, entityTypeName);
+                                cascadeCF = this._findCFDefinition(cfDefinitions, cfNameLowered, processId,
+                                    entityTypeName);
                                 this._cascadeCFs.push(cascadeCF);
                             }
-                        }, this)
+                        }, this);
                     }
                 }
 
@@ -64,20 +65,20 @@ tau.mashups
             _cascadeCFChangedHandler: function(processId, entityTypeName, cfVertex) {
                 this._toggleCFElement(processId, entityTypeName, cfVertex.id, cfVertex.value, cfVertex.isValid);
             },
+            _isCF: function(cf, cfNameLowered, processId, entityTypeName) {
+                return cf.name.toLowerCase() === cfNameLowered &&
+                    cf.processId == processId &&
+                    cf.entityTypeName.toLowerCase() === entityTypeName.toLowerCase();
+            },
             _isRootCF: function(rootCFs, cfNameLowered, processId, entityTypeName) {
                 return !!_.find(rootCFs, function(cf) {
-                    return cf.name.toLowerCase() === cfNameLowered
-                        && cf.processId == processId
-                        && cf.entityTypeName.toLowerCase() === entityTypeName.toLowerCase();
-
-                });
+                    return this._isCF(cf, cfNameLowered, processId, entityTypeName);
+                }, this);
             },
             _findCFDefinition: function(cfDefinitions, cfNameLowered, processId, entityTypeName) {
                 return _.find(cfDefinitions, function(cfDefinition) {
-                    return cfDefinition.name.toLowerCase() === cfNameLowered
-                        && cfDefinition.processId == processId
-                        && cfDefinition.entityTypeName.toLowerCase() === entityTypeName.toLowerCase()
-                });
+                    return this._isCF(cfDefinition, cfNameLowered, processId, entityTypeName);
+                }, this);
             },
             _toggleCFElement: function(processId, entityTypeName, cfName, cfValue, shouldBeVisible) {
                 var cfElement = this._findCFElement(processId, entityTypeName, cfName);
@@ -105,26 +106,34 @@ tau.mashups
                 if (cfElement.length === 0 || !cfValue || !shouldBeVisible) {
                     return null;
                 }
-                return cfElement.data('fieldtype').toLowerCase() === 'multipleselectionlist'
-                    ? cfValue.split(',')
-                    : cfValue;
+                return cfElement.data('fieldtype').toLowerCase() === 'multipleselectionlist' ?
+                    cfValue.split(',') :
+                    cfValue;
             },
             _actualizeCascadeCFsElements: function() {
                 var verticesWrapped = this._cascadeCFConstraintsGraph.getVerticesWrapped();
                 _.forEach(this._cascadeCFs, function(cf) {
-                    if (!verticesWrapped.processes[cf.processId].entityTypes[cf.entityTypeName.toLowerCase()].cfs[cf.name].isValid()) {
+                    if (!verticesWrapped.processes[cf.processId].entityTypes[cf.entityTypeName.toLowerCase()]
+                            .cfs[cf.name].isValid()) {
                         this._toggleCFElement(cf.processId, cf.entityTypeName, cf.name);
                     }
                 }, this);
             },
+            _getQuickAddFieldValue: function(fieldName) {
+                return this._$quickAddElement
+                        .find('[data-fieldname="' + fieldName + '"]')
+                        .find('option:selected')
+                        .data('option') || {};
+            },
             _bindGraphToCFsChanges: function() {
-                this._$quickAddElement.delegate('[data-iscf="true"]', 'change', _.bind(function(e) {
+                this._$quickAddElement.on('change', '[data-iscf="true"]', _.bind(function(e) {
                     var $target = $(e.target),
                         cfName = $target.data('fieldname'),
-                        entityTypeNameLowered = this._$quickAddElement.find('.quick-add__entity-items').find('button.tau-active').data('type').toLowerCase(),
-                        processId = entityTypeNameLowered === 'project'
-                            ? this._$quickAddElement.find('[data-fieldname="Process"]').find('option:selected').data('option').id
-                            : this._$quickAddElement.find('[data-fieldname="project"]').find('option:selected').data('option').processId,
+                        entityTypeNameLowered = this._$quickAddElement.find('.quick-add__entity-items')
+                            .find('button.tau-active').data('type').toLowerCase(),
+                        processId = entityTypeNameLowered === 'project' ?
+                            this._getQuickAddFieldValue('Process').id :
+                            this._getQuickAddFieldValue('Project').processId,
                         cfValue = this._getCFValueFromElement($target);
                     this._cascadeCFConstraintsGraph.setCFValue(processId, entityTypeNameLowered, cfName, cfValue);
                 }, this));
