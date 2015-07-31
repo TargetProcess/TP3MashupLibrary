@@ -65,7 +65,6 @@ tau
             addCSSRule('.tau-no-data-in-slice h2, .tau-no-data-in-slice .tau-txt', 'font-weight: 400 !important; color: #fff !important; text-shadow: none !important;');
             addCSSRule('.tau-card-v2_isInPast .tau-name, .tau-selected .tau-name, .tau-card-v2_type_build .tau-name', 'color: #000 !important;');
             addCSSRule('.i-role-timeline-planner-card-holder .tau-name', 'color: #ffffff !important;');
-            addCSSRule('.tau-btn.tau-close:before', 'background-position: -909px -107px !important;');
             addCSSRule('.tau-page-items, .tau-page-items .tau-count', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-page-items .tau-count:hover', 'color: #fff !important;');
             addCSSRule('.tau-page-items .tau-count.tau-active', 'color: #fff !important; background: #989CA6 !important');
