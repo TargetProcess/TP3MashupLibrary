@@ -110,7 +110,7 @@ tau.mashups
                     }),
                     cascadeCFs = this.cascadeTracker.buildCascadeCFs(calculatedRequiredCFs.concat(requiredCFs), data.customFields);
 
-                return calculatedRequiredCFs.concat(cascadeCFs);
+                return _.compact(calculatedRequiredCFs.concat(cascadeCFs));
             },
 
             _modifyBindData: function(dataBindEvtArg, requiredCFsToModify) {
