@@ -121,7 +121,7 @@ tau.mashups
             },
             _getQuickAddFieldValue: function(fieldName) {
                 return this._$quickAddElement
-                        .find('[data-fieldname="' + fieldName + '"]')
+                        .find('[data-fieldname="' + fieldName + '"],[data-fieldname="' + fieldName.toLowerCase() + '"]')
                         .find('option:selected')
                         .data('option') || {};
             },
