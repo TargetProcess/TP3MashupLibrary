@@ -88,9 +88,6 @@ tau.mashups
                 var $ivite = $('.tau-invite-widget', $form);
                 $ivite.hide();
 
-                var $assignTeams = $('.tau-teams', $form);
-                $assignTeams.hide();
-
                 var $container = $('<div class="file-upload-container" ></div>');
                 _.each(addedItems, function (item, index) {
                     var $item = $('<div class="file-upload-item"></div>').text((index + 1) + ". " + item.join(', '));
