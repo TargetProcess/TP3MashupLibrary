@@ -47,7 +47,7 @@ tau.mashups
 
             var entityTypeName = context.entity.entityType.name.toLowerCase();
             var term = _.find(context.getTerms(), function(v) {
-                return (v.wordKey || v.name).toLowerCase() === entityTypeName;
+                return (v.wordKey || v.name).toLowerCase().replace(' ', '') === entityTypeName;
             });
             var termValue = term ? term.value.toLowerCase() : null;
 
