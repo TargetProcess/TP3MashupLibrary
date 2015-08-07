@@ -15,6 +15,7 @@ tau.mashups
         var addedItems = [];
         var queue = [];
         var $quickAdd = null;
+        var hasNoUnicode;
 
         $("<style type='text/css'> .file-upload-item { padding-bottom: 5px; white-space: nowrap; text-overflow: ellipsis; font-size: 12px; } </style>").appendTo("head");
         $("<style type='text/css'> .file-upload-container { overflow-x: hidden ; overflow-y: auto; max-height: 200px; } </style>").appendTo("head");
@@ -94,6 +95,13 @@ tau.mashups
                     $container.append($item);
                 });
                 var $parent = $name.eq(0).parent();
+
+                if (hasNoUnicode) {
+                    $parent.append('<div style="color: red; border: 1px solid red; border-radius: 5px; padding: 5px; font-size: 13px; margin: 10px 0;">' +
+                            'This data contains non-unicode symbols, which may not be interpreted correctly. You can try it as is or save the file again in a unicode format.'
+                        + '</div>');
+                }
+
                 $container.appendTo($parent);
 
                 var $tauButton = $('.tau-add-item', $form);
@@ -232,6 +240,8 @@ tau.mashups
             $cells.on('drop', function(e) {
                 e.preventDefault();
 
+                hasNoUnicode = false;
+
                 if (!window.FileReader || !e.originalEvent.dataTransfer || !e.originalEvent.dataTransfer.files || !e.originalEvent.dataTransfer.files.length) {
                     return false;
                 }
@@ -251,7 +261,12 @@ tau.mashups
                         return v.trim();
                     }));
                     var items = lines.map(function(v){
-                        if (complexEntity == true) {
+
+                        if (v.match(/[\ufffd]/)) {
+                            hasNoUnicode = true;
+                        }
+
+                        if (complexEntity) {
                             //allow commas in non-complex entities
                             return (v || '').split(',');
                         }
