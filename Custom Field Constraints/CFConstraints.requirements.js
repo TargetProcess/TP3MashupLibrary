@@ -47,10 +47,10 @@ tau.mashups
                         return entityCFConstraint.name.toLowerCase() === changedCF.name.toLowerCase()
                             && (entityCFConstraint.valueIn
                             ? _.some(entityCFConstraint.valueIn, function(value) {
-                            return value === changedCF.value;
+                            return value == changedCF.value; // quick fix to prevent String as Number
                         })
                             : _.every(entityCFConstraint.valueNotIn, function(value) {
-                            return value !== changedCF.value;
+                            return value != changedCF.value;
                         }))
                     });
                     return cfConstraintsMemo.concat(cfConstraints);
