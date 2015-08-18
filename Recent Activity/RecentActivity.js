@@ -1,4 +1,4 @@
-/* globals tau */
+/*global tau*/
 tau
     .mashups
     .addDependency('jQuery')
@@ -28,7 +28,7 @@ tau
                 }).join(',');
             } else if (_.isObject(fields)) {
                 var key = _.keys(fields)[0];
-                prefix += _.keys(fields)[0] + '.';
+                prefix += key + '.';
                 return 'new(' + processFields(fields[key], prefix) + ') as ' + key;
             } else {
                 return prefix + fields;
@@ -154,12 +154,10 @@ tau
                 var fields = processFields([
                     'id',
                     'name',
-                    'owner', {
-                        'entityType': ['name']
-                    },
-                    'createDate', {
-                        'project': ['color', 'abbreviation']
-                    }
+                    'owner',
+                    {'entityType': ['name']},
+                    'createDate',
+                    {'project': ['color', 'abbreviation']}
                 ]);
 
                 return $
@@ -346,10 +344,10 @@ tau
                 html += '<div id="ac_main" style="height: 100%; overflow: scroll"><table style="font-size: 11px !important">';
 
                 var tmpl = ['<tr><td><img width="16" height="16" src="<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>">',
-                    ' <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>',
+                    ' <b><%= this.date %></b></td><td <%= this.doneStyle %>><%= this.state %></td>',
                     '<td><span class="delimeter">—</span> <span style="background:<%= this.color %>"><%= this.projectAbr %></span>',
                     ' <%= this.entityType %> <a href="<%= this.path %>/entity/<%= this.entityId %>"><%= this.entityName %></a>',
-                    ' by <%= this.user %></td></tr>'
+                    ' by <%! this.user %></td></tr>'
                 ].join('');
 
                 _.forEach(grouped, function(val, key) {
