@@ -346,7 +346,7 @@ tau
                 var tmpl = ['<tr><td><img width="16" height="16" src="<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>">',
                     ' <b><%= this.date %></b></td><td <%= this.doneStyle %>><%= this.state %></td>',
                     '<td><span class="delimeter">—</span> <span style="background:<%= this.color %>"><%= this.projectAbr %></span>',
-                    ' <%= this.entityType %> <a href="<%= this.path %>/entity/<%= this.entityId %>"><%= this.entityName %></a>',
+                    ' <%= this.entityType %> <a href="<%= this.path %>/entity/<%= this.entityId %>"><%! this.entityName %></a>',
                     ' by <%! this.user %></td></tr>'
                 ].join('');
 
