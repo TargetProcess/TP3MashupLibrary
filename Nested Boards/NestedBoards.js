@@ -9,9 +9,8 @@ tau.mashups
     .addDependency('tau/configurator')
 
     .addDependency('tp3/mashups/popup')
-    .addDependency('tau/storage/api.nocache')
     .addCSS('NestedBoards.css')
-    .addMashup(function($, _, parseUri, Class, configurator, Popup, storeapi) {
+    .addMashup(function($, _, parseUri, Class, configurator, Popup) {
 
         'use strict';
 
@@ -35,9 +34,6 @@ tau.mashups
                 }
             });
 
-            reg.getByName(busName).done(function(bus) {
-                bus.on(eventName, listener);
-            });
         };
 
         var nestedBoardsConfig = {
@@ -96,7 +92,10 @@ tau.mashups
             });
 
             return res;
+
         }, {});
+
+        var boardSettings;
 
         var Mashup = Class.extend({
 
@@ -109,13 +108,21 @@ tau.mashups
                     configurator = appConfigurator;
                 }.bind(this));
 
+
+                addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
+                    boardSettings = bs.boardSettings;
+                }.bind(this));
+
                 if (this.request.isNestedBoard) {
+
                     $('body').addClass('fullscreen');
-                    this.patchSlice();
 
                     addBusListener('board_plus', 'board.configuration.ready', function(e, boardConfig) {
+
                         this.updateConfiguration(boardConfig);
+
                     }.bind(this));
+
                 } else {
 
                     addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
@@ -183,7 +190,9 @@ tau.mashups
                         "&acid=" + acid +
                         "&clipboardData=" + encodeURIComponent(JSON.stringify(clipboardData)) +
                         "&axisType=" + entityTypeName +
-                        "&cellType=" + type;
+                        "&cellType=" + type +
+                        '#page=board/' + boardSettings.settings.id
+                        ;
 
                     var $frame = $('<iframe class="nestedboardsframe" src="' + url + '"></iframe>');
 
@@ -258,26 +267,7 @@ tau.mashups
                     filter: axisFilter,
                     types: [axisType]
                 };
-            },
 
-            patchSlice: function() {
-
-                var cellType = this.request.cellType;
-                var axisType = this.request.axisType;
-
-                var prevFn = storeapi.prototype._makeServiceCall;
-
-                storeapi.prototype._makeServiceCall = function(ajaxConfig) {
-
-                    if (ajaxConfig.url.match(/api\/board\/v1\//) && ajaxConfig.type.toLowerCase() === 'post') {
-                        var matched = ajaxConfig.url.match(/\/(\d+)/);
-                        if (matched) {
-                            var boardId = ajaxConfig.url.match(/\/(\d+)/)[1];
-                            ajaxConfig.url = configurator.getApplicationPath() + '/storage/v1/boards_private_' + axisType + "_" + cellType + '_boardlink/' + boardId;
-                        }
-                    }
-                    return prevFn.apply(this, arguments);
-                };
             }
 
         });
