@@ -48,12 +48,14 @@ tau.mashups
                     .ofType('entityState')
                     .filteredBy(this._getEntityStateFilter(entitiesDetailed, defaultProcess))
                     .withFieldSetRestrictedTo([
+                        {workflow: ['id']},
                         {process: ['id']},
                         {entityType: ['name']},
                         'name',
                         'isInitial',
                         'isFinal',
-                        'isPlanned'
+                        'isPlanned',
+                        {subEntityStates: ['id', 'name', {workflow: ['id']}, 'isInitial', 'isFinal', 'isPlanned']}
                     ])
                     .withCallOnDone(function(entityStatesDetailed) {
                         getEntityStatesDetails.resolve(entityStatesDetailed);
@@ -98,6 +100,38 @@ tau.mashups
                 return getTasksDeferred.promise();
             },
 
+            getTeamProjectsPromise: function(entitiesDetailed) {
+                var getTeamProjectsDetails = $.Deferred();
+                var teamProjectIds = _.chain(entitiesDetailed)
+                    .filter(function(entityDetailed) {
+                        return entityDetailed.project &&
+                            entityDetailed.assignedTeams && entityDetailed.assignedTeams.length > 0;
+                    })
+                    .map(function(entityDetailed) {
+                        return _.pluck(entityDetailed.project.teamProjects, 'id');
+                    })
+                    .flatten()
+                    .unique()
+                    .value();
+                if (teamProjectIds.length === 0) {
+                    getTeamProjectsDetails.resolve([]);
+                    return getTeamProjectsDetails.promise();
+                }
+                this.storage.getEntities()
+                    .ofType('teamProject')
+                    .filteredBy({id: {$in: teamProjectIds}})
+                    .withFieldSetRestrictedTo([
+                        {team: ['id']},
+                        {project: ['id']},
+                        {workflows: ['id', 'name', {entityType: ['name']}, {parentWorkflow: ['id']}]}
+                    ])
+                    .withCallOnDone(function(entityStatesDetailed) {
+                        getTeamProjectsDetails.resolve(entityStatesDetailed);
+                    })
+                    .execute();
+                return getTeamProjectsDetails.promise();
+            },
+
             getEntityStatesForTypesAndProcessesPromise: function(configurator, entityTypes, processIds) {
                 var entityTypesValues = '%22' + entityTypes.join('%22,%20%22') + '%22';
                 var processIdsValues = processIds.join(',%20');
@@ -126,16 +160,34 @@ tau.mashups
                     : defaultProcess.id;
             },
 
+            getEntityTeamWorkflowIds: function(entityDetailed) {
+                if (entityDetailed.entityType.name.toLowerCase() === 'project' || !entityDetailed.project) {
+                    return [];
+                }
+                return entityDetailed.entityType.name.toLowerCase() === 'project'
+                    ? entityDetailed.process.id
+                    : entityDetailed.project
+                    ? entityDetailed.project.process.id
+                    : defaultProcess.id;
+            },
+
             _getEntitiesDetailsFilter: function(entityType) {
                 var filter = ['customFields', 'name', {entityType: ['name']}];
                 filter.push(entityType.toLowerCase() === 'project'
-                    ? {process: ['id']}
-                    : {project: [
-                    {process: ['id']}
-                ]}
+                        ? {process: ['id']}
+                        : {
+                        project: [
+                            {process: ['id']},
+                            {teamProjects: ['id']}
+                        ]
+                    }
                 );
                 if (entityType.toLowerCase() === 'userstory') {
                     filter.push({tasks: ['id', 'name', {entityState: ['isFinal']}]});
+                }
+                if (_.contains(['epic', 'feature', 'userstory', 'request', 'bug', 'task',
+                        'testplan', 'testplanrun'], entityType.toLowerCase())) {
+                    filter.push({assignedTeams: ['id', {team: ['id']}]});
                 }
 
                 return filter;
