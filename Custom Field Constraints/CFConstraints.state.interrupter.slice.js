@@ -19,28 +19,69 @@ tau.mashups
                 return this.sliceDecoder.decode(change.id);
             },
 
-            _getNewState: function(entity, entityStatesDetailed, changesToInterrupt, defaultProcess) {
+            _getNewState: function(entity, entityStatesDetailed, changesToInterrupt, defaultProcess, teamProjects) {
                 var entityStateChange = _.find(changesToInterrupt, function(change) {
                     return parseInt(this.sliceDecoder.decode(change.id)) == entity.id;
                 }, this);
 
-                return this._getEntityState(entity, entityStatesDetailed, entityStateChange.changes, defaultProcess);
+                return this._getEntityState(entity, entityStatesDetailed, entityStateChange.changes, defaultProcess, teamProjects);
             },
 
-            _getEntityState: function(entity, entityStates, changes, defaultProcess) {
-                var stateName = this.sliceDecoder.decode(_.find(changes,function(change) {
+            _getEntityState: function(entity, entityStates, changes, defaultProcess, teamProjects) {
+                var change = _.find(changes, function(change) {
                     return this._shouldChangeBeHandled(change);
-                }, this).value);
+                }, this);
+                var stateName = this.sliceDecoder.decode(change.value);
 
+                if (this._isTeamStateChange(change)) {
+                    return this._getTeamState(stateName, entity, entityStates, change, teamProjects);
+                } else {
+                    return _.find(entityStates, function(state) {
+                        return state.process.id == this.dataProvider.getEntityProcessId(entity, defaultProcess)
+                            && state.entityType.name == entity.entityType.name
+                            && (stateName.toLowerCase() == state.name.toLowerCase()
+                                || (stateName.toLowerCase() == '_initial' && state.isInitial)
+                                || (stateName.toLowerCase() == '_final' && state.isFinal)
+                                || (stateName.toLowerCase() == '_planned' && state.isPlanned)
+                            )
+                    }, this);
+                }
+            },
+
+            _getTeamState: function(stateName, entity, entityStates, change, teamProjects) {
+                if (!entity.assignedTeams || entity.assignedTeams.length === 0) {
+                    return null;
+                }
+                var workflowIds = _.compact(_.map(entity.assignedTeams, function(teamAssignment) {
+                    var teamId = teamAssignment.team.id;
+                    var teamProject = _.find(teamProjects, function(teamProjects) {
+                        return teamProjects.project.id === entity.project.id &&
+                            teamProjects.team.id === teamId;
+                    });
+                    if (!teamProject) {
+                        return null;
+                    }
+                    return _.find(teamProject.workflows, function(workflow) {
+                        return workflow.entityType.name == entity.entityType.name;
+                    }).id;
+                }));
                 return _.find(entityStates, function(state) {
-                    return state.process.id == this.dataProvider.getEntityProcessId(entity, defaultProcess)
-                        && state.entityType.name == entity.entityType.name
-                        && (stateName.toLowerCase() == state.name.toLowerCase()
+                    if (this.isProperState(stateName, state, workflowIds)) {
+                        return true;
+                    }
+                    return _.some(state.subEntityStates, function(sub) {
+                        return this.isProperState(stateName, sub, workflowIds);
+                    }.bind(this));
+                }.bind(this));
+            },
+
+            isProperState: function(stateName, state, workflowIds) {
+                return _.contains(workflowIds, state.workflow.id)
+                    && (stateName.toLowerCase() == state.name.toLowerCase()
                         || (stateName.toLowerCase() == '_initial' && state.isInitial)
                         || (stateName.toLowerCase() == '_final' && state.isFinal)
                         || (stateName.toLowerCase() == '_planned' && state.isPlanned)
-                        )
-                }, this);
+                    )
             }
         });
 
