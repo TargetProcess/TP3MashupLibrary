@@ -21,7 +21,7 @@ tau.mashups
 
             _getNewState: function(entity, entityStatesDetailed, changesToInterrupt, defaultProcess, teamProjects) {
                 var entityStateChange = _.find(changesToInterrupt, function(change) {
-                    return parseInt(this.sliceDecoder.decode(change.id)) == entity.id;
+                    return parseInt(this.sliceDecoder.decode(change.id)) === entity.id;
                 }, this);
 
                 return this._getEntityState(entity, entityStatesDetailed, entityStateChange.changes, defaultProcess, teamProjects);
@@ -37,19 +37,15 @@ tau.mashups
                     return this._getTeamState(stateName, entity, entityStates, change, teamProjects);
                 } else {
                     return _.find(entityStates, function(state) {
-                        return state.process.id == this.dataProvider.getEntityProcessId(entity, defaultProcess)
-                            && state.entityType.name == entity.entityType.name
-                            && (stateName.toLowerCase() == state.name.toLowerCase()
-                                || (stateName.toLowerCase() == '_initial' && state.isInitial)
-                                || (stateName.toLowerCase() == '_final' && state.isFinal)
-                                || (stateName.toLowerCase() == '_planned' && state.isPlanned)
-                            )
+                        return state.process.id === this.dataProvider.getEntityProcessId(entity, defaultProcess)
+                            && state.entityType.name === entity.entityType.name
+                            && this.isStateEqual(stateName, state)
                     }, this);
                 }
             },
 
             _getTeamState: function(stateName, entity, entityStates, change, teamProjects) {
-                if (!entity.assignedTeams || entity.assignedTeams.length === 0) {
+                if (_.isEmpty(entity.assignedTeams)) {
                     return null;
                 }
                 var workflowIds = _.compact(_.map(entity.assignedTeams, function(teamAssignment) {
@@ -62,7 +58,7 @@ tau.mashups
                         return null;
                     }
                     return _.find(teamProject.workflows, function(workflow) {
-                        return workflow.entityType.name == entity.entityType.name;
+                        return workflow.entityType.name === entity.entityType.name;
                     }).id;
                 }));
                 return _.find(entityStates, function(state) {
@@ -76,12 +72,15 @@ tau.mashups
             },
 
             isProperState: function(stateName, state, workflowIds) {
-                return _.contains(workflowIds, state.workflow.id)
-                    && (stateName.toLowerCase() == state.name.toLowerCase()
-                        || (stateName.toLowerCase() == '_initial' && state.isInitial)
-                        || (stateName.toLowerCase() == '_final' && state.isFinal)
-                        || (stateName.toLowerCase() == '_planned' && state.isPlanned)
-                    )
+                return _.contains(workflowIds, state.workflow.id) && this.isStateEqual(stateName, state)
+            },
+
+            isStateEqual: function(expectedStateName, actualState) {
+                return (expectedStateName.toLowerCase() === actualState.name.toLowerCase()
+                    || (expectedStateName.toLowerCase() === '_initial' && actualState.isInitial)
+                    || (expectedStateName.toLowerCase() === '_final' && actualState.isFinal)
+                    || (expectedStateName.toLowerCase() === '_planned' && actualState.isPlanned)
+                );
             }
         });
 

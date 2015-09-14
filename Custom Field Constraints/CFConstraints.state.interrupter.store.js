@@ -18,7 +18,7 @@ tau.mashups
 
             _getNewState: function(entity, entityStatesDetailed, changesToInterrupt) {
                 var entityStateChange = _.find(changesToInterrupt, function(change) {
-                        return change.id == entity.id;
+                        return change.id === entity.id;
                     }
                 );
 
@@ -40,7 +40,7 @@ tau.mashups
                 } else {
                     var newStateId = change.value.id;
                     return _.find(entityStatesDetailed, function(state) {
-                        return state.id == newStateId;
+                        return state.id === newStateId;
                     });
                 }
             },

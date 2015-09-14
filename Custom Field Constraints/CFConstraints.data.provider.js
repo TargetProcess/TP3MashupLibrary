@@ -57,9 +57,7 @@ tau.mashups
                         'isPlanned',
                         {subEntityStates: ['id', 'name', {workflow: ['id']}, 'isInitial', 'isFinal', 'isPlanned']}
                     ])
-                    .withCallOnDone(function(entityStatesDetailed) {
-                        getEntityStatesDetails.resolve(entityStatesDetailed);
-                    })
+                    .withCallOnDone(getEntityStatesDetails.resolve)
                     .execute();
                 return getEntityStatesDetails.promise();
             },
@@ -88,9 +86,7 @@ tau.mashups
                         .withFieldSetRestrictedTo(['id', 'name', 'customFields', {entityType: ['name']}, {project: [
                             {process: ['id']}
                         ]}, {userStory: ['id', 'name']}])
-                        .withCallOnDone(function(tasks) {
-                            getTasksDeferred.resolve(tasks);
-                        })
+                        .withCallOnDone(getTasksDeferred.resolve)
                         .execute();
                 }
                 else {
@@ -101,11 +97,9 @@ tau.mashups
             },
 
             getTeamProjectsPromise: function(entitiesDetailed) {
-                var getTeamProjectsDetails = $.Deferred();
                 var teamProjectIds = _.chain(entitiesDetailed)
                     .filter(function(entityDetailed) {
-                        return entityDetailed.project &&
-                            entityDetailed.assignedTeams && entityDetailed.assignedTeams.length > 0;
+                        return entityDetailed.project && !_.isEmpty(entityDetailed.assignedTeams);
                     })
                     .map(function(entityDetailed) {
                         return _.pluck(entityDetailed.project.teamProjects, 'id');
@@ -113,10 +107,10 @@ tau.mashups
                     .flatten()
                     .unique()
                     .value();
-                if (teamProjectIds.length === 0) {
-                    getTeamProjectsDetails.resolve([]);
-                    return getTeamProjectsDetails.promise();
+                if (_.isEmpty(teamProjectIds)) {
+                    return $.when([]);
                 }
+                var getTeamProjectsDetails = $.Deferred();
                 this.storage.getEntities()
                     .ofType('teamProject')
                     .filteredBy({id: {$in: teamProjectIds}})
@@ -125,9 +119,7 @@ tau.mashups
                         {project: ['id']},
                         {workflows: ['id', 'name', {entityType: ['name']}, {parentWorkflow: ['id']}]}
                     ])
-                    .withCallOnDone(function(entityStatesDetailed) {
-                        getTeamProjectsDetails.resolve(entityStatesDetailed);
-                    })
+                    .withCallOnDone(getTeamProjectsDetails.resolve)
                     .execute();
                 return getTeamProjectsDetails.promise();
             },
@@ -160,20 +152,9 @@ tau.mashups
                     : defaultProcess.id;
             },
 
-            getEntityTeamWorkflowIds: function(entityDetailed) {
-                if (entityDetailed.entityType.name.toLowerCase() === 'project' || !entityDetailed.project) {
-                    return [];
-                }
-                return entityDetailed.entityType.name.toLowerCase() === 'project'
-                    ? entityDetailed.process.id
-                    : entityDetailed.project
-                    ? entityDetailed.project.process.id
-                    : defaultProcess.id;
-            },
-
             _getEntitiesDetailsFilter: function(entityType) {
                 var filter = ['customFields', 'name', {entityType: ['name']}];
-                filter.push(entityType.toLowerCase() === 'project'
+                filter.push(this._isProjectType(entityType)
                         ? {process: ['id']}
                         : {
                         project: [
@@ -185,8 +166,7 @@ tau.mashups
                 if (entityType.toLowerCase() === 'userstory') {
                     filter.push({tasks: ['id', 'name', {entityState: ['isFinal']}]});
                 }
-                if (_.contains(['epic', 'feature', 'userstory', 'request', 'bug', 'task',
-                        'testplan', 'testplanrun'], entityType.toLowerCase())) {
+                if (this._isAssignableType(entityType)) {
                     filter.push({assignedTeams: ['id', {team: ['id']}]});
                 }
 
@@ -202,7 +182,17 @@ tau.mashups
                     .value();
 
                 return {process: {id: {$in: processIds}}};
+            },
+
+            _isProjectType: function(entityType) {
+                return entityType.toLowerCase() === 'project';
+            },
+
+            _isAssignableType: function(entityType) {
+                return _.contains(['epic', 'feature', 'userstory', 'request', 'bug', 'task',
+                    'testplan', 'testplanrun'], entityType.toLowerCase());
             }
+
         });
 
         return CFConstraintsDataProvider;
