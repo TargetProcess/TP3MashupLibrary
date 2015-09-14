@@ -9,12 +9,7 @@ tau.mashups
             },
 
             _shouldChangeBeHandled: function(change) {
-                return change.name &&
-                    _.contains(['entitystate', 'assignedteams', 'teamentitystate'], change.name.toLowerCase());
-            },
-
-            _isTeamStateChange: function(change) {
-                return change.name && _.contains(['assignedteams', 'teamentitystate'], change.name.toLowerCase());
+                return change.name && change.name.toLowerCase() === 'entitystate';
             },
 
             _getEntityRequiredCFs: function(entityToRequire) {
@@ -22,21 +17,21 @@ tau.mashups
             },
 
             _buildEntitiesWithRequirements: function(entitiesDetailed, changesToHandle, defaultProcess) {
-                var teamProjectsPromise = this.dataProvider.getTeamProjectsPromise(entitiesDetailed);
-                var entityStatesDetailsPromise = this.dataProvider.getEntityStatesDetailsPromise(changesToHandle, entitiesDetailed, defaultProcess);
-                var tasksDetailsPromise = this.dataProvider.getTasksDetailsPromise(entitiesDetailed);
+                var entitiesToHandleDeferred = $.Deferred();
 
-                return $.when(teamProjectsPromise, entityStatesDetailsPromise, tasksDetailsPromise)
-                    .then(function(teamProjects, entityStatesDetailed, tasks) {
-                        return this._getEntitiesWithRequirements(entitiesDetailed, entityStatesDetailed, changesToHandle,
-                            defaultProcess, tasks, teamProjects);
-                    }.bind(this));
+                this.dataProvider.getEntityStatesDetailsPromise(changesToHandle, entitiesDetailed, defaultProcess).done(_.bind(function(entityStatesDetailed) {
+                    this.dataProvider.getTasksDetailsPromise(entitiesDetailed).done(_.bind(function(tasks) {
+                        this._getEntitiesWithRequirements(entitiesToHandleDeferred, entitiesDetailed, entityStatesDetailed, changesToHandle, defaultProcess, tasks);
+                    }, this))
+                }, this));
+
+                return entitiesToHandleDeferred.promise();
             },
 
-            _getEntitiesWithRequirements: function(entitiesDetailed, entityStatesDetailed, changesToHandle, defaultProcess, tasks, teamProjects) {
+            _getEntitiesWithRequirements: function(entitiesToHandleDeferred, entitiesDetailed, entityStatesDetailed, changesToHandle, defaultProcess, tasks) {
                 var entitiesToHandle = _.map(entitiesDetailed, function(entity) {
                     var entities = [],
-                        newState = this._getNewState(entity, entityStatesDetailed, changesToHandle, defaultProcess, teamProjects);
+                        newState = this._getNewState(entity, entityStatesDetailed, changesToHandle, defaultProcess);
 
                     if (newState){
                         var entityToHandle = {
@@ -57,7 +52,8 @@ tau.mashups
 
                     return entities;
                 }, this);
-                return _.flatten(entitiesToHandle, true);
+
+                entitiesToHandleDeferred.resolve(_.flatten(entitiesToHandle, true));
             },
 
             _getUserStoryTasksToHandle: function(entityToHandle, tasks, entityStatesDetailed, defaultProcess) {
@@ -88,7 +84,7 @@ tau.mashups
                 }, this);
             },
 
-            _getNewState: function(entity, entityStatesDetailed, changesToInterrupt, defaultProcess, teamProjects) {
+            _getNewState: function(entity, entityStatesDetailed, changesToInterrupt, defaultProcess) {
                 this._throwNotImplemented();
             }
         });

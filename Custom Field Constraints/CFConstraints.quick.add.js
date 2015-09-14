@@ -122,13 +122,6 @@ tau.mashups
             _createCFDataBindConfig: function(cf) {
                 return {
                     caption: cf.name,
-                    config: {
-                        calculationModel: '',
-                        calculationModelContainsCollections: null,
-                        defaultValue: '',
-                        resourceType: 'CustomFieldConfig',
-                        units: ''
-                    },
                     fieldType: cf.fieldType,
                     id: 'CustomFields',
                     options: cf.value ? {value: cf.value} : {},
