@@ -43,7 +43,7 @@ tau.mashups
 				'UserStory': 'Feature.Id',
 				'Task': 'UserStory.Id'
 			},
-			
+
 			_ctx: {},
 
 			init: function() {
@@ -54,7 +54,7 @@ tau.mashups
 				this.state = false;
 				this.$btn = null;
 				this.boardId = 0;
-				
+
 				this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
 				context.onChange(function(ctx, data) {
@@ -73,7 +73,7 @@ tau.mashups
 						sender.bus.on('overview.board.ready', _.bind(self.restoreState, self));
 					}
 				});
-				
+
 				addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
 					this.boardId = eventArgs.boardSettings.settings.id;
 				}.bind(this));
@@ -82,7 +82,7 @@ tau.mashups
 					this.renderButton($el);
 				}.bind(this));
 			},
-			
+
 			apiGet: function(url, callback, _objects) {
 				if (_objects === undefined) {
 					_objects = []
@@ -115,7 +115,7 @@ tau.mashups
 				}
 
 				_.each(this.parentMap, _.bind(function(parentSelector, entityType) {
-					this.apiGet(configurator.getApplicationPath() + '/api/v2/' + entityType + '?take=1000&where=(id in [' + whereIdsStr + '] and EntityState.isFinal==false)&select={id,' + parentSelector + ' as parent}&acid=' + acid, _.bind(function(data) {
+					this.apiGet(configurator.getApplicationPath() + '/api/v2/' + entityType + '?take=1000&where=(id in [' + whereIdsStr + '] and EntityState.isFinal==false)&select={id,parent:' + parentSelector + '}&acid=' + acid, _.bind(function(data) {
 						if (data === undefined) return;
 						for (var i = 0; i < data.length; i++) {
 							var id = data[i].id;
@@ -142,7 +142,7 @@ tau.mashups
 
 				$toolbar.append(this.$btn);
 			},
-			
+
 			restoreState: function() {
 				$.ajax({
 					url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
@@ -155,7 +155,7 @@ tau.mashups
 					}
 				}, this));
 			},
-			
+
 			saveState: function() {
 				var data = {"userData": {}};
 				data['userData'][this.boardId.toString()] = this.state ? "1" : "0";
