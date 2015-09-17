@@ -61,7 +61,7 @@ tau.mashups
                 if (!(this.includeIdeas)) {
                     searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'RequestType.Name!="Idea"';
                 }
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Request?take=1000' + (searchCriteria ? '&where=' + searchCriteria : '') + '&select={id,CreateDate as createDate,LastCommentDate as lastCommentDate,LastCommentedUser.Kind as lastCommentUserKind, IsReplied as isReplied}&acid=' + acid;
+                var requestUrl = configurator.getApplicationPath() + '/api/v2/Request?take=1000' + (searchCriteria ? '&where=' + searchCriteria : '') + '&select={id,createDate:CreateDate,lastCommentDate:LastCommentDate,lastCommentUserKind:LastCommentedUser.Kind, isReplied:IsReplied}&acid=' + acid;
                 $.ajax({
                     url: requestUrl,
                     context: this
