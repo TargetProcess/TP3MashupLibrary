@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "This mashup does something, I suppose.",
+    "CompatibleTpVersion": {
+        "Minimum": "3.6.0"
+    }
+}
