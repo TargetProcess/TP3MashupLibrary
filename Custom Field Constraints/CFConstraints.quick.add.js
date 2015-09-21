@@ -121,6 +121,7 @@ tau.mashups
 
             _createCFDataBindConfig: function(cf) {
                 return {
+                    config: cf.config,
                     caption: cf.name,
                     fieldType: cf.fieldType,
                     id: 'CustomFields',
