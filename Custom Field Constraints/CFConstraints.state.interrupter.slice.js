@@ -31,6 +31,9 @@ tau.mashups
                 var change = _.find(changes, function(change) {
                     return this._shouldChangeBeHandled(change);
                 }, this);
+                if (!change) {
+                    return null;
+                }
                 var stateName = this.sliceDecoder.decode(change.value);
 
                 if (this._isTeamStateChange(change)) {
@@ -76,10 +79,11 @@ tau.mashups
             },
 
             isStateEqual: function(expectedStateName, actualState) {
-                return (expectedStateName.toLowerCase() === actualState.name.toLowerCase()
-                    || (expectedStateName.toLowerCase() === '_initial' && actualState.isInitial)
-                    || (expectedStateName.toLowerCase() === '_final' && actualState.isFinal)
-                    || (expectedStateName.toLowerCase() === '_planned' && actualState.isPlanned)
+                var lowerName = expectedStateName.toLowerCase();
+                return (lowerName === actualState.name.toLowerCase()
+                    || (lowerName === '_initial' && actualState.isInitial)
+                    || (lowerName === '_final' && actualState.isFinal)
+                    || (lowerName === '_planned' && actualState.isPlanned)
                 );
             }
         });
