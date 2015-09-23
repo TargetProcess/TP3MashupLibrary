@@ -37,7 +37,7 @@ tau.mashups
                 var stateName = this.sliceDecoder.decode(change.value);
 
                 if (this._isTeamStateChange(change)) {
-                    return this._getTeamState(stateName, entity, entityStates, change, teamProjects);
+                    return this._getTeamState(stateName, entity, entityStates, teamProjects);
                 } else {
                     return _.find(entityStates, function(state) {
                         return state.process.id === this.dataProvider.getEntityProcessId(entity, defaultProcess)
@@ -47,7 +47,7 @@ tau.mashups
                 }
             },
 
-            _getTeamState: function(stateName, entity, entityStates, change, teamProjects) {
+            _getTeamState: function(stateName, entity, entityStates, teamProjects) {
                 if (_.isEmpty(entity.assignedTeams)) {
                     return null;
                 }
