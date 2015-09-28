@@ -23,13 +23,13 @@ tau.mashups
                         .withCallOnDone(_.bind(function($element, requiredCustomFields, entityDeferred, entity) {
                             var filledCfs = _.filter(requiredCustomFields, function(customField) {
                                 var entityCustomField = _.find(entity.customFields, function(cf) {
-                                    return cf.name == customField.name;
+                                    return cf.name === customField.name;
                                 });
 
-                                return typeof entityCustomField != 'undefined' && entityCustomField.value != null && entityCustomField.value != '';
+                                return typeof entityCustomField !== 'undefined' && entityCustomField.value !== null && entityCustomField.value !== '';
                             });
 
-                            if (filledCfs.length == requiredCustomFields.length) {
+                            if (filledCfs.length === requiredCustomFields.length) {
                                 entityDeferred.resolve();
                             }
                             else {
