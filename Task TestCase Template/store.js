@@ -136,7 +136,7 @@ tau
 
                         var tasks = tasksToSave.reduce(function(res, item) {
                             return res.then(function() {
-                                this.createTaskByTemplate(item, userStory);
+                                return this.createTaskByTemplate(item, userStory);
                             }.bind(this));
                         }.bind(this), $.when(true));
 
