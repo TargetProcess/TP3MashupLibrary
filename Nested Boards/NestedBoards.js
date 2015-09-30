@@ -268,6 +268,14 @@ tau.mashups
                     types: [axisType]
                 };
 
+                if (boardConfig.user) {
+                    boardConfig.user.cardFilter = '';
+                }
+
+                if (boardConfig.colorSettings && boardConfig.colorSettings.customEncoding) {
+                    boardConfig.colorSettings.customEncoding = [];
+                }
+
             }
 
         });
