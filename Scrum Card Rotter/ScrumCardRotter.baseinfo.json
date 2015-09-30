@@ -1,5 +1,5 @@
 {
-	"ShortDescription": "This mashup will color task cards that have been in process for too long.",
+	"ShortDescription": "This mashup will color task cards that have been in progress for too long.",
 	"CompatibleTpVersion": {
 		"Minimum": "2.24.6"
 	}
