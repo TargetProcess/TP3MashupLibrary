@@ -1,0 +1,6 @@
+{
+    "ShortDescription": "Show relations as arrows on a Board or List View.",
+    "CompatibleTpVersion": {
+        "Minimum": "3.0.0"
+    }
+}
