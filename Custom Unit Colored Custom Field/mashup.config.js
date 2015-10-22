@@ -4,7 +4,8 @@ tau.mashups.addModule("CustomUnitColoredCustomField/config", [
         "colors": {
             "Apple": "red",
             "Pear": "#007f00",
-            "Plum": "rgb(128, 0, 128)"
+            "Plum": "rgb(128, 0, 128)",
+            "Tangerine": "orange"
         }
     },
     {
