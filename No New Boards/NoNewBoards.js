@@ -6,8 +6,8 @@ tau.mashups
     .addDependency('Underscore')
     .addDependency('jQuery')
     .addDependency('tau/core/bus.reg')
-    .addCSS('style.css')
-    .addMashup(function(_, $, reg) {
+    .addDependency('tau/configurator')
+    .addMashup(function(_, $, reg, configurator) {
 
         'use strict';
 
@@ -30,15 +30,18 @@ tau.mashups
             });
         };
 
-        var hideByCSS = function() {
-            $('body').addClass('nonewboards');
-        };
-
         var hideCreateViewButton = function() {
 
-            addBusListener('board.add', 'afterRender', function(e, data) {
-                data.element.hide();
+            configurator.getGlobalBus().on('configurator.ready', function(e, appConfigurator) {
+
+                if (appConfigurator.getViewsMenuActionsIntegrationService().hideCreateTrigger) {
+
+                    appConfigurator.getViewsMenuActionsIntegrationService().hideCreateTrigger();
+
+                }
+
             });
+
         };
 
         var hideTemplatesTab = function() {
@@ -62,7 +65,6 @@ tau.mashups
             _.contains(listAccessDenied.ids, loggedUser.id);
 
         if (isAccessDenied) {
-            hideByCSS();
             hideCreateViewButton();
             hideTemplatesTab();
             hideActionButtons();
