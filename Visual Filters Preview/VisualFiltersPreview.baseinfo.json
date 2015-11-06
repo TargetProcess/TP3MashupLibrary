@@ -1,6 +1,0 @@
-{
-    "ShortDescription": "This mashup will enable an early preview version of Visual Filters to help you compose DSL filters using a graphical interface.",
-    "CompatibleTpVersion": {
-        "Minimum": "3.7.1"
-    }
-}
