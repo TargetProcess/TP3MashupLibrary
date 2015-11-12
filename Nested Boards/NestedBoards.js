@@ -14,6 +14,20 @@ tau.mashups
 
         'use strict';
 
+        var appConfigurator;
+
+        configurator.getGlobalBus().on('configurator.ready', function(e) {
+
+            var configurator_ = e.data;
+
+            if (!configurator_._id.match(/global/) && !appConfigurator) {
+
+                appConfigurator = configurator_;
+
+            }
+
+        });
+
         var reg = configurator.getBusRegistry();
 
         var addBusListener = function(busName, eventName, listener) {
@@ -104,11 +118,6 @@ tau.mashups
                 var uri = parseUri(window.location.href);
                 this.request = uri.queryKey;
 
-                addBusListener('application board', 'configurator.ready', function(e, appConfigurator) {
-                    configurator = appConfigurator;
-                }.bind(this));
-
-
                 addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
                     boardSettings = bs.boardSettings;
                 }.bind(this));
@@ -167,8 +176,8 @@ tau.mashups
                 activityPopup.showLoading();
                 var $container = activityPopup.$container;
 
-                var clipboardManager = configurator.getClipboardManager();
-                var acidStore = configurator.getAppStateStore();
+                var clipboardManager = appConfigurator.getClipboardManager();
+                var acidStore = appConfigurator.getAppStateStore();
 
                 acidStore.get({
                     fields: ['acid']
