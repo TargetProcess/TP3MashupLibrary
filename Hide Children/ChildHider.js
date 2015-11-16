@@ -1,187 +1,214 @@
 tau.mashups
-	.addDependency('tp/mashups')
-	.addDependency('user/mashups')
-	.addDependency('jQuery')
-	.addDependency('Underscore')
-	.addDependency('tp3/mashups/context')
-	.addDependency('tau/core/bus.reg')
-	.addDependency('tau/configurator')
+    .addDependency('tp/mashups')
+    .addDependency('user/mashups')
+    .addDependency('jQuery')
+    .addDependency('Underscore')
+    .addDependency('tp3/mashups/context')
+    .addDependency('tau/core/bus.reg')
+    .addDependency('tau/configurator')
     .addDependency('tau/core/class')
-	.addMashup(function(m, um, $, _, context, busRegistry, configurator, Class) {
+    .addMashup(function(m, um, $, _, context, busRegistry, configurator, Class) {
 
-		'use strict';
+        'use strict';
 
-		var reg = configurator.getBusRegistry();
+        var reg = configurator.getBusRegistry();
 
-		var addBusListener = function(busName, eventName, listener) {
+        var addBusListener = function(busName, eventName, listener) {
 
-			reg.on('create', function(e, data) {
+            reg.on('create', function(e, data) {
 
-				var bus = data.bus;
-				if (bus.name === busName) {
-					bus.on(eventName, listener);
-				}
-			});
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.on(eventName, listener);
+                }
+            });
 
-			reg.on('destroy', function(e, data) {
+            reg.on('destroy', function(e, data) {
 
-				var bus = data.bus;
-				if (bus.name === busName) {
-					bus.removeListener(eventName, listener);
-				}
-			});
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.removeListener(eventName, listener);
+                }
+            });
 
-			reg.getByName(busName).done(function(bus) {
-				bus.on(eventName, listener);
-			});
-		};
+            reg.getByName(busName).done(function(bus) {
+                bus.on(eventName, listener);
+            });
+        };
 
-		var ChildHider = Class.extend({
+        var refreshBoardSize = function() {
 
-			parentMap: {
-				'Feature': 'Epic.Id',
-				'UserStory': 'Feature.Id',
-				'Task': 'UserStory.Id'
-			},
+            configurator.getBusRegistry().getByName('board_plus').then(function(bus) {
 
-			_ctx: {},
+                bus.fire('resize.executed', {
+                    onlyHeaders: false,
+                    refreshElement: true
+                });
 
-			init: function() {
-				var self = this;
+            });
 
-				this.cards = [];
-				this.represented = [];
-				this.state = false;
-				this.$btn = null;
-				this.boardId = 0;
+        };
 
-				this.refreshDebounced = _.debounce(this.refresh, 100, false);
+        var ChildHider = Class.extend({
 
-				context.onChange(function(ctx, data) {
-					this._ctx = ctx;
-					this.refresh(ctx);
-				}.bind(this));
+            parentMap: {
+                'Feature': 'Epic.Id',
+                'UserStory': 'Feature.Id',
+                'Task': 'UserStory.Id'
+            },
 
-				busRegistry.on('create', function(eventName, sender) {
-					if (sender.bus.name == 'board_plus') {
-						sender.bus.on('start.lifecycle', _.bind(function(e) {
-							this.cards = [];
-							this.represented = [];
-							this.state = false;
-						}, self));
-						sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
-						sender.bus.on('overview.board.ready', _.bind(self.restoreState, self));
-					}
-				});
+            _ctx: {},
 
-				addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
-					this.boardId = eventArgs.boardSettings.settings.id;
-				}.bind(this));
+            init: function() {
+                var self = this;
 
-				addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
-					this.renderButton($el);
-				}.bind(this));
-			},
+                this.cards = [];
+                this.represented = [];
+                this.state = false;
+                this.$btn = null;
+                this.boardId = 0;
 
-			apiGet: function(url, callback, _objects) {
-				if (_objects === undefined) {
-					_objects = []
-				};
-				$.ajax({
-					url: url,
-					method: 'GET',
-					async: false
-				}).then(function(response) {
-					if (response.hasOwnProperty("items")) {
-						_objects = $.merge(_objects, response.items);
-					}
-					if (response.hasOwnProperty("next")) {
-						getTpApi(response.next, callback, _objects);
-					} else {
-						callback(_objects);
-					}
-				});
-			},
+                this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
-			refresh: function(ctx) {
-				var acid = ctx.acid;
-				var cardIds = this.cards.map(function(c) {
-					return parseInt(c.attr('data-entity-id'));
-				});
-				var whereIdsStr = cardIds.join(',');
+                context.onChange(function(ctx, data) {
+                    this._ctx = ctx;
+                    this.refresh(ctx);
+                }.bind(this));
 
-				if (whereIdsStr == '') {
-					whereIdsStr = '0';
-				}
+                busRegistry.on('create', function(eventName, sender) {
+                    if (sender.bus.name == 'board_plus') {
+                        sender.bus.on('start.lifecycle', _.bind(function(e) {
+                            this.cards = [];
+                            this.represented = [];
+                            this.state = false;
+                        }, self));
+                        sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
+                        sender.bus.on('overview.board.ready', _.bind(self.restoreState, self));
+                    }
+                });
 
-				_.each(this.parentMap, _.bind(function(parentSelector, entityType) {
-					this.apiGet(configurator.getApplicationPath() + '/api/v2/' + entityType + '?take=1000&where=(id in [' + whereIdsStr + '] and EntityState.isFinal==false)&select={id,parent:' + parentSelector + '}&acid=' + acid, _.bind(function(data) {
-						if (data === undefined) return;
-						for (var i = 0; i < data.length; i++) {
-							var id = data[i].id;
-							var parentId = data[i].parent;
-							if (_.contains(cardIds, parentId))
-								this.represented.push(id);
-						}
-					}, this));
-				}, this));
-			},
+                addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
+                    this.boardId = eventArgs.boardSettings.settings.id;
+                }.bind(this));
 
-			renderButton: function($el) {
-				var $toolbar = $el.find('.i-role-clipboardfilter');
+                addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
+                    this.renderButton($el);
+                }.bind(this));
+            },
 
-				if (!$toolbar.length) {
-					$toolbar = $('<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-block;"></div>')
-						.appendTo($el.find('.tau-select-block'));
-				}
+            apiGet: function(url, callback, _objects) {
+                if (_objects === undefined) {
+                    _objects = []
+                };
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    async: false
+                }).then(function(response) {
+                    if (response.hasOwnProperty("items")) {
+                        _objects = $.merge(_objects, response.items);
+                    }
+                    if (response.hasOwnProperty("next")) {
+                        getTpApi(response.next, callback, _objects);
+                    } else {
+                        callback(_objects);
+                    }
+                });
+            },
 
-				$toolbar.children('.mashup-hider').remove();
+            refresh: function(ctx) {
+                var acid = ctx.acid;
+                var cardIds = this.cards.map(function(c) {
+                    return parseInt(c.attr('data-entity-id'));
+                });
+                var whereIdsStr = cardIds.join(',');
 
-				this.$btn = $('<button class="tau-btn mashup-hider">Hide Children</button>')
-					.on('click', this.toggle.bind(this));
+                if (whereIdsStr == '') {
+                    whereIdsStr = '0';
+                }
 
-				$toolbar.append(this.$btn);
-			},
+                _.each(this.parentMap, _.bind(function(parentSelector, entityType) {
+                    this.apiGet(configurator.getApplicationPath() + '/api/v2/' + entityType +
+                        '?take=1000&where=(id in [' + whereIdsStr +
+                        '] and EntityState.isFinal==false)&select={id,parent:' +
+                        parentSelector + '}&acid=' + acid, _.bind(function(data) {
+                            if (data === undefined) return;
+                            for (var i = 0; i < data.length; i++) {
+                                var id = data[i].id;
+                                var parentId = data[i].parent;
+                                if (_.contains(cardIds, parentId))
+                                    this.represented.push(id);
+                            }
+                        }, this));
+                }, this));
+            },
 
-			restoreState: function() {
-				$.ajax({
-					url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
-					method: 'GET'
-				}).then(_.bind(function(response) {
-					if (_.has(response.userData, this.boardId)) {
-						if ((response.userData[this.boardId] == "0") != (!this.state)) {
-							this.toggle();
-						}
-					}
-				}, this));
-			},
+            renderButton: function($el) {
+                var $toolbar = $el.find('.i-role-clipboardfilter');
 
-			saveState: function() {
-				var data = {"userData": {}};
-				data['userData'][this.boardId.toString()] = this.state ? "1" : "0";
-				$.ajax({
-					url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
-					method: 'POST',
-					data: JSON.stringify(data),
-					contentType: 'application/json; charset=utf8'
-				});
-			},
+                if (!$toolbar.length) {
+                    $toolbar = $(
+                            '<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-block;"></div>'
+                        )
+                        .appendTo($el.find('.tau-select-block'));
+                }
 
-			toggle: function() {
-				this.state = !this.state;
-				_.each(this.represented, _.bind(function(id) {
-					$('div[role=card][data-entity-id=' + id + ']')[this.state ? 'hide' : 'show']();
-				}, this));
-				this.$btn.html(this.state ? 'Show Children ('+this.represented.length+')' : 'Hide Children');
-				this.saveState();
-			},
+                $toolbar.children('.mashup-hider').remove();
 
-			cardAdded: function(eventName, sender) {
-				this.cards.push(sender.element);
-				this.refreshDebounced(this._ctx);
-			},
-		});
+                this.$btn = $('<button class="tau-btn mashup-hider">Hide Children</button>')
+                    .on('click', this.toggle.bind(this));
 
-		return new ChildHider();
+                $toolbar.append(this.$btn);
+            },
 
-	});
+            restoreState: function() {
+                $.ajax({
+                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' +
+                        loggedUser.id,
+                    method: 'GET'
+                }).then(_.bind(function(response) {
+                    if (_.has(response.userData, this.boardId)) {
+                        if ((response.userData[this.boardId] == "0") != (!this.state)) {
+                            this.toggle();
+                        }
+                    }
+                }, this));
+            },
+
+            saveState: function() {
+                var data = {
+                    "userData": {}
+                };
+                data['userData'][this.boardId.toString()] = this.state ? "1" : "0";
+                $.ajax({
+                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' +
+                        loggedUser.id,
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json; charset=utf8'
+                });
+            },
+
+            toggle: function() {
+                this.state = !this.state;
+                _.each(this.represented, _.bind(function(id) {
+                    $('div[role=card][data-entity-id=' + id + ']')[this.state ? 'hide' :
+                        'show']();
+                }, this));
+                this.$btn.html(this.state ? 'Show Children (' + this.represented.length + ')' :
+                    'Hide Children');
+                this.saveState();
+
+                refreshBoardSize();
+
+            },
+
+            cardAdded: function(eventName, sender) {
+                this.cards.push(sender.element);
+                this.refreshDebounced(this._ctx);
+            },
+        });
+
+        return new ChildHider();
+
+    });
