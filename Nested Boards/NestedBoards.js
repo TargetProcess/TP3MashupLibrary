@@ -20,7 +20,7 @@ tau.mashups
 
             var configurator_ = e.data;
 
-            if (!configurator_._id.match(/global/) && !appConfigurator) {
+            if (configurator_._id && !configurator_._id.match(/global/) && !appConfigurator) {
 
                 appConfigurator = configurator_;
 
