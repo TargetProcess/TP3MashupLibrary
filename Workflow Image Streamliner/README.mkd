@@ -1,7 +1,11 @@
 Workflow Image Streamliner
 ==================
 
-This mashup will streamline the graphical image of your workflows. 
+This mashup allows you to see project state transitions for entity type from Workflow setup:
+
+![Workflow Image Streamliner 2](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Workflow%20Image%20Streamliner/WorkflowImageStreamlinerTP3.png)
+
+In old ```Settings -> Processes -> your process```
 
 Compare: No Workflow Streamliner mashup
 
