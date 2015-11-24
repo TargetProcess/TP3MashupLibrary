@@ -12,6 +12,7 @@ tau
         'use strict';
 
         var reg = configurator.getBusRegistry();
+        var boardSettings;
 
         var addBusListener = function(busName, eventName, listener, isImmediate) {
 
@@ -41,6 +42,10 @@ tau
 
         configurator.getGlobalBus().once('configurator.ready', function(e, appConfigurator) {
             configurator = appConfigurator;
+        });
+
+        addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
+            boardSettings = bs.boardSettings;
         });
 
         var types = configurator.getStore().getTypes().getDictionary();
@@ -325,7 +330,7 @@ tau
                     this.boardBus = bus;
                 }.bind(this));
 
-                configurator.service('boardSettings').get({
+                boardSettings.get({
                     fields: [
                         'x',
                         'y',
