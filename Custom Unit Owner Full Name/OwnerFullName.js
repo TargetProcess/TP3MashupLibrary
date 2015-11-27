@@ -19,10 +19,10 @@ tau.mashups
                ],
                model: 'owner:{owner.fullName}',
                sampleData: { owner:{fullName:'John Hitz'} }
-                
+
             }
-            
-            
+
+
         ];
 
         function addUnits(configurator) {
@@ -30,9 +30,18 @@ tau.mashups
             _.extend(registry.units, registry.register(units));
         }
 
-    
-        globalConfigurator.getGlobalBus().once('configurator.ready', function(e, configurator) {
-            addUnits(configurator);
+
+        var appConfigurator;
+        globalConfigurator.getGlobalBus().on('configurator.ready', function(e, configurator) {
+
+            if (!appConfigurator && configurator._id && configurator._id.match(/board/)) {
+
+                appConfigurator = configurator;
+                addUnits(appConfigurator);
+
+            }
+
         });
+
 
  });

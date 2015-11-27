@@ -13,7 +13,7 @@ tau.mashups
 	            name: 'Description',
                 types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST ],
                 sections: 1,
-                sizes: [ sizes.M, sizes.L, sizes.XL ], 
+                sizes: [ sizes.M, sizes.L, sizes.XL ],
                 template: [
                   '<% if(this.data.description) { %>',
                     '<div class="tau-board-unit__value" style="white-space:normal">',
@@ -35,9 +35,18 @@ tau.mashups
             _.extend(registry.units, registry.register(units));
         }
 
-    
-        globalConfigurator.getGlobalBus().once('configurator.ready', function(e, configurator) {
-            addUnits(configurator);
+
+        var appConfigurator;
+        globalConfigurator.getGlobalBus().on('configurator.ready', function(e, configurator) {
+
+            if (!appConfigurator && configurator._id && configurator._id.match(/board/)) {
+
+                appConfigurator = configurator;
+                addUnits(appConfigurator);
+
+            }
+
         });
+
 
  });
