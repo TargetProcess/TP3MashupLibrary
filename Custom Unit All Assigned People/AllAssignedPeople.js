@@ -9,7 +9,7 @@ tau.mashups
 .addMashup(function ($, _, globalConfigurator, et, sz, helper, interactionUtils) {
     var openUnitEditor = interactionUtils.openUnitEditor.bind(interactionUtils);
 
-    
+
     var sampleAssignedUsers = {
         users: [
             {
@@ -116,8 +116,16 @@ tau.mashups
     _.extend(registry.units, registry.register(units));
   }
 
-  var globalBus = globalConfigurator.getGlobalBus();
-  globalBus.once('configurator.ready', function (e, configurator) {
-    addUnits(configurator);
+  var appConfigurator;
+  globalConfigurator.getGlobalBus().on('configurator.ready', function(e, configurator) {
+
+      if (!appConfigurator && configurator._id && configurator._id.match(/board/)) {
+
+          appConfigurator = configurator;
+          addUnits(appConfigurator);
+
+      }
+
   });
+
 });
