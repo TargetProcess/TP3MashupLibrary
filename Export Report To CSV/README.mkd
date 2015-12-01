@@ -1,0 +1,24 @@
+Export Report To CSV
+================================
+
+The mashup allows to export data from the created custom grapfical reports and get the information represented in a tabular form.
+
+For example, we have a report which shows how many bugs and user stories are in every project:
+
+![](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Export%20Report%20To%20CSV/report.png)
+
+When you export such a report into .csv file, you'll see project names and user stories and bugs count shown as columns in the file.
+
+![](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Export%20Report%20To%20CSV/export.png)
+
+How To Install The Mashup
+----------------------------------------
+
+1. Navigate to ```Settings > (System Settings) > Mashups```
+2. Find 'Export Report To CSV' mashup in the Mashups Library
+3. Click Install button
+4. A new 'Export to csv' button will appear on Report Views
+
+![](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Export%20Report%20To%20CSV/button.png)
+
+Note: The mashup is a prototype for future core functionalily, so any feedback is highly appreciated.
