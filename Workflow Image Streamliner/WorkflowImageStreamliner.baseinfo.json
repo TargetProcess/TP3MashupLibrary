@@ -1,6 +1,6 @@
 {
   "ShortDescription": "This mashup will streamline the graphical image of your workflows.",
-	"CompatibleTpVersion": {
-		"Minimum": "3.7.12"
-	}		
+  "CompatibleTpVersion": {
+    "Minimum": "3.7.12"
+  }
 }

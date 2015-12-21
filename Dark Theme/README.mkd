@@ -5,7 +5,7 @@ This mashup enable Dark Theme for TV
 
 As soon as you install it from Targetprocess Mashups Library, you'll see TV button at the topbar. Click it and you see activate Dark Theme.
 
-![Dark Theme for TV](https://raw.githubusercontent.com/TargetProcess/TP3MashupLibrary/master/Dark%20Theme/DarkTheme.png)
+![Dark Theme for TV](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Dark%20Theme/DarkTheme.png)
 
 
 

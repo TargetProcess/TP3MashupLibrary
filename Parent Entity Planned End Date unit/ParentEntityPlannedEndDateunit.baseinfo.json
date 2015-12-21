@@ -1,6 +1,6 @@
 {
-    "ShortDescription": "Shows the parent's (Feature, Release and User Story) planned end date, for a User Story or Task card.",
-    "CompatibleTpVersion": {
-        "Minimum": "3.3.2"
-    }
+  "ShortDescription": "Shows the parent's (Feature, Release and User Story) planned end date, for a User Story or Task card.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.3.2"
+  }
 }

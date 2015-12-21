@@ -1,6 +1,6 @@
 {
-	"ShortDescription": "This mashup makes a floating CK Editor panel transparent to help see the elements behind it. Helpful for the Test Steps editor.",
-	"CompatibleTpVersion": {
-		"Minimum": "3.3.4"
-	}		
+  "ShortDescription": "This mashup makes a floating CK Editor panel transparent to help see the elements behind it. Helpful for the Test Steps editor.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.3.4"
+  }
 }
