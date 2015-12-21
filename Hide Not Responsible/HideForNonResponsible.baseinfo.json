@@ -1,6 +1,6 @@
 {
-    "ShortDescription": "This Mashup adds a button - 'Hide not Responsible' - on all boards where 'Person' is selected as a lane.",
-    "CompatibleTpVersion": {
-        "Minimum": "2.23.0"
-    }
+  "ShortDescription": "This Mashup adds a button - 'Hide not Responsible' - on all boards where 'Person' is selected as a lane.",
+  "CompatibleTpVersion": {
+    "Minimum": "2.23.0"
+  }
 }
