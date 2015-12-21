@@ -26,7 +26,8 @@ tau.mashups
                     '</div>'
                 ],
                 sampleData: { attachments: [ { thumbnailUri: helper.url('/Javascript/tau/css/images/icons/users/karat.png?size=') } ] },
-                model: 'attachments:attachments.Select({thumbnailUri})'
+                model: 'attachments:attachments.Select({thumbnailUri})',
+                priority: 2
             }
         ];
 
