@@ -430,6 +430,10 @@ tau
             store.isApply = false;
         });
 
+        addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
+            boardSettings = bs.boardSettings;
+        });
+
         addBusListener('board_plus', 'overview.board.ready', function(e, renderData) {
             store.init(renderData.element);
         });
