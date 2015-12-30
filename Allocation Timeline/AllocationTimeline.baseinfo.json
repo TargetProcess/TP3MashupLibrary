@@ -1,6 +1,0 @@
-{
-  "ShortDescription": "This mashup gives a visual overview of people's allocations: who's working on what, when do they start and leave projects.",
-  "CompatibleTpVersion": {
-    "Minimum": "2.23.1"
-  }
-}
