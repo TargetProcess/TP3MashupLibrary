@@ -25,8 +25,8 @@ tau
         };
 
         var validTypes = [
-            'bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'epic',
-            'request', 'task', 'testcase', 'testplan', 'testplanrun', 'time', 'userstory'
+            'bug', 'build', 'feature', 'impediment', 'iteration', 'project', 'release', 'requester', 'epic', 'project',
+            'request', 'task', 'team', 'teamiteration', 'testcase', 'testplan', 'testplanrun', 'time', 'user', 'userstory'
         ];
 
         var Tab = Class.extend({
