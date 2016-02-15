@@ -5,7 +5,7 @@ The Embedded Pages mashup allows to see the pages by links you've provided in a 
 
 For example, if Google Docs application is used to keep documentation related to User Stories, you can create a custom field "Google Doc" and specify there links to appropriate google documents for each User Story. This document will be reflected as a new tab on a User Story view.
 
-![Embedded Pages](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Embedded%20Pages/EmbeddedPages.jpg)
+![Embedded Pages](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Embedded%20Pages/1.jpg)
 
 How to activate it:
 
