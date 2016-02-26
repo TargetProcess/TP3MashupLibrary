@@ -1,5 +1,5 @@
 {
-    "ShortDescription": "This mashup allows a custom field to be required when an entity is moved to a specific state or a specific value is selected in another custom field.",
+    "ShortDescription": "The mashup adds a new custom unit to the Customize Cards tab in a View Setup area, based on a custom field that needs to be specified in the mashup code. The values of that custom field are mapped to colors in the mashup code, which will the be used to color the values on the cards.",
     "CompatibleTpVersion": {
         "Minimum": "3.6.6"
     }
