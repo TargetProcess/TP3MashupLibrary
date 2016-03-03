@@ -10,6 +10,15 @@ tau.mashups
 
         var reg = configurator.getBusRegistry();
 
+        var appConfigurator;
+
+        configurator.getGlobalBus().on('configurator.ready', function(e) {
+            var configurator_ = e.data;
+            if (configurator_._id && !configurator_._id.match(/global/) && !appConfigurator) {
+                appConfigurator = configurator_;
+            }
+        });
+
         var addBusListener = function(busName, eventName, listener) {
 
             reg.on('create', function(e, data) {
@@ -39,10 +48,6 @@ tau.mashups
                 var uri = parseUri(window.location.href);
                 this.request = uri.queryKey;
 
-                addBusListener('application board', 'configurator.ready', function(e, appConfigurator) {
-                    configurator = appConfigurator;
-                }.bind(this));
-
                 addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
                     this.boardSettings = eventArgs.boardSettings;
                 }.bind(this));
@@ -70,7 +75,7 @@ tau.mashups
             },
 
             focusOnCards: function() {
-                var clipboardManager = configurator.getClipboardManager();
+                var clipboardManager = appConfigurator.getClipboardManager();
 
                 var cards = _.values(clipboardManager._cache);
 
