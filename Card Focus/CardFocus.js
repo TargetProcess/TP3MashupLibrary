@@ -79,9 +79,15 @@ tau.mashups
 
                 var cards = _.values(clipboardManager._cache);
 
-                var ids = cards.reduce(function(r, item) {
-                    r.push(item.data.id); return r;
-                }, []);
+                var ids = _.chain(cards)
+                    .filter(function(c) {
+                        return c.isSelected;
+                    })
+                    .map(function(c) {
+                        return c.data.id;
+                    })
+                    .value();
+
                 if (ids.length === 0) {
                     return;
                 }
@@ -98,7 +104,7 @@ tau.mashups
                 });
 
                 $('.tau-resetable-input>input').val(filter)
-                $('.tau-resetable-input>button').css('visibility','visible');
+                $('.tau-resetable-input>button').css('visibility', 'visible');
                 $('.tau-role-filter-input').blur();
             }
 
