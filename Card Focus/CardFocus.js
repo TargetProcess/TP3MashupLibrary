@@ -82,17 +82,22 @@ tau.mashups
                 var ids = cards.reduce(function(r, item) {
                     r.push(item.data.id); return r;
                 }, []);
+                if (ids.length === 0) {
+                    return;
+                }
+
+                var filter = '?Id is ' + ids.join(' or Id is ');
 
                 this.boardSettings.set({
                     set: {
                         user: {
-                            cardFilter: ids.join(',')
+                            cardFilter: filter
                         },
                         viewMode: "list"
                     }
                 });
 
-                $('.tau-resetable-input>input').val(ids.join(','))
+                $('.tau-resetable-input>input').val(filter)
                 $('.tau-resetable-input>button').css('visibility','visible');
                 $('.tau-role-filter-input').blur();
             }
