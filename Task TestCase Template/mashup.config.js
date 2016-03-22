@@ -1,0 +1,1 @@
+tau.mashups.addModule("TaskTestcaseTemplate/config", {});
