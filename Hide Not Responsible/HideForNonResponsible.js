@@ -317,11 +317,37 @@ tau
         });
 
         var colorer = new Colorer();
+
+        var saveToStorage = function(isActive) {
+            try {
+                window.localStorage.setItem('mashup_hide_for_non_responsible_active', JSON.stringify(isActive));
+            } catch (e) {}
+        };
+
+
         var store = {
             isActive: false,
             isApply: false,
 
             init: function($boardEl) {
+
+                var activeByStorageDefault = false;
+
+                if (mashupConfig.hideByDefaultForUsers &&
+                    mashupConfig.hideByDefaultForUsers.length &&
+                    mashupConfig.hideByDefaultForUsers.indexOf(window.loggedUser.id) >= 0) {
+                    activeByStorageDefault = true;
+                } else {
+                    activeByStorageDefault = Boolean(mashupConfig.hideByDefault);
+                }
+
+                var activeByStorage = activeByStorageDefault;
+                try {
+                    activeByStorage = JSON.parse(window.localStorage.getItem('mashup_hide_for_non_responsible_active'));
+                    activeByStorage = (activeByStorage === null) ? activeByStorageDefault : activeByStorage;
+                } catch (e) {}
+
+                this.isActive = activeByStorage;
 
                 this.isApply = false;
                 this.fireChange();
@@ -388,6 +414,7 @@ tau
 
                 if (this.isApply) {
                     this.isActive = true;
+                    saveToStorage(true);
                     $
                         .when(colorer.execute())
                         .then(this.resizeBoard.bind(this));
@@ -397,6 +424,7 @@ tau
 
             deactivate: function() {
                 this.isActive = false;
+                saveToStorage(false);
                 $
                     .when(colorer.reset())
                     .then(this.resizeBoard.bind(this));
