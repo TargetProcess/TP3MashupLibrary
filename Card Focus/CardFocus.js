@@ -79,25 +79,25 @@ tau.mashups
 
                 var cards = _.values(clipboardManager._cache);
 
-                var ids = _.chain(cards)
-                    .filter(function(c) {
-                        return c.isSelected;
-                    })
-                    .map(function(c) {
-                        return c.data.id;
-                    })
-                    .value();
+                var ids = _.reduce(cards, function(ids, c) {
+                    if (c.isSelected) {
+                        ids.push(c.data.id);
+                    }
+                    return ids;
+                }, []);
 
                 if (ids.length === 0) {
                     return;
                 }
 
-                var filter = '?Id is ' + ids.join(' or Id is ');
+                var filter = _.map(ids, function(id) {
+                    return 'Id is ' + id;
+                }).join(' or ');
 
                 this.boardSettings.set({
                     set: {
                         user: {
-                            cardFilter: filter
+                            cardFilter: '?' + filter
                         },
                         viewMode: "list"
                     }
