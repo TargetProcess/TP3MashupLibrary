@@ -39,7 +39,7 @@ tau
             addCSSRule('.tau-axiscell__item .i-role-name, .tau-x-header .tau-label, .i-role-timeline-header-cell .tau-label, .tau-timeline-scale .i-role-timeline-header-cell .i-role-cell, .tau-period-label, .tau-boardclipboard-title, .tau-scale-ruler', 'color: #fff !important; text-shadow: none !important;');
             addCSSRule('.tau-boardclipboard-title', 'font-weight: 400 !important; font-size: 12px !important; opacity: .9 !important;');
             addCSSRule('.i-role-axis-mark-selector', 'background: #989CA6 !important; border: none !important;');
-            addCSSRule('.tau-cards-count span', 'background: #292c33 !important; border: none !important;');
+            addCSSRule('.tau-cards-count span', 'background: #292c33 !important; box-shadow: none !important;');
             addCSSRule('.tau-board-view .tau-grid .tau-cellholder , .tau-board-view .tau-cols-header .tau-cellholder, .tau-board-view .tau-cols-header, .tau-board-view .tau-rows-header, .tau-x-header, .tau-board-view .tau-rows-header .tau-cellholder, .tau-board-view .tau-backlog-body .tau-cellholder, .tau-board-view .tau-timeline .tau-cellholder, .tau-board-view .tau-backlog', 'border-color: #595C63 !important;');
             addCSSRule('.tau-board-grid-view .tau-cellholder.tau-selected, .tau-cellholder_dndcrossing_true', 'background: #3D424D !important;');
             addCSSRule('.tau-board-view .tau-cols-header>ul,.tau-board-grid-view .tau-grid>table', 'border-right: none !important;');
@@ -72,7 +72,7 @@ tau
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
             addCSSRule('.boardsettings-filter__contener:after', 'background: #292c33 !important; box-shadow: none !important;');
-
+            addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;')
         };
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
