@@ -96,9 +96,16 @@ tau.mashups
             _.extend(registry.units, registry.register(units));
         }
 
+        var appConfigurator;
+        globalConfigurator.getGlobalBus().on('configurator.ready', function(e, configurator) {
 
-        globalConfigurator.getGlobalBus().once('configurator.ready', function(e, configurator) {
-            addUnits(configurator);
+            if (!appConfigurator && configurator._id && configurator._id.match(/board/)) {
+
+                appConfigurator = configurator;
+                addUnits(appConfigurator);
+
+            }
+
         });
 
     });
