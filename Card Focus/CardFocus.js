@@ -10,6 +10,15 @@ tau.mashups
 
         var reg = configurator.getBusRegistry();
 
+        var appConfigurator;
+
+        configurator.getGlobalBus().on('configurator.ready', function(e) {
+            var configurator_ = e.data;
+            if (configurator_._id && !configurator_._id.match(/global/) && !appConfigurator) {
+                appConfigurator = configurator_;
+            }
+        });
+
         var addBusListener = function(busName, eventName, listener) {
 
             reg.on('create', function(e, data) {
@@ -39,10 +48,6 @@ tau.mashups
                 var uri = parseUri(window.location.href);
                 this.request = uri.queryKey;
 
-                addBusListener('application board', 'configurator.ready', function(e, appConfigurator) {
-                    configurator = appConfigurator;
-                }.bind(this));
-
                 addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
                     this.boardSettings = eventArgs.boardSettings;
                 }.bind(this));
@@ -70,25 +75,36 @@ tau.mashups
             },
 
             focusOnCards: function() {
-                var clipboardManager = configurator.getClipboardManager();
+                var clipboardManager = appConfigurator.getClipboardManager();
 
                 var cards = _.values(clipboardManager._cache);
 
-                var ids = cards.reduce(function(r, item) {
-                    r.push(item.data.id); return r;
+                var ids = _.reduce(cards, function(ids, c) {
+                    if (c.isSelected) {
+                        ids.push(c.data.id);
+                    }
+                    return ids;
                 }, []);
+
+                if (ids.length === 0) {
+                    return;
+                }
+
+                var filter = _.map(ids, function(id) {
+                    return 'Id is ' + id;
+                }).join(' or ');
 
                 this.boardSettings.set({
                     set: {
                         user: {
-                            cardFilter: ids.join(',')
+                            cardFilter: '?' + filter
                         },
                         viewMode: "list"
                     }
                 });
 
-                $('.tau-resetable-input>input').val(ids.join(','))
-                $('.tau-resetable-input>button').css('visibility','visible');
+                $('.tau-resetable-input>input').val(filter)
+                $('.tau-resetable-input>button').css('visibility', 'visible');
                 $('.tau-role-filter-input').blur();
             }
 
