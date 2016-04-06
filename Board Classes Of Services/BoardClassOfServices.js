@@ -166,7 +166,7 @@ tau.mashups
                     fields = _.without(fields, cf);
                     fields.push('customFields');
                 }
-                if (typeName !== 'user' && typeName !== 'projectmember') {
+                if (typeName !== 'user' && typeName !== 'projectmember' && typeName !== 'requester') {
                     fields.push({
                         'entityType': ['id', 'name']
                     });
@@ -286,7 +286,19 @@ tau.mashups
                             defs.push(load(getCollection(entityTypeName), {
                                 include: '[' + TreeFormat.stringify(fields) + ']',
                                 where: '(id in (' + part.join(',') + '))'
-                            }).then(processResult));
+                            })
+                            .then(processResult)
+                            .then(function(items) {
+
+                                return items.map(function(v){
+
+                                    if (!v.entityType) v.entityType = {name: entityTypeName};
+
+                                    return v;
+
+                                });
+
+                            }));
 
                             i += take;
                             part = ids.slice(i, i + take);
