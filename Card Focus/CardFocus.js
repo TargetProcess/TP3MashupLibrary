@@ -42,6 +42,21 @@ tau.mashups
             });
         };
 
+        var appConfigurator;
+
+        configurator.getGlobalBus().on('configurator.ready', function(e) {
+
+            var configurator_ = e.data;
+
+            if (configurator_._id && !configurator_._id.match(/global/) && !appConfigurator) {
+
+                appConfigurator = configurator_;
+
+            }
+
+        });
+
+
         var CardFocus = Class.extend({
 
             init: function() {
