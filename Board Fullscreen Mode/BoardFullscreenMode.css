@@ -3,6 +3,7 @@ body.fullscreen {
 }
 
 body.fullscreen .tau-app-header,
+body.fullscreen .app-header,
 body.fullscreen .tau-board-header,
 body.fullscreen .tau-board-settings,
 body.fullscreen .tau-app-secondary-pane,
