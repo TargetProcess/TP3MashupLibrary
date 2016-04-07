@@ -1,7 +1,0 @@
-{
-    "Name": "Export Report To CSV",
-    "ShortDescription": "The mashup allows to export data from the created custom grapfical reports and get the information represented in a tabular form.",
-    "CompatibleTpVersion": {
-        "Minimum": "3.7.12"
-    }
-}
