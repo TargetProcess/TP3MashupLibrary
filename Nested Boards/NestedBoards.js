@@ -1,5 +1,11 @@
 /*globals require */
 /*eslint max-len: 0, no-underscore-dangle: 0 */
+
+if (window.location.search.indexOf('isNestedBoard=1') >= 0) {
+    tauFeatures['comet.notifications'] = false;
+}
+
+
 tau.mashups
     .addDependency('jQuery')
     .addDependency('Underscore')
