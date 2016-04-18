@@ -35,3 +35,11 @@ body.fullscreen .tau-board {
     display: inline-block;
     background-position: -820px -159px;
 }
+
+body.fullscreen .tau-board-list-sticky-header {
+    position: static !important;
+}
+
+body.fullscreen .tau-board-list-sticky-header + .i-role-cardsholder {
+    margin-top: 0px !important;
+}
