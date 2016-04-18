@@ -1,0 +1,7 @@
+{
+    "Name": "Quick Add Serveral Work Items",
+    "ShortDescription": "This mashup will create new entities (User Stories, Tasks, Bugs, etc.) from the list of names in a .txt file",
+    "CompatibleTpVersion": {
+        "Minimum": "3.6.0"
+    }
+}
