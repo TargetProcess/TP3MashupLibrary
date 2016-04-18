@@ -1,0 +1,1 @@
+tau.mashups.addModule("QuickAddSeveralWorkItems/config", {});
