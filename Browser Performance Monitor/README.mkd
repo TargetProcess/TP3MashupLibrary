@@ -1,5 +1,4 @@
-Cross-browser JavaScript Performance Monitor
-============================================
+# Cross-browser JavaScript Performance Monitor
 
 Provides simple charts to help monitor your JavaScript performance.
 
@@ -9,6 +8,6 @@ Provides simple charts to help monitor your JavaScript performance.
 
 As soon as the mashup is installed, you'll see performance details at the top left part of the screen.
 
-![Browser Performance Monitor](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Browser%20Performance%20Monitor/BrowserPerformanceMonitor.png)
+![Browser Performance Monitor](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Browser%20Performance%20Monitor/1.png)
 
-Uses [xStats.js](https://github.com/victor-homyakov/xstats.js)
+Uses [stats.js](https://github.com/mrdoob/stats.js)
