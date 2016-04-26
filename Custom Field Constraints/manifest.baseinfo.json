@@ -1,4 +1,5 @@
 {
+    "Name": "Custom Field Constraints",
     "ShortDescription": "This mashup allows a custom field to be required when an entity is moved to a specific state or a specific value is selected in another custom field.",
     "CompatibleTpVersion": {
         "Minimum": "3.6.6"
