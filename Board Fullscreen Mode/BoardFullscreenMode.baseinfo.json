@@ -1,6 +1,6 @@
 {
   "ShortDescription": "This mashup will let you see the current board in the fullscreen mode.",
   "CompatibleTpVersion": {
-    "Minimum": "2.24.4"
+    "Minimum": "3.3.0"
   }
 }
