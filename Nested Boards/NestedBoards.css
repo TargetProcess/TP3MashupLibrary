@@ -20,7 +20,6 @@ body.fullscreen .app-header,
 body.fullscreen .tau-board-settings,
 body.fullscreen .tau-app-secondary-pane,
 body.fullscreen .tau-boardclipboard,
-body.fullscreen .tau-boardtools,
 body.fullscreen .i-role-axis-mark-selector,
 body.fullscreen .tau-board-view-switch  {
     display: none !important;
