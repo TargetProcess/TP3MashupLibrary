@@ -166,12 +166,14 @@ tau.mashups
                     fields = _.without(fields, cf);
                     fields.push('customFields');
                 }
-                if (typeName !== 'user' && typeName !== 'projectmember' && typeName !== 'requester') {
+                
+                var excludedTypes = ['user', 'projectmember', 'requester', 'time'];
+                if (!_.contains(excludedTypes, typeName)) {
                     fields.push({
                         'entityType': ['id', 'name']
                     });
                 }
-
+                
                 return fields;
             },
 
