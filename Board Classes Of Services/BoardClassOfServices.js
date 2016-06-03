@@ -20,7 +20,6 @@ tau.mashups
         };
 
         var getParents = function(typeName) {
-
             var type = types[typeName];
             if (type.parent) {
                 var parentType = types[type.parent];
@@ -92,20 +91,16 @@ tau.mashups
         };
 
         var stringify = function(obj) {
-
-            var res = "";
+            var res = '';
 
             if (obj) {
                 if (Array.isArray(obj)) {
-
-                    res = obj.map(stringify).join(",");
-                } else if (typeof obj === "object") {
-
+                    res = obj.map(stringify).join(',');
+                } else if (typeof obj === 'object') {
                     res = Object.keys(obj).map(function(key) {
-                        return key + "[" + stringify(obj[key]) + "]";
-                    }).join(",");
-                } else if (typeof obj !== "function") {
-
+                        return key + '[' + stringify(obj[key]) + ']';
+                    }).join(',');
+                } else if (typeof obj !== 'function') {
                     res = String(obj);
                 }
             }
@@ -124,14 +119,12 @@ tau.mashups
             colorsConfigCache: {},
 
             init: function() {
-
                 this.options.colors = _.object(_.map(this.options.colors, function(v, k) {
                     return [k.toLowerCase(), v];
                 }));
             },
 
             getColorsConfigByType: function(typeName) {
-
                 typeName = typeName.toLowerCase();
 
                 if (this.colorsConfigCache[typeName]) {
@@ -143,7 +136,6 @@ tau.mashups
 
                 var parents = getParents(typeName);
                 parents.forEach(function(parentType) {
-
                     var parentColor = colors[parentType.name];
                     if (parentColor) {
                         color = _.extend(_.deepClone(parentColor), color);
@@ -155,7 +147,6 @@ tau.mashups
             },
 
             getFieldsConfigByType: function(typeName) {
-
                 var colorsConfig = this.getColorsConfigByType(typeName);
                 var fields = this.collectFields(colorsConfig);
 
@@ -166,19 +157,18 @@ tau.mashups
                     fields = _.without(fields, cf);
                     fields.push('customFields');
                 }
-                
+
                 var excludedTypes = ['user', 'projectmember', 'requester', 'time'];
                 if (!_.contains(excludedTypes, typeName)) {
                     fields.push({
                         'entityType': ['id', 'name']
                     });
                 }
-                
+
                 return fields;
             },
 
             mergeTypes: function(cardsByType) {
-
                 var colors = this.options.colors;
                 _.keys(cardsByType).forEach(function(typeName) {
 
@@ -205,14 +195,12 @@ tau.mashups
             },
 
             collectFields: function(colorsConfig) {
-
                 var fields = [];
-                _.forEach(colorsConfig, function(value, fieldName) {
 
+                _.forEach(colorsConfig, function(value, fieldName) {
                     var field;
 
                     if (_.isObject(value) && !_.isArray(value) && !_.isFunction(value)) {
-
                         if (_.any(_.values(value), _.isObject)) {
                             field = {};
                             field[fieldName] = this.collectFields(value);
@@ -220,7 +208,6 @@ tau.mashups
                             field = fieldName;
                         }
                     } else if (_.isArray(value)) {
-
                         field = {};
                         field[fieldName] = this.collectFields(value[0]);
                     }
@@ -228,13 +215,12 @@ tau.mashups
                     if (field) {
                         fields.push(field);
                     }
-                }.bind(this));
+                }, this);
 
                 return fields;
             },
 
             execute: function() {
-
                 var $cards = this.getCardsEl();
 
                 $
@@ -245,11 +231,10 @@ tau.mashups
             },
 
             getCardsEl: function() {
-                return $('.tau-card:not(.coloredByMashup),.tau-card-v2:not(.coloredByMashup)');
+                return $('.tau-card-v2:not(.coloredByMashup)');
             },
 
             getCardsData: function($cards) {
-
                 var ids = $cards.map(function() {
                     if (!$(this).data('entity-type')) {
                         return null;
@@ -284,42 +269,38 @@ tau.mashups
                         var part = ids.slice(i, i + take);
 
                         while (part.length) {
-
                             defs.push(load(getCollection(entityTypeName), {
                                 include: '[' + TreeFormat.stringify(fields) + ']',
                                 where: '(id in (' + part.join(',') + '))'
                             })
-                            .then(processResult)
-                            .then(function(items) {
+                                .then(processResult)
+                                .then(function(items) {
 
-                                return items.map(function(v){
+                                    return items.map(function(v) {
+                                        if (!v.entityType) {
+                                            v.entityType = {name: entityTypeName};
+                                        }
+                                        return v;
+                                    });
 
-                                    if (!v.entityType) v.entityType = {name: entityTypeName};
-
-                                    return v;
-
-                                });
-
-                            }));
+                                }));
 
                             i += take;
                             part = ids.slice(i, i + take);
                         }
                         return whenList(defs);
                     }
-                }.bind(this));
+                }, this);
 
                 return whenList(defs);
             },
 
             applyToCards: function(data, $cards) {
-
                 var hash = _.object(data.map(function(v) {
                     return [v.id, v];
                 }));
 
                 $cards.each(function(k, v) {
-
                     var $el = $(v);
                     this.applyToCard(hash[$el.data('entity-id')], $el);
                 }.bind(this));
@@ -333,17 +314,12 @@ tau.mashups
             },
 
             applyBackgroundByValues: function(cardData, $cardEl) {
-
                 var values = this.collectValues(cardData);
-                /*eslint-disable */
                 var colors = this.collectColors(values, this.getColorsConfigByType(cardData.entityType.name));
-                /*eslint-enable */
 
                 if (!colors.length) {
                     return $cardEl;
-
                 } else if (colors.length === 1 || this.options.colorType === 'single') {
-
                     $cardEl.css('background', colors[0]);
                     return $cardEl;
                 }
@@ -360,7 +336,6 @@ tau.mashups
             },
 
             collectValues: function(cardData) {
-
                 if (!_.isArray(cardData.tags)) {
                     cardData.tags = _.compact((cardData.tags || '').split(',').map(function(tag) {
                         return tag.trim().toLowerCase();
@@ -371,7 +346,6 @@ tau.mashups
             },
 
             collectColors: function(value, fieldColorConfig, globalValue) {
-
                 if (!globalValue) {
                     globalValue = value;
                 }
@@ -382,24 +356,20 @@ tau.mashups
                 }
 
                 if (_.isArray(value) && _.isArray(fieldColorConfig)) {
-
                     colors = fieldColorConfig.reduce(function matchInEntityArrayData(colors, colorsConfig) {
                         return colors.concat(value.reduce(function(colors, value) {
                             return colors.concat(this.collectColors(value, colorsConfig, globalValue));
                         }.bind(this), []));
                     }.bind(this), colors);
                 } else if (_.isArray(value) && _.isObject(fieldColorConfig)) {
-
                     colors = colors.concat(value.reduce(function(colors, value) {
                         return colors.concat(this.collectColors(value, fieldColorConfig, globalValue));
                     }.bind(this), []));
                 } else if (_.isObject(value) && _.isObject(fieldColorConfig)) {
-
                     colors = colors.concat(_.keys(fieldColorConfig).reduce(function(colors, fieldName) {
                         return colors.concat(this.collectColors(value[fieldName], fieldColorConfig[fieldName], globalValue));
                     }.bind(this), []));
                 } else {
-
                     var findFunc = this.matchValueAndConfigValue.bind(this, value);
                     var key = _.find(_.keys(fieldColorConfig), findFunc);
                     if (key) {
