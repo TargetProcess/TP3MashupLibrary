@@ -15,9 +15,7 @@ tau
         var boardSettings;
 
         var addBusListener = function(busName, eventName, listener, isImmediate) {
-
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
@@ -25,7 +23,6 @@ tau
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
@@ -55,7 +52,6 @@ tau
         };
 
         var getParents = function(typeName) {
-
             var type = types[typeName];
             if (type.parent) {
                 var parentType = types[type.parent];
@@ -88,7 +84,6 @@ tau
             };
 
             var loadPages = function loadPages(url, params) {
-
                 return loadSimple(url, params)
                     .then(function(res) {
                         var items = res.Items;
@@ -107,7 +102,6 @@ tau
         };
 
         var processResult = function(result) {
-
             if (_.isArray(result)) {
                 return result.map(function(v) {
                     return processResult(v);
@@ -127,20 +121,16 @@ tau
         };
 
         var stringify = function(obj) {
-
-            var res = "";
+            var res = '';
 
             if (obj) {
                 if (Array.isArray(obj)) {
-
-                    res = obj.map(stringify).join(",");
-                } else if (typeof obj === "object") {
-
+                    res = obj.map(stringify).join(',');
+                } else if (typeof obj === 'object') {
                     res = Object.keys(obj).map(function(key) {
-                        return key + "[" + stringify(obj[key]) + "]";
-                    }).join(",");
-                } else if (typeof obj !== "function") {
-
+                        return key + '[' + stringify(obj[key]) + ']';
+                    }).join(',');
+                } else if (typeof obj !== 'function') {
                     res = String(obj);
                 }
             }
@@ -178,7 +168,6 @@ tau
             },
 
             execute: function() {
-
                 if (!this.axisCache) {
                     this.axisCache = this.createAxisCache(this.$boardEl);
                 }
@@ -193,13 +182,13 @@ tau
             },
 
             reset: function() {
-                return this.$boardEl.find(
-                        '.tau-card.hiddenByResposible,.tau-card-v2.hiddenByResposible').show()
+                return this.$boardEl
+                    .find('.tau-card-v2.hiddenByResposible')
+                    .show()
                     .toggleClass('hiddenByResposible', false);
             },
 
             createAxisCache: function() {
-
                 return _.object(this.$boardEl.find('[data-dimension=' + this.usersAxis +
                     '] .i-role-cellaxis-viewtrigger').toArray().map(function(v) {
                     return [$(v).data('id'), $(v).data('entityId')];
@@ -207,12 +196,10 @@ tau
             },
 
             getCardsEl: function() {
-                return this.$boardEl.find(
-                    '.tau-card:not(.hiddenByResposible),.tau-card-v2:not(.hiddenByResposible)');
+                return this.$boardEl.find('.tau-card-v2:not(.hiddenByResposible)');
             },
 
             getCardsData: function($cards) {
-
                 var ids = $cards.map(function() {
                     if (!$(this).data('entity-type')) {
                         return null;
@@ -275,13 +262,11 @@ tau
             },
 
             applyToCards: function(data, $cards) {
-
                 var hash = _.object(data.map(function(v) {
                     return [v.id, v];
                 }));
 
                 $cards.toArray().forEach(function(v) {
-
                     var $el = $(v);
                     this.applyToCard(hash[$el.data('entity-id')], $el);
                 }.bind(this));
@@ -321,7 +306,8 @@ tau
         var saveToStorage = function(isActive) {
             try {
                 window.localStorage.setItem('mashup_hide_for_non_responsible_active', JSON.stringify(isActive));
-            } catch (e) {}
+            } catch (e) {
+            }
         };
 
 
@@ -345,7 +331,8 @@ tau
                 try {
                     activeByStorage = JSON.parse(window.localStorage.getItem('mashup_hide_for_non_responsible_active'));
                     activeByStorage = (activeByStorage === null) ? activeByStorageDefault : activeByStorage;
-                } catch (e) {}
+                } catch (e) {
+                }
 
                 this.isActive = activeByStorage;
 
@@ -357,14 +344,8 @@ tau
                 }.bind(this));
 
                 boardSettings.get({
-                    fields: [
-                        'x',
-                        'y',
-                        'viewMode',
-                        'cells'
-                    ],
+                    fields: ['x', 'y', 'viewMode', 'cells'],
                     callback: function(res) {
-
                         if (res.viewMode !== 'board') {
                             this.isApply = false;
                             return;
@@ -387,14 +368,12 @@ tau
                         this.isApply = Boolean(axis) && isCells;
 
                         if (this.isApply) {
-
                             colorer.usersAxis = axis;
                             colorer.$boardEl = $boardEl;
 
                             if (this.isActive) {
                                 this.activate();
                             }
-
                         }
 
                         this.fireChange();
@@ -411,7 +390,6 @@ tau
             },
 
             activate: function() {
-
                 if (this.isApply) {
                     this.isActive = true;
                     saveToStorage(true);
@@ -432,7 +410,6 @@ tau
             },
 
             toggle: function() {
-
                 if (this.isActive) {
                     this.deactivate();
                 } else {
@@ -469,13 +446,12 @@ tau
         addBusListener('board_plus', 'view.card.skeleton.built', _.debounce(store.execute.bind(store), 500));
 
         var $button = $(
-            '<button class="tau-btn  tau-extension-board-tooltip" style="float:right;margin-right:10px;"' +
-            ' data-title="Show only responsible cards" >' +
-                'Hide not Responsible' +
+            '<button class="tau-btn tau-extension-board-tooltip" style="float: right; margin-right: 10px;"' +
+            ' data-title="Show only responsible cards">' +
+            'Hide not Responsible' +
             '</button>');
 
         var renderButton = function($el) {
-
             if (store.isApply) {
 
                 $button.text(store.isActive ?
@@ -494,7 +470,6 @@ tau
         };
 
         addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
-
             renderButton(renderData.element);
             store.on('change', function() {
                 renderButton(renderData.element);
