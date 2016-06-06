@@ -1,0 +1,5 @@
+# Custom Unit - Project name for Inbound and Outbound relation cards.
+
+The Custom Units mashup adds a new unit with project name of entity to the Customize Cards for List view mode for Inbound and Outbound relation cards.
+
+
