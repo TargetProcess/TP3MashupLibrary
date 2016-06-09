@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "Custom Units - Open/Total Work Items and Relations without Links",
+  "CompatibleTpVersion": {
+    "Minimum": "3.2.8"
+  }
+}
