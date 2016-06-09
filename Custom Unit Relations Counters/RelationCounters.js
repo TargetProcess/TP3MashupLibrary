@@ -10,7 +10,7 @@ tau.mashups
                 id: 'custom_open_total_work_items',
                 classId: 'tau-board-unit_type_open_total_work_items',
                 name: 'Open/Total Work Items',
-                hideIf: function(data) {
+                hideIf: function (data) {
                     return !data.total && !data.open;
                 },
                 types: [
@@ -27,8 +27,7 @@ tau.mashups
                         'Open: <%! this.data.open||"0" %>, Total: <%! this.data.total||"0" %>'
                     ]
                 },
-                model:
-                'total:OutboundAssignables.Where(RelationType.Name=="Link").count()+' +
+                model: 'total:OutboundAssignables.Where(RelationType.Name=="Link").count()+' +
                 'SlaveRelations.Where(RelationType.Name=="Link" and slave.entityType.name="Project").count(),' +
                 'open:OutboundAssignables.Where(RelationType.Name=="Link" and EntityState.IsFinal!=true).count()+' +
                 'SlaveRelations.Where(RelationType.Name=="Link" and slave.as<Project>.EntityState.IsFinal!=true).count()',
@@ -56,7 +55,7 @@ tau.mashups
                     inbound: 10,
                     outbound: 20
                 },
-                hideIf: function(data) {
+                hideIf: function (data) {
                     return !data.inbound && !data.outbound;
                 },
                 listSettings: {
