@@ -1,0 +1,12 @@
+# Export and Import Views
+
+This mashup allows to export views settings (Board, List, Timeline and One-by-One) to local disk and import them back.
+
+Can be used cross account as well.
+
+
+## Export button
+![Export](export.png)
+
+## Import button
+![Import](import.png)
