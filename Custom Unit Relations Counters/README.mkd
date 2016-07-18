@@ -3,6 +3,6 @@
 The Custom Units mashup adds new units:
 
 * Open/Total Work Items: It shows the open and total number of entities connected via the link relations in the format following format: open/total.
-* Relations without Links: It looks completly the same as our original relations unit, but it doesn't count relations of type "link".
+* Dependencies: It looks completly the same as our original relations unit, but it doesn't count relations of type "link".
 
 

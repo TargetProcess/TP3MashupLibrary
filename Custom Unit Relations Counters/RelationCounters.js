@@ -36,7 +36,7 @@ tau.mashups
             {
                 id: 'custom_relation_not_links',
                 classId: 'tau-board-unit_type_relations-counter-in-out',
-                name: "Work Relations",
+                name: "Dependencies",
                 types: [
                     et.FEATURE, et.EPIC, et.STORY, et.TASK, et.BUG, et.REQUEST, et.IMPEDIMENT,
                     et.RESPONSIBLE_TEAM, et.TEAM, et.PROJECT, et.ITERATION, et.TEAM_ITERATION, et.RELEASE,
@@ -46,14 +46,15 @@ tau.mashups
                 template: {
                     markup: [
                         '<div class="tau-board-unit__value">',
-                        '<div class="tau-board-unit__value-in"><%= this.data.inbound %></div>',
-                        '<div class="tau-board-unit__value-out"><%= this.data.outbound %></div>',
+                        '<div class="tau-board-unit__value-in <%=this.data.hasInboundBlockers?"tau-board-unit__value-blocker":"" %>"><%= this.data.inbound %></div>',
+                        '<div class="tau-board-unit__value-out <%=this.data.hasOutboundBlockers?"tau-board-unit__value-blocker":"" %>"><%= this.data.outbound %></div>',
                         '</div>'
                     ]
                 },
                 sampleData: {
                     inbound: 10,
-                    outbound: 20
+                    outbound: 20,
+                    hasInboundBlockers: true
                 },
                 hideIf: function (data) {
                     return !data.inbound && !data.outbound;
@@ -63,8 +64,11 @@ tau.mashups
                         'In: <%! this.data.inbound||"0" %>, out: <%! this.data.outbound||"0" %>'
                     ]
                 },
-                model: 'inbound:masterRelations.Where(RelationType.Name !="Link").Count,' +
-                'outbound:slaveRelations.Where(RelationType.Name !="Link").Count'
+                model:
+                    'inbound:masterRelations.Where(RelationType.Name !="Link").Count,' +
+                    'outbound:slaveRelations.Where(RelationType.Name !="Link").Count,' +
+                    'hasInboundBlockers:masterRelations.Where(RelationType.Name=="Blocker").Count>0,' +
+                    'hasOutboundBlockers:slaveRelations.Where(RelationType.Name=="Blocker").Count>0'
             }
         ];
 
