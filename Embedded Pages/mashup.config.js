@@ -7,7 +7,7 @@ tau.mashups.addModule('EmbeddedPages/config', {
         processName: 'Scrum',
         frameTemplate: '<iframe src="${url}" width="854" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>'
     }, {
-        /* Sample embedded page of the 'CustomPageUrl' Custom Field of a Bug of any Project */
+        /* Sample embedded page of the 'CustomPageUrl' Custom Field of a User Story of any Project */
         entityTypeName: 'UserStory',
         customFieldName: 'CustomPageUrl'
     }, {
