@@ -1,6 +1,6 @@
 tau.mashups.addModule("CustomFieldConstraints/config", [
 	{
-		// fields for Tasks, Bugs, User Stories, Requests, Features, Epics, Projects
+		// fields for Tasks, Bugs, User Stories, Requests, Features, Epics, Test Plans, Test Plan Runs and Projects
 		
 		"process": "Kanban", //Process Name the custom field belongs to
 		"constraints": {
@@ -27,7 +27,7 @@ tau.mashups.addModule("CustomFieldConstraints/config", [
 		}
 	},
 	{
-		// fields for Users, Teams and Programs
+		// fields for Users, Requesters, Teams, Team Iteration and Programs
 		
 		"constraints": {
 			"user": { //Entity Type the custom field was created for
