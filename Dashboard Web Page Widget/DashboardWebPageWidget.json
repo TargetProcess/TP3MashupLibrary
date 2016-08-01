@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "Adds a new widget to display any web page on a dashboard",
+  "CompatibleTpVersion": {
+    "Minimum": "3.8"
+  }
+}
