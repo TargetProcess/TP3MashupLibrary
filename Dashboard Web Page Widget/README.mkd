@@ -1,0 +1,7 @@
+# Web page dashboard widget
+
+The mashup adds a new "Web page" widget which lets you display a web page on your dashboard. Maybe a web page with your company policy or a feature documentation on Google Drive? You decide!
+
+
+![Add the widget](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Dashboard%20Web%20Page%20Widget/ex01.png?raw=true)
+![Configure the widget](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Dashboard%20Web%20Page%20Widget/DashboardWebPageWidget.png?raw=true)
