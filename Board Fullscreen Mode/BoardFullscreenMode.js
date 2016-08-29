@@ -60,13 +60,17 @@ tau
             var $el = renderData.element;
 
             var $button = $(
-            '<button class="tau-btn tau-extension-board-tooltip tau-btn-fullscreen" id="btnFullScreen" ' +
-                'data-title="Fullscreen" alt="Toggle full screen">' +
-                '<i class="icon icon-fullscreen tau-icons-general"></i>' +
-            '</button>');
+                '<button class="tau-btn i-role-board-tooltip tau-extension-board-tooltip tau-btn-fullscreen" id="btnFullScreen" ' +
+                    'data-title="Fullscreen" alt="Toggle full screen">' +
+                    '<i class="icon icon-fullscreen tau-icons-general"></i>' +
+                '</button>');
 
             if (!$el.find('#btnFullScreen').length) {
-                $el.find('[role=actions-button]').before($button);
+
+                var $elWrapper = $el.find('.tau-board-header__control--actions');
+                var $elAnchor = $elWrapper.length ? $elWrapper: $el.find('[role=actions-button]');
+
+                $elAnchor.before($('<div class="tau-board-header__control--mashup"></div>').html($button));
             }
 
             $button.click(function() {

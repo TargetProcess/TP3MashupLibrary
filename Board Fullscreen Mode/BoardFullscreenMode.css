@@ -22,9 +22,8 @@ body.fullscreen .tau-board {
 }
 
 .tau-btn-fullscreen {
-    float: right;
     padding: 0;
-    margin-left: 12px;
+    margin: 0;
 }
 
 .icon-fullscreen {
@@ -41,4 +40,12 @@ body.fullscreen .tau-board-list-sticky-header {
 
 body.fullscreen .tau-board-list-sticky-header + .i-role-cardsholder {
     margin-top: 0px !important;
+}
+
+.tau-board-header__control--mashup {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: center;
+    align-items: center;
+    margin-left: 10px;
 }
