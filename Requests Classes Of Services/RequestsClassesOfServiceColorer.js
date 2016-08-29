@@ -67,12 +67,14 @@ tau.mashups
                     context: this
                 }).done(function(data) {
                     this.requestAttributesLoaded = {};
-                    for (var i = 0; i < data.items.length; i++) {
-                        var id = data.items[i].id;
-                        this.createdDates[id] = data.items[i].createDate;
-                        this.lastCommentDates[id] = data.items[i].lastCommentDate;
-                        this.lastCommentUserKinds[id] = data.items[i].lastCommentUserKind;
-                        this.isReplied[id] = data.items[i].isReplied;
+                    var items = data.items || [];
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var id = item.id;
+                        this.createdDates[id] = item.createDate;
+                        this.lastCommentDates[id] = item.lastCommentDate;
+                        this.lastCommentUserKinds[id] = item.lastCommentUserKind;
+                        this.isReplied[id] = item.isReplied;
                         this.requestAttributesLoaded[id] = true;
                     }
                     this.renderAll();
