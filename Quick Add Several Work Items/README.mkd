@@ -3,7 +3,7 @@ Quick Add Several Work Items
 
 This mashup will create new entities (User Stories, Tasks, Bugs, etc.) from a .txt file.
 
-![Quick Add Several Work Items](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Quick%20Add%20Serveral%20Work%20Items/1.png)
+![Quick Add Several Work Items](1.png)
 
 | Entity  | File format |
 | ------------- | ------------- |
@@ -20,6 +20,7 @@ This mashup will create new entities (User Stories, Tasks, Bugs, etc.) from a .t
 | Project  | Name  |
 | Build  | Name  |
 | User  | First name,Last name,Email,Login,Password  |
+| Requester | First name,Last name,Email |
 | Release  | not supported  |
 | Iteration  | not supported  |
 | Team Iteration  | not supported  |
