@@ -164,7 +164,8 @@ tau.mashups
                     var $cards = $el.find('.tau-card-v2_type_' + entityTypeName);
                     if ($cards.length) {
                         _.forEach(config, function(subEntityConfig) {
-                            $toolbar.append(renderButton(entityTypeName, subEntityConfig));
+                            $('<div class="tau-inline-group-nestedboardstoolbar__control">').append(renderButton(entityTypeName, subEntityConfig))
+                                .appendTo($toolbar);
                         });
                     }
                 });

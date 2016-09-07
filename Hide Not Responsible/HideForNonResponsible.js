@@ -446,7 +446,7 @@ tau
         addBusListener('board_plus', 'view.card.skeleton.built', _.debounce(store.execute.bind(store), 500));
 
         var $button = $(
-            '<button class="tau-btn tau-extension-board-tooltip" style="float: right; margin-right: 10px;"' +
+            '<button class="tau-btn i-role-board-tooltip tau-extension-board-tooltip" style="float: right; margin-left: 7px;"' +
             ' data-title="Show only responsible cards">' +
             'Hide not Responsible' +
             '</button>');

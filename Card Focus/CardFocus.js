@@ -62,16 +62,16 @@ tau.mashups
                 var $toolbar = $el.find('.i-role-clipboardfilter');
 
                 if (!$toolbar.length) {
-                    $toolbar = $('<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-block;"></div>')
+                    $toolbar = $('<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-flex; display: -ms-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center;"></div>')
                         .appendTo($el.find('.tau-select-block'));
                 }
 
-                $toolbar.children('.mashup-focus').remove();
+                $toolbar.children('.i-role-mashup-focus').remove();
 
-                var $button = $('<button class="tau-btn mashup-focus">Card Focus</button>')
+                var $button = $('<button class="tau-btn mashup-focus" style="margin: 0;">Card Focus</button>')
                     .on('click', this.focusOnCards.bind(this));
 
-                $toolbar.append($button);
+                $('<div class="i-role-mashup-focus" style="margin-right: 4px;">').append($button).appendTo($toolbar);
             },
 
             focusOnCards: function() {

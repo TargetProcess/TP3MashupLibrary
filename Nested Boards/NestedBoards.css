@@ -33,3 +33,20 @@ body.fullscreen .tau-board {
     height: 100% !important;
     border-bottom-width: 0 !important;
 }
+
+.tau-inline-group-nestedboardstoolbar {
+    display: -ms-flexbox;
+    display: inline-flex;
+    -ms-flex-align: center;
+    align-items: center;
+
+    vertical-align: middle;
+}
+
+.tau-inline-group-nestedboardstoolbar__control {
+    margin-right: 4px;
+}
+
+.tau-inline-group-nestedboardstoolbar__control:last-child {
+    margin-right: 0;
+}
