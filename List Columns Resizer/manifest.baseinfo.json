@@ -1,6 +1,0 @@
-{
-    "ShortDescription": "Be able to resize any list column with this mashup. It also adds column seperators, so that lists look more like tables.",
-    "CompatibleTpVersion": {
-        "Minimum": "3.0.0"
-    }
-}
