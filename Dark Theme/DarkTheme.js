@@ -28,7 +28,7 @@ tau
             addCSSRule('.tau-btn-active-highlight', 'box-shadow: 0px 0px 5px 0px #FFE6B3; border-color: #FFF2B2 !important; color: #FFF2B2 !important;');
             addCSSRule('.tau-app-body > header, .tau-btn-add-bg', 'background: #14161a !important;');
             addCSSRule('.tau-context-filter', 'background: #292c33 !important; box-shadow: none !important; padding: 2px 4px !important; margin-top: -1px !important; font-size: 12px !important; font-weight: 400 !important;');
-            addCSSRule('.tau-board', 'background: #292c33 !important;');
+            addCSSRule('.tau-board, .tau-board-header', 'background: #292c33 !important;');
             addCSSRule('.tau-board-header .tau-board-name', 'color: #fff !important; font-weight: 400 !important; letter-spacing: .2px !important;');
             addCSSRule('.tau-board-header .tau-btn, .tau-board-header input, .tau-inline-group-nestedboardstoolbar .tau-btn, .tau-selection-counter', 'background: transparent !important; border-radius: 2px !important; border-color: #5c5f66 !important; font-weight: normal !important; text-shadow: none !important; color: #a1a7b3 !important; font-size: 12px !important; height: 26px !important; line-height: 18px !important;');
             addCSSRule('.tau-board-header .tau-btn:hover, .tau-board-header input:hover, .tau-board-header .tau-checked', 'border-color: #fff !important; z-index: 10 !important;');
