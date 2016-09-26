@@ -16,7 +16,9 @@ After the mashup has been installed, it will need to be configured. Click the Cu
 * Specify an _Entity State_, when moving to this state in the workflow the custom field will be required, as a ```‘name:’``` in an ```‘entityStates:’``` section.
 * Specify a _Name_ of a Custom Field, which will be required, as a ```‘requiredCustomFields:’``` in an ```‘entityStates:’``` section. 
 
-_Note: In the case where multiple custom fields are required, provide a comma separated list of custom fields._
+_Note: In the case where multiple custom fields are required, provide a comma separated list of custom fields.
+Also, when you use [custom team workflows](https://www.targetprocess.com/guide/settings/states-workflows/team-workflow/), 
+specify the Entity State for related Project Workflow instead of a Team one._
 
 
 ## To configure Custom Field Constraints
