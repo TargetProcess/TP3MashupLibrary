@@ -460,7 +460,7 @@ tau
                 $button.data('title', store.isActive ?
                     'Show all cards assigned' :
                     'Show only responsible cards');
-                $el.find('[role=zoomer]').before($button);
+                $el.find('[role=actions-button]').before($button);
                 $button.off('click');
                 $button.on('click', store.toggle.bind(store));
             } else {
