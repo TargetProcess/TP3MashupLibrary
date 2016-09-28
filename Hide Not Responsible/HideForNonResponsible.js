@@ -445,13 +445,14 @@ tau
 
         addBusListener('board_plus', 'view.card.skeleton.built', _.debounce(store.execute.bind(store), 500));
 
-        var $button = $(
+        var controlHTML = '<div class="tau-board-header__control">' +
             '<button class="tau-btn i-role-board-tooltip tau-extension-board-tooltip" style="float: right; margin-left: 7px;"' +
-            ' data-title="Show only responsible cards">' +
-            'Hide not Responsible' +
-            '</button>');
+            ' data-title="Show only responsible cards">Hide not Responsible</button>' +
+            '</div>';
+        var $control = $(controlHTML);
+        var $button = $control.find('button');
 
-        var renderButton = function($el) {
+        var renderControl = function($el) {
             if (store.isApply) {
 
                 $button.text(store.isActive ?
@@ -460,19 +461,19 @@ tau
                 $button.data('title', store.isActive ?
                     'Show all cards assigned' :
                     'Show only responsible cards');
-                $el.find('[role=actions-button]').before($button);
+                $el.find('.i-role-filter-control').parent().after($control);
                 $button.off('click');
                 $button.on('click', store.toggle.bind(store));
             } else {
 
-                $button.detach();
+                $control.detach();
             }
         };
 
         addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
-            renderButton(renderData.element);
+            renderControl(renderData.element);
             store.on('change', function() {
-                renderButton(renderData.element);
+                renderControl(renderData.element);
             });
         });
     });
