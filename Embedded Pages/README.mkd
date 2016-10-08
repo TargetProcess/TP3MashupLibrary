@@ -14,18 +14,16 @@ How to activate it:
 3. Change a mashup config (in the mashups list) to specify which custom fields you'd like to see as an embedded page on a User Story view:
 
 ```
-tau.mashups
-    .addModule('EmbeddedPages.config', function() {
-        var EmbeddedPagesConfig = {
-            tabs: [{
-                entityTypeName: 'userStory',
-                customFieldName: 'Google Doc',
-                processName: 'Scrum'
-            }]
-        };
+tau.mashups.addModule('EmbeddedPages/config', {
 
-        return EmbeddedPagesConfig;
-    });
+    tabs: [{
+        /* Sample embedded page of the 'CustomPageUrl' Custom Field of a User Story of a Project with the 'Scrum' Process */
+        entityTypeName: 'UserStory',
+        customFieldName: 'Google Doc',
+        processName: 'Scrum'
+    }]
+
+});
 ```
 
 Now when you put a URL into a 'Google Doc' custom field for a User Story, it will be reflected as a new tab and an embedded page on that User Story view.
