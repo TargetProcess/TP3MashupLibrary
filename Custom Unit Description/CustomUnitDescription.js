@@ -5,6 +5,16 @@ tau.mashups
     .addDependency('tau/models/board.customize.units/const.entity.types.names')
     .addDependency('tau/models/board.customize.units/const.card.sizes')
     .addMashup(function($, _, globalConfigurator, types, sizes, helper) {
+        var div;
+        function extractPlainTextFromRichText(richText) {
+            div = div || document.createElement('div');
+            div.innerHTML = richText;
+            return div.textContent || div.innerText || '';
+        }
+        
+        function getPlainDescription(description, maxLength) {
+            return _.truncate(extractPlainTextFromRichText(description), maxLength).replace(/\u00a0/g, ' ');
+        }
 
         var units = [
             {
@@ -14,17 +24,17 @@ tau.mashups
                 types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST ],
                 sections: 1,
                 sizes: [ sizes.M, sizes.L, sizes.XL ],
-                template: [
+                template: {
+                    customFunctions: {
+                        getPlainDescription: getPlainDescription
+                    },
+                    markup:[
                   '<% if(this.data.description) { %>',
                     '<div class="tau-board-unit__value" style="white-space:normal">',
-                    '<% var tmp = document.createElement("DIV"); %>',
-                    '<% tmp.innerHTML = this.data.description; %>',
-                    '<% var plain = tmp.textContent || tmp.innerText || ""; %>',
-                    '<% if(plain.length > 150) { plain = plain.substring(0, 150) + "..."; } %>',
-                    '<%= plain.replace(/\u00a0/g, " ") %>',
+                        '<%= fn.getPlainDescription(this.data.description, 150) %>',
                     '</div>',
                   '<% } %>'
-                ],
+                ]},
                 model: 'description:Description',
                 sampleData: { description: '<div>Entity description</div>' }
            },
@@ -35,17 +45,17 @@ tau.mashups
                 types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST ],
                 sections: 1,
                 sizes: [ sizes.LIST ],
-                template: [
+                template: {
+                    customFunctions: {
+                        getPlainDescription: getPlainDescription
+                    },
+                    markup:[
                   '<% if(this.data.description) { %>',
                     '<div class="tau-board-unit__value">',
-                    '<% var tmp = document.createElement("DIV"); %>',
-                    '<% tmp.innerHTML = this.data.description; %>',
-                    '<% var plain = tmp.textContent || tmp.innerText || ""; %>',
-                    '<% if(plain.length > 300) { plain = plain.substring(0, 300); } %>',
-                    '<%= plain.replace(/\u00a0/g, " ") %>',
+                        '<%= fn.getPlainDescription(this.data.description, 1000) %>',
                     '</div>',
                   '<% } %>'
-                ],
+                ]},
                 model: 'description:Description',
                 sampleData: { description: '<div>Entity description</div>' }
            }
