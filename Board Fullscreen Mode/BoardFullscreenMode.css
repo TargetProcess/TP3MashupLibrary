@@ -26,6 +26,10 @@ body.fullscreen .tau-board {
     margin: 0;
 }
 
+.tau-btn-fullscreen.tau-btn {
+    min-width: 0;
+}
+
 .icon-fullscreen {
     margin: 5px;
     width: 12px;
