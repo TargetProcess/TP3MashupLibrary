@@ -22,9 +22,11 @@ tau.mashups
                 sections: 1,
                 sizes: [sizes.S, sizes.M, sizes.L, sizes.XL],
                 template: [
+                    '<div class="tau-board-unit__icon-wrapper">',
+                       '<div class="tau-icon-general tau-icon-thumbnail"></div>',
+                    '</div>',
                     '<div class="tau-board-unit__value">',
-                       '<span class="tau-board-unit_type_requesters-counter" style="position: relative; top: -4px;"></span>',
-                       '<span style="padding-left:2px;position: relative;top: -7px;"><%! _.pluck(this.data.requesters, "fullName").join(", ")%></span>',
+                       '<%! _.pluck(this.data.requesters, "fullName").join(", ")%>',
                     '</div>'
                 ],
                 sampleData: {
