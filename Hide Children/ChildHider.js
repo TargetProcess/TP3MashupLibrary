@@ -106,21 +106,33 @@ tau.mashups
                 });
             },
 
+            _getApiUrl: function(entityType, entityIds, parentSelector, acid) {
+                return configurator.getApplicationPath() + '/api/v2/' + entityType +
+                    '?take=1000&where=(id in [' + entityIds.join(',') +
+                    '] and EntityState.isFinal==false)&select={id,parent:' +
+                    parentSelector + '}&acid=' + acid;
+            },
+
             refresh: function(acid) {
-                var cardIds = this.cards.map(function(c) {
-                    return parseInt(c.attr('data-entity-id'));
-                });
+                if (!this.cards.length) {
+                    return;
+                }
+
+                var cardIds = _
+                    .chain(this.cards)
+                    .map(function(card) {
+                        return parseInt(card.attr('data-entity-id'), 10);
+                    })
+                    .sortBy(_.identity)
+                    .uniq(true)
+                    .value();
+
                 if (!cardIds.length) {
                     return;
                 }
 
-                var whereIdsStr = cardIds.join(',');
-
                 _.each(this.parentMap, function(parentSelector, entityType) {
-                    var url = configurator.getApplicationPath() + '/api/v2/' + entityType +
-                        '?take=1000&where=(id in [' + whereIdsStr +
-                        '] and EntityState.isFinal==false)&select={id,parent:' +
-                        parentSelector + '}&acid=' + acid;
+                    var url = this._getApiUrl(entityType, cardIds, parentSelector, acid);
                     this.apiGet(url, function(data) {
                         if (data === undefined) {
                             return;
@@ -194,7 +206,10 @@ tau.mashups
             },
 
             cardAdded: function(eventName, sender) {
-                this.cards.push(sender.element);
+                var $card = sender.element && sender.element.filter('.i-role-card');
+                if ($card && $card.length) {
+                    this.cards.push($card);
+                }
                 this.refreshDebounced(this.acid);
             }
         });
