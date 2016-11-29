@@ -88,9 +88,7 @@ tau.mashups
             },
 
             apiGet: function(url, callback, objects) {
-                if (objects === undefined) {
-                    objects = [];
-                }
+                objects = objects || [];
 
                 $.ajax({
                     url: url,
@@ -101,7 +99,7 @@ tau.mashups
                         objects = $.merge(objects, response.items);
                     }
                     if (response.hasOwnProperty('next')) {
-                        getTpApi(response.next, callback, objects);
+                        this.apiGet(response.next, callback, objects);
                     } else {
                         callback(objects);
                     }
