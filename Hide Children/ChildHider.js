@@ -1,22 +1,19 @@
+/*global tau,loggedUser*/
 tau.mashups
-    .addDependency('tp/mashups')
-    .addDependency('user/mashups')
     .addDependency('jQuery')
     .addDependency('Underscore')
     .addDependency('tp3/mashups/context')
     .addDependency('tau/core/bus.reg')
     .addDependency('tau/configurator')
     .addDependency('tau/core/class')
-    .addMashup(function(m, um, $, _, context, busRegistry, configurator, Class) {
+    .addMashup(function($, _, context, busRegistry, configurator, Class) {
 
         'use strict';
 
         var reg = configurator.getBusRegistry();
 
         var addBusListener = function(busName, eventName, listener) {
-
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
@@ -24,7 +21,6 @@ tau.mashups
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
@@ -37,20 +33,15 @@ tau.mashups
         };
 
         var refreshBoardSize = function() {
-
             configurator.getBusRegistry().getByName('board_plus').then(function(bus) {
-
                 bus.fire('resize.executed', {
                     onlyHeaders: false,
                     refreshElement: true
                 });
-
             });
-
         };
 
         var ChildHider = Class.extend({
-
             parentMap: {
                 'Feature': 'Epic.Id',
                 'UserStory': 'Feature.Id',
@@ -70,13 +61,13 @@ tau.mashups
 
                 this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
-                context.onChange(function(ctx, data) {
+                context.onChange(function(ctx) {
                     this._ctx = ctx;
                     this.refresh(ctx);
                 }.bind(this));
 
                 busRegistry.on('create', function(eventName, sender) {
-                    if (sender.bus.name == 'board_plus') {
+                    if (sender.bus.name === 'board_plus') {
                         sender.bus.on('start.lifecycle', _.bind(function(e) {
                             this.cards = [];
                             this.represented = [];
@@ -96,22 +87,23 @@ tau.mashups
                 }.bind(this));
             },
 
-            apiGet: function(url, callback, _objects) {
-                if (_objects === undefined) {
-                    _objects = []
-                };
+            apiGet: function(url, callback, objects) {
+                if (objects === undefined) {
+                    objects = [];
+                }
+
                 $.ajax({
                     url: url,
                     method: 'GET',
                     async: false
                 }).then(function(response) {
-                    if (response.hasOwnProperty("items")) {
-                        _objects = $.merge(_objects, response.items);
+                    if (response.hasOwnProperty('items')) {
+                        objects = $.merge(objects, response.items);
                     }
-                    if (response.hasOwnProperty("next")) {
-                        getTpApi(response.next, callback, _objects);
+                    if (response.hasOwnProperty('next')) {
+                        getTpApi(response.next, callback, objects);
                     } else {
-                        callback(_objects);
+                        callback(objects);
                     }
                 });
             },
@@ -132,25 +124,26 @@ tau.mashups
                         '?take=1000&where=(id in [' + whereIdsStr +
                         '] and EntityState.isFinal==false)&select={id,parent:' +
                         parentSelector + '}&acid=' + acid, _.bind(function(data) {
-                            if (data === undefined) return;
-                            for (var i = 0; i < data.length; i++) {
-                                var id = data[i].id;
-                                var parentId = data[i].parent;
-                                if (_.contains(cardIds, parentId))
-                                    this.represented.push(id);
+                        if (data === undefined) {
+                            return;
+                        }
+                        for (var i = 0; i < data.length; i++) {
+                            var id = data[i].id;
+                            var parentId = data[i].parent;
+                            if (_.contains(cardIds, parentId)) {
+                                this.represented.push(id);
                             }
-                        }, this));
+                        }
+                    }, this));
                 }, this));
             },
 
             renderButton: function($el) {
                 var $toolbar = $el.find('.i-role-clipboardfilter');
-
                 if (!$toolbar.length) {
                     $toolbar = $(
-                            '<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-flex; display: -ms-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center;"></div>'
-                        )
-                        .appendTo($el.find('.tau-select-block'));
+                        '<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-flex; display: -ms-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center;"></div>'
+                    ).appendTo($el.find('.tau-select-block'));
                 }
 
                 $toolbar.children('.i-role-mashup-hide').remove();
@@ -163,12 +156,11 @@ tau.mashups
 
             restoreState: function() {
                 $.ajax({
-                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' +
-                        loggedUser.id,
+                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
                     method: 'GET'
                 }).then(_.bind(function(response) {
                     if (_.has(response.userData, this.boardId)) {
-                        if ((response.userData[this.boardId] == "0") != (!this.state)) {
+                        if ((response.userData[this.boardId] == '0') != (!this.state)) {
                             this.toggle();
                         }
                     }
@@ -176,13 +168,10 @@ tau.mashups
             },
 
             saveState: function() {
-                var data = {
-                    "userData": {}
-                };
-                data['userData'][this.boardId.toString()] = this.state ? "1" : "0";
+                var data = {userData: {}};
+                data.userData[this.boardId.toString()] = this.state ? '1' : '0';
                 $.ajax({
-                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' +
-                        loggedUser.id,
+                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
                     method: 'POST',
                     data: JSON.stringify(data),
                     contentType: 'application/json; charset=utf8'
@@ -191,24 +180,21 @@ tau.mashups
 
             toggle: function() {
                 this.state = !this.state;
+                var method = this.state ? 'hide' : 'show';
                 _.each(this.represented, _.bind(function(id) {
-                    $('div[role=card][data-entity-id=' + id + ']')[this.state ? 'hide' :
-                        'show']();
+                    $('div[role=card][data-entity-id=' + id + ']')[method]();
                 }, this));
-                this.$btn.html(this.state ? 'Show Children (' + this.represented.length + ')' :
-                    'Hide Children');
+                this.$btn.html(this.state ? 'Show Children (' + this.represented.length + ')' : 'Hide Children');
                 this.saveState();
 
                 refreshBoardSize();
-
             },
 
             cardAdded: function(eventName, sender) {
                 this.cards.push(sender.element);
                 this.refreshDebounced(this._ctx);
-            },
+            }
         });
 
         return new ChildHider();
-
     });
