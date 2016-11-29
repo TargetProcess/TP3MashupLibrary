@@ -53,11 +53,10 @@ tau.mashups
             init: function() {
                 var self = this;
 
-                this.cards = [];
-                this.represented = [];
-                this.state = false;
                 this.$btn = null;
                 this.boardId = 0;
+
+                this._clearCardsInfo();
 
                 this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
@@ -68,13 +67,9 @@ tau.mashups
 
                 busRegistry.on('create', function(eventName, sender) {
                     if (sender.bus.name === 'board_plus') {
-                        sender.bus.on('start.lifecycle', _.bind(function(e) {
-                            this.cards = [];
-                            this.represented = [];
-                            this.state = false;
-                        }, self));
-                        sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
-                        sender.bus.on('overview.board.ready', _.bind(self.restoreState, self));
+                        sender.bus.on('start.lifecycle', self._clearCardsInfo.bind(self));
+                        sender.bus.on('view.card.skeleton.built', self.cardAdded.bind(self));
+                        sender.bus.on('overview.board.ready', self.restoreState.bind(self));
                     }
                 });
 
@@ -85,6 +80,12 @@ tau.mashups
                 addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
                     this.renderButton($el);
                 }.bind(this));
+            },
+
+            _clearCardsInfo: function() {
+                this.cards = [];
+                this.represented = [];
+                this.state = false;
             },
 
             apiGet: function(url, callback, objects) {
@@ -109,33 +110,33 @@ tau.mashups
             },
 
             refresh: function(ctx) {
-                var acid = ctx.acid;
                 var cardIds = this.cards.map(function(c) {
                     return parseInt(c.attr('data-entity-id'));
                 });
-                var whereIdsStr = cardIds.join(',');
-
-                if (whereIdsStr == '') {
-                    whereIdsStr = '0';
+                if (!cardIds.length) {
+                    return;
                 }
 
-                _.each(this.parentMap, _.bind(function(parentSelector, entityType) {
-                    this.apiGet(configurator.getApplicationPath() + '/api/v2/' + entityType +
+                var whereIdsStr = cardIds.join(',');
+                var acid = ctx.acid;
+
+                _.each(this.parentMap, function(parentSelector, entityType) {
+                    var url = configurator.getApplicationPath() + '/api/v2/' + entityType +
                         '?take=1000&where=(id in [' + whereIdsStr +
                         '] and EntityState.isFinal==false)&select={id,parent:' +
-                        parentSelector + '}&acid=' + acid, _.bind(function(data) {
+                        parentSelector + '}&acid=' + acid;
+                    this.apiGet(url, function(data) {
                         if (data === undefined) {
                             return;
                         }
                         for (var i = 0; i < data.length; i++) {
-                            var id = data[i].id;
                             var parentId = data[i].parent;
                             if (_.contains(cardIds, parentId)) {
-                                this.represented.push(id);
+                                this.represented.push(data[i].id);
                             }
                         }
-                    }, this));
-                }, this));
+                    }.bind(this));
+                }, this);
             },
 
             renderButton: function($el) {
@@ -154,24 +155,29 @@ tau.mashups
                 $('<div class="i-role-mashup-hide" style="margin-right: 4px;">').append(this.$btn).appendTo($toolbar);
             },
 
+            _getStorageUrl: function() {
+                return configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id;
+            },
+
             restoreState: function() {
                 $.ajax({
-                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
+                    url: this._getStorageUrl(),
                     method: 'GET'
-                }).then(_.bind(function(response) {
-                    if (_.has(response.userData, this.boardId)) {
-                        if ((response.userData[this.boardId] == '0') != (!this.state)) {
+                }).then(function(response) {
+                    var userData = response.userData;
+                    if (_.has(userData, this.boardId)) {
+                        if ((userData[this.boardId] == '0') != (!this.state)) {
                             this.toggle();
                         }
                     }
-                }, this));
+                }.bind(this));
             },
 
             saveState: function() {
                 var data = {userData: {}};
                 data.userData[this.boardId.toString()] = this.state ? '1' : '0';
                 $.ajax({
-                    url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
+                    url: this._getStorageUrl(),
                     method: 'POST',
                     data: JSON.stringify(data),
                     contentType: 'application/json; charset=utf8'
@@ -181,9 +187,9 @@ tau.mashups
             toggle: function() {
                 this.state = !this.state;
                 var method = this.state ? 'hide' : 'show';
-                _.each(this.represented, _.bind(function(id) {
+                _.each(this.represented, function(id) {
                     $('div[role=card][data-entity-id=' + id + ']')[method]();
-                }, this));
+                }, this);
                 this.$btn.html(this.state ? 'Show Children (' + this.represented.length + ')' : 'Hide Children');
                 this.saveState();
 
