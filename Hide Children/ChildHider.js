@@ -48,21 +48,20 @@ tau.mashups
                 'Task': 'UserStory.Id'
             },
 
-            _ctx: {},
-
             init: function() {
                 var self = this;
 
                 this.$btn = null;
                 this.boardId = 0;
+                this.acid = null;
 
                 this._clearCardsInfo();
 
                 this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
                 context.onChange(function(ctx) {
-                    this._ctx = ctx;
-                    this.refresh(ctx);
+                    this.acid = ctx.acid;
+                    this.refresh(this.acid);
                 }.bind(this));
 
                 busRegistry.on('create', function(eventName, sender) {
@@ -109,7 +108,7 @@ tau.mashups
                 });
             },
 
-            refresh: function(ctx) {
+            refresh: function(acid) {
                 var cardIds = this.cards.map(function(c) {
                     return parseInt(c.attr('data-entity-id'));
                 });
@@ -118,7 +117,6 @@ tau.mashups
                 }
 
                 var whereIdsStr = cardIds.join(',');
-                var acid = ctx.acid;
 
                 _.each(this.parentMap, function(parentSelector, entityType) {
                     var url = configurator.getApplicationPath() + '/api/v2/' + entityType +
@@ -198,7 +196,7 @@ tau.mashups
 
             cardAdded: function(eventName, sender) {
                 this.cards.push(sender.element);
-                this.refreshDebounced(this._ctx);
+                this.refreshDebounced(this.acid);
             }
         });
 
