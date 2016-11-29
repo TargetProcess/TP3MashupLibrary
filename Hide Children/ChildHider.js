@@ -32,20 +32,11 @@ tau.mashups
             });
         };
 
-        var refreshBoardSize = function() {
-            configurator.getBusRegistry().getByName('board_plus').then(function(bus) {
-                bus.fire('resize.executed', {
-                    onlyHeaders: false,
-                    refreshElement: true
-                });
-            });
-        };
-
         var ChildHider = Class.extend({
             parentMap: {
-                'Feature': 'Epic.Id',
-                'UserStory': 'Feature.Id',
-                'Task': 'UserStory.Id'
+                Feature: {entityType: 'Epic', selector: 'Epic.Id'},
+                UserStory: {entityType: 'Feature', selector: 'Feature.Id'},
+                Task: {entityType: 'UserStory', selector: 'UserStory.Id'}
             },
 
             init: function() {
@@ -82,9 +73,9 @@ tau.mashups
             },
 
             _clearCardsInfo: function() {
-                this.cards = [];
-                this.represented = [];
-                this.state = false;
+                this.cardsByType = {};
+                this.childrenIds = {};
+                this.hideChildren = false;
             },
 
             apiGet: function(url, callback, objects) {
@@ -113,36 +104,47 @@ tau.mashups
                     parentSelector + '}&acid=' + acid;
             },
 
+            _processResponse: function(parentIds, data) {
+                if (data === undefined) {
+                    return;
+                }
+
+                var hasChanges = false;
+                for (var i = 0; i < data.length; i++) {
+                    var childId = data[i].id;
+                    var parentId = data[i].parent;
+                    if (parentId && _.contains(parentIds, parentId) && this.childrenIds[childId] !== childId) {
+                        this.childrenIds[childId] = childId;
+                        hasChanges = true;
+                    }
+                }
+
+                if (hasChanges) {
+                    this.updateCardsVisibility();
+                }
+            },
+
             refresh: function(acid) {
-                if (!this.cards.length) {
-                    return;
-                }
+                _.each(this.parentMap, function(parent, entityType) {
+                    var parentIds = this.cardsByType[parent.entityType.toLowerCase()] || [];
+                    if (!parentIds.length) {
+                        return;
+                    }
 
-                var cardIds = _
-                    .chain(this.cards)
-                    .map(function(card) {
-                        return parseInt(card.attr('data-entity-id'), 10);
-                    })
-                    .sortBy(_.identity)
-                    .uniq(true)
-                    .value();
+                    // sort and remove duplicate ids, e.g. on timeline or on one-to-many board
+                    var cardIds = this.cardsByType[entityType.toLowerCase()];
+                    cardIds = _
+                        .chain(cardIds)
+                        .sortBy(_.identity)
+                        .uniq(true)
+                        .value();
+                    if (!cardIds.length) {
+                        return;
+                    }
 
-                if (!cardIds.length) {
-                    return;
-                }
-
-                _.each(this.parentMap, function(parentSelector, entityType) {
-                    var url = this._getApiUrl(entityType, cardIds, parentSelector, acid);
+                    var url = this._getApiUrl(entityType, cardIds, parent.selector, acid);
                     this.apiGet(url, function(data) {
-                        if (data === undefined) {
-                            return;
-                        }
-                        for (var i = 0; i < data.length; i++) {
-                            var parentId = data[i].parent;
-                            if (_.contains(cardIds, parentId)) {
-                                this.represented.push(data[i].id);
-                            }
-                        }
+                        this._processResponse(parentIds, data);
                     }.bind(this));
                 }, this);
             },
@@ -174,8 +176,13 @@ tau.mashups
                 }).then(function(response) {
                     var userData = response.userData;
                     if (_.has(userData, this.boardId)) {
-                        if ((userData[this.boardId] == '0') != (!this.state)) {
-                            this.toggle();
+                        // '1' - hideChildren === true
+                        // '0' or undefined - hideChildren === false
+                        var shouldHideChildren = userData[this.boardId] === '1';
+                        if (shouldHideChildren !== this.hideChildren) {
+                            this.hideChildren = shouldHideChildren;
+                            this.updateCardsVisibility();
+                            this.refreshBoardSize();
                         }
                     }
                 }.bind(this));
@@ -183,7 +190,7 @@ tau.mashups
 
             saveState: function() {
                 var data = {userData: {}};
-                data.userData[this.boardId.toString()] = this.state ? '1' : '0';
+                data.userData[this.boardId.toString()] = this.hideChildren ? '1' : '0';
                 $.ajax({
                     url: this._getStorageUrl(),
                     method: 'POST',
@@ -193,22 +200,52 @@ tau.mashups
             },
 
             toggle: function() {
-                this.state = !this.state;
-                var method = this.state ? 'hide' : 'show';
-                var $cards = $('.i-role-card');
-                _.each(this.represented, function(id) {
-                    $cards.filter('[data-entity-id=' + id + ']')[method]();
-                }, this);
-                this.$btn.html(this.state ? 'Show Children (' + this.represented.length + ')' : 'Hide Children');
+                this.hideChildren = !this.hideChildren;
                 this.saveState();
+                this.updateCardsVisibility();
+                this.refreshBoardSize();
+            },
 
-                refreshBoardSize();
+            updateCardsVisibility: function() {
+                var $cards = $('.i-role-card');
+                var $cardsToHide = $();
+                var cardsCount = 0;
+
+                _.each(this.childrenIds, function(id) {
+                    var $cardToHide = $cards.filter('[data-entity-id=' + id + ']');
+                    if ($cardToHide.length) {
+                        $cardsToHide = $cardsToHide.add($cardToHide);
+                        cardsCount++;
+                    }
+                });
+
+                if (this.hideChildren) {
+                    $cardsToHide.addClass('tau-hide');
+                    this.$btn.html('Show Children (' + cardsCount + ')');
+                } else {
+                    $cardsToHide.removeClass('tau-hide');
+                    this.$btn.html('Hide Children');
+                }
+            },
+
+            refreshBoardSize: function() {
+                configurator.getBusRegistry().getByName('board_plus').then(function(bus) {
+                    bus.fire('resize.executed', {
+                        onlyHeaders: false,
+                        refreshElement: true
+                    });
+                });
             },
 
             cardAdded: function(eventName, sender) {
                 var $card = sender.element && sender.element.filter('.i-role-card');
                 if ($card && $card.length) {
-                    this.cards.push($card);
+                    var type = ($card.attr('data-entity-type') || '').toLowerCase();
+                    if (type) {
+                        this.cardsByType[type] = this.cardsByType[type] || [];
+                        var id = parseInt($card.attr('data-entity-id'), 10);
+                        this.cardsByType[type].push(id);
+                    }
                 }
                 this.refreshDebounced(this.acid);
             }
