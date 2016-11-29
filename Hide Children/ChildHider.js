@@ -183,8 +183,9 @@ tau.mashups
             toggle: function() {
                 this.state = !this.state;
                 var method = this.state ? 'hide' : 'show';
+                var $cards = $('.i-role-card');
                 _.each(this.represented, function(id) {
-                    $('div[role=card][data-entity-id=' + id + ']')[method]();
+                    $cards.filter('[data-entity-id=' + id + ']')[method]();
                 }, this);
                 this.$btn.html(this.state ? 'Show Children (' + this.represented.length + ')' : 'Hide Children');
                 this.saveState();
