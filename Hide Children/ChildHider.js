@@ -6,7 +6,8 @@ tau.mashups
     .addDependency('tau/core/bus.reg')
     .addDependency('tau/configurator')
     .addDependency('tau/core/class')
-    .addMashup(function($, _, context, busRegistry, configurator, Class) {
+    .addDependency('tau/models/board.customize.units/const.entity.types.names')
+    .addMashup(function($, _, context, busRegistry, configurator, Class, et) {
 
         'use strict';
 
@@ -33,18 +34,18 @@ tau.mashups
         };
 
         var ChildHider = Class.extend({
-            parentMap: {
-                Feature: {entityType: 'Epic', selector: 'Epic.Id'},
-                UserStory: {entityType: 'Feature', selector: 'Feature.Id'},
-                Task: {entityType: 'UserStory', selector: 'UserStory.Id'}
-            },
+            parentMap: [
+                {entityType: et.FEATURE, parentEntityType: et.EPIC},
+                {entityType: et.STORY, parentEntityType: et.FEATURE},
+                {entityType: et.TASK, parentEntityType: et.STORY}
+            ],
 
             init: function() {
                 var self = this;
 
                 this.$btn = null;
-                this.boardId = 0;
                 this.acid = null;
+                this.boardId = 0;
 
                 this._clearCardsInfo();
 
@@ -125,14 +126,14 @@ tau.mashups
             },
 
             refresh: function(acid) {
-                _.each(this.parentMap, function(parent, entityType) {
-                    var parentIds = this.cardsByType[parent.entityType.toLowerCase()] || [];
+                _.each(this.parentMap, function(entry) {
+                    var parentIds = this.cardsByType[entry.parentEntityType] || [];
                     if (!parentIds.length) {
                         return;
                     }
 
                     // sort and remove duplicate ids, e.g. on timeline or on one-to-many board
-                    var cardIds = this.cardsByType[entityType.toLowerCase()];
+                    var cardIds = this.cardsByType[entry.entityType];
                     cardIds = _
                         .chain(cardIds)
                         .sortBy(_.identity)
@@ -142,7 +143,8 @@ tau.mashups
                         return;
                     }
 
-                    var url = this._getApiUrl(entityType, cardIds, parent.selector, acid);
+                    var parentSelector = entry.parentEntityType + '.id';
+                    var url = this._getApiUrl(entry.entityType, cardIds, parentSelector, acid);
                     this.apiGet(url, function(data) {
                         this._processResponse(parentIds, data);
                     }.bind(this));
