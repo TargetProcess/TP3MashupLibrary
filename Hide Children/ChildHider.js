@@ -152,16 +152,22 @@ tau.mashups
             },
 
             renderButton: function($el) {
-                var $toolbar = $el.find('.i-role-clipboardfilter');
+                var $container = $el.find('.tau-select-block');
+
+                if (this.$btn && $container.find('.i-role-mashup-hide-button').is(this.$btn)) {
+                    return;
+                }
+
+                var $toolbar = $container.find('.i-role-clipboardfilter');
                 if (!$toolbar.length) {
                     $toolbar = $(
                         '<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-flex; display: -ms-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center;"></div>'
-                    ).appendTo($el.find('.tau-select-block'));
+                    ).appendTo($container);
                 }
 
                 $toolbar.children('.i-role-mashup-hide').remove();
 
-                this.$btn = $('<button class="tau-btn mashup-hider" style="margin: 0;">Hide Children</button>')
+                this.$btn = $('<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">Hide Children</button>')
                     .on('click', this.toggle.bind(this));
 
                 $('<div class="i-role-mashup-hide" style="margin-right: 4px;">').append(this.$btn).appendTo($toolbar);
