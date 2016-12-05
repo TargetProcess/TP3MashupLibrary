@@ -60,9 +60,9 @@ tau
             var $el = renderData.element;
 
             var $button = $(
-                '<button class="tau-btn i-role-board-tooltip tau-extension-board-tooltip tau-btn-fullscreen" id="btnFullScreen" ' +
+                '<button class="tau-btn tau-btn--icon i-role-board-tooltip tau-extension-board-tooltip" id="btnFullScreen" ' +
                     'data-title="Fullscreen" alt="Toggle full screen">' +
-                    '<i class="icon icon-fullscreen tau-icons-general"></i>' +
+                    '<i class="icon tau-icon-general tau-icon-fullscreen"></i>' +
                 '</button>');
 
             if (!$el.find('#btnFullScreen').length) {

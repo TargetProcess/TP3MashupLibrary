@@ -21,29 +21,12 @@ body.fullscreen .tau-board {
     height: 100% !important;
 }
 
-.tau-btn-fullscreen {
-    padding: 0;
-    margin: 0;
-}
-
-.tau-btn-fullscreen.tau-btn {
-    min-width: 0;
-}
-
-.icon-fullscreen {
-    margin: 5px;
-    width: 12px;
-    height: 12px;
-    display: inline-block;
-    background-position: -820px -159px;
-}
-
 body.fullscreen .tau-board-list-sticky-header {
     position: static !important;
 }
 
 body.fullscreen .tau-board-list-sticky-header + .i-role-cardsholder {
-    margin-top: 0px !important;
+    margin-top: 0 !important;
 }
 
 .tau-board-header__control--mashup {
