@@ -1,8 +1,8 @@
-# Custom Unit - Project name for Inbound and Outbound relation cards.
+# Custom Unit - Relations Counters
+
+Counts of open vs all items in Inbound and Outbound relations for any entity. Relations of type Link and all other types are counted separately.
 
 The Custom Units mashup adds new units:
 
 * Open/Total Work Items: It shows the open and total number of entities connected via the link relations in the format following format: open/total.
 * Dependencies: It looks completly the same as our original relations unit, but it doesn't count relations of type "link".
-
-
