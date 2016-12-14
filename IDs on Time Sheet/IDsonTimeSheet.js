@@ -16,7 +16,7 @@ tau.mashups
 
                 $target.find('tr.dataRow td:nth-of-type(3) a:first-of-type').each(function(k, v) {
                     var $link = $(v);
-                    var id = $link.attr('href').match(/#(\w+)\/(\d+)/);
+                    var id = $link.attr('href').match(/#(?:page=)?(\w+)\/(\d+)/);
                     if (id) {
                         id = id[2];
                         $link.parent().prepend(
