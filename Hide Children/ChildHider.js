@@ -43,6 +43,7 @@ tau.mashups
             init: function() {
                 var self = this;
 
+                this.$board = null;
                 this.$btn = null;
                 this.acid = null;
                 this.boardId = 0;
@@ -60,7 +61,10 @@ tau.mashups
                     if (sender.bus.name === 'board_plus') {
                         sender.bus.on('start.lifecycle', self._clearCardsInfo.bind(self));
                         sender.bus.on('view.card.skeleton.built', self.cardAdded.bind(self));
-                        sender.bus.on('overview.board.ready', self.restoreState.bind(self));
+                        sender.bus.on('overview.board.ready', function(event, board) {
+                            self.$board = board.element;
+                            self.restoreState();
+                        }.bind(self));
                     }
                 });
 
@@ -215,7 +219,7 @@ tau.mashups
             },
 
             updateCardsVisibility: function() {
-                var $cards = $('.i-role-card');
+                var $cards = $('.i-role-card', this.$board);
                 var $cardsToHide = $();
                 var cardsCount = 0;
 
