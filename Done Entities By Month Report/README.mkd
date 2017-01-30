@@ -1,8 +1,0 @@
-Done Entities by Projects and by Months Report
-=======================
-
-A report that shows in a visual way how many stories, bugs, issues or features were completed or closed this year by months.
-
-![Done Entities By Month Report](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Done%20Entities%20By%20Month%20Report/DoneEntitiesByMonthReport.png)
-
-Navigate to ```Reports > Other Reports > (Planning) > Done Entities by Month``` to see the report.
