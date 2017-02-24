@@ -10,7 +10,7 @@ tau.mashups
         var units = [
             {
                 id: 'request_requesters',
-                classId: 'tau-board-unit_type_entity-name-extended-small',
+                classId: 'tau-board-unit_type_request_requesters',
                 hideIf: function(data) {
                     return !data.requesters || !data.requesters.length;
                 },
