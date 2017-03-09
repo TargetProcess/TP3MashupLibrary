@@ -1,4 +1,4 @@
-# Custom Unit - Colored Custom Fields
+# Custom Unit - Colored Custom Field
 
 The mashup adds a new custom unit to the Customize Cards tab in a View Setup area, based on a custom field that needs to be specified in the mashup code. The values of that custom field are mapped to colors in the mashup code, which will the be used to color the values on the cards.
 
@@ -14,4 +14,4 @@ In the mashup code, define your custom field in the name section `name` (e.g. "R
   }
 ```
 
-![Colored Custom Fields on Cards](https://raw.githubusercontent.com/TargetProcess/CustomUnitColoredCustomFieldMashup/master/src/traffic-light.png)
+![Colored Custom Fields on Cards](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Custom%20Unit%20Colored%20Custom%20Field/traffic-light.png)
