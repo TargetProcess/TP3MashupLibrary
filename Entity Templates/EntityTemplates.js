@@ -24,64 +24,74 @@ tau.mashups
 
         var reg = configurator.getBusRegistry();
 
-        var addBusListener = function(busName, eventName, listener) {
+        function addBusListeners(busName, events) {
+            var scope = {};
 
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
-                    bus.once(eventName, listener);
+                    _.each(events, function(listener, eventName) {
+                        bus.once(eventName, listener, scope);
+                    });
                 }
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
-                    bus.removeListener(eventName, listener);
+                    bus.removeAllListeners(scope);
                 }
             });
-        };
+        }
 
-        var getTemplate = function(context) {
+        function findTemplate(entityTypeName) {
+            return _.find(templates, function(v, k) {
+                return k.toLowerCase() === entityTypeName;
+            });
+        }
 
+        function getTemplate(context) {
             var entityTypeName = context.entity.entityType.name.toLowerCase();
             var term = _.find(context.getTerms(), function(v) {
                 return (v.wordKey || v.name).toLowerCase().replace(' ', '') === entityTypeName;
             });
-            var termValue = term ? term.value.toLowerCase() : null;
+            var template = term ? findTemplate(term.value.toLowerCase()) : null;
+            return template || findTemplate(entityTypeName);
+        }
 
-            var template = _.find(templates, function(v, k) {
-                return k.toLowerCase() === entityTypeName || k.toLowerCase() === termValue;
-            });
-            return template;
-        };
-
-        addBusListener('description', 'afterRender', function(e, renderData) {
-
-            var $el = renderData.element;
-
-            var $description = $el.find('.ui-description__inner');
-            var value = renderData.data.value;
-
-            if ($description.length && !value) {
+        addBusListeners('description', {
+            'afterRender': function(e, renderData) {
+                var value = renderData.data.value;
+                if (value) {
+                    return;
+                }
 
                 var template = getTemplate(renderData.view.config.context);
+                if (!template) {
+                    return;
+                }
 
-                if (template) {
+                var $description = renderData.element.find('.ui-description__inner');
+                if ($description.length) {
                     $description.attr('data-placeholder', '');
                     $description.append('<div>' + template + '</div>');
                 }
-            }
-        });
+            },
 
-        addBusListener('description', 'afterRender:last + $editor.ready', function(e, renderData, $editor) {
+            'afterRender:last + $editor.ready': function(e, renderData, $editor) {
+                var value = renderData.data.rawDescription;
+                if (value) {
+                    return;
+                }
 
-            var template = getTemplate(renderData.view.config.context);
-            var value = renderData.data.rawDescription;
+                var template = getTemplate(renderData.view.config.context);
+                if (!template) {
+                    return;
+                }
 
-            if (!value && template && $editor.data('ui-richeditorMarkdown')) {
-                $editor.richeditorMarkdown('setText', template);
+                if ($editor.richeditorMarkdown('instance')) {
+                    $editor.richeditorMarkdown('setText', template);
+                }
             }
         });
     });
