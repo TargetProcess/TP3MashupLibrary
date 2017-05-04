@@ -1,11 +1,11 @@
+/*global tau*/
 tau.mashups
     .addDependency('jQuery')
     .addDependency('Underscore')
     .addDependency('tau/configurator')
     .addDependency('tau/models/board.customize.units/const.entity.types.names')
     .addDependency('tau/models/board.customize.units/const.card.sizes')
-    .addDependency('tau/models/board.customize.units/board.customize.units.base')
-    .addMashup(function($, _, globalConfigurator, types, sizes, helper) {
+    .addMashup(function($, _, globalConfigurator, types, sizes) {
 
         var units = [{
             id: 'feature_endDate',
@@ -24,7 +24,7 @@ tau.mashups
             term: 'feature',
             sizes: [sizes.XS, sizes.S, sizes.M, sizes.L, sizes.LIST],
             template: [
-                '<div class="tau-board-unit__value">&rarr;',
+                '<div class="tau-board-unit__value-flexbox-wrapper">&rarr;',
                 '<div class="tau-board-unit__value_type_day"><%=fn.formatDayShort(this.data.endDate)%></div>',
                 '<div class="tau-board-unit__value_type_month"><%=fn.formatDate(this.data.endDate, "MMM")%></div>',
                 '<div class="tau-board-unit__value_type_year"><%=fn.formatDate(this.data.endDate, "yyyy")%></div>',
@@ -51,7 +51,7 @@ tau.mashups
             term: 'userstory',
             sizes: [sizes.XS, sizes.S, sizes.M, sizes.L, sizes.LIST],
             template: [
-                '<div class="tau-board-unit__value">&rarr;',
+                '<div class="tau-board-unit__value-flexbox-wrapper">&rarr;',
                 '<div class="tau-board-unit__value_type_day"><%=fn.formatDayShort(this.data.endDate)%></div>',
                 '<div class="tau-board-unit__value_type_month"><%=fn.formatDate(this.data.endDate, "MMM")%></div>',
                 '<div class="tau-board-unit__value_type_year"><%=fn.formatDate(this.data.endDate, "yyyy")%></div>',
@@ -78,7 +78,7 @@ tau.mashups
             term: 'release',
             sizes: [sizes.XS, sizes.S, sizes.M, sizes.L, sizes.LIST],
             template: [
-                '<div class="tau-board-unit__value">&rarr;',
+                '<div class="tau-board-unit__value-flexbox-wrapper">&rarr;',
                 '<div class="tau-board-unit__value_type_day"><%=fn.formatDayShort(this.data.endDate)%></div>',
                 '<div class="tau-board-unit__value_type_month"><%=fn.formatDate(this.data.endDate, "MMM")%></div>',
                 '<div class="tau-board-unit__value_type_year"><%=fn.formatDate(this.data.endDate, "yyyy")%></div>',
@@ -97,12 +97,9 @@ tau.mashups
 
         var appConfigurator;
         globalConfigurator.getGlobalBus().on('configurator.ready', function(e, configurator) {
-
             if (!appConfigurator && configurator._id && configurator._id.match(/board/)) {
-
                 appConfigurator = configurator;
                 addUnits(appConfigurator);
             }
         });
-
     });
