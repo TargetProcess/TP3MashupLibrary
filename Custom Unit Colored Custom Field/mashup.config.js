@@ -1,6 +1,15 @@
 tau.mashups.addModule("CustomUnitColoredCustomField/config", [
     //{
+    //    "name": "Risk",
+    //    "colors": {
+    //      "High Risk": "red",
+    //      "Low Risk": "#00FF00",
+    //      "Medium Risk": {text: "black", background: "rgb(255, 255, 0)"}
+    //    }
+    //},
+    //{
     //    "name": "Favorite Fruit",
+    //    "sortable": false,
     //    "colors": {
     //        "Apple": "red",
     //        "Pear": "#007f00",
