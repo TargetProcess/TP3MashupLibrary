@@ -1,19 +1,16 @@
-/*globals require */
+/*global tau,tauFeatures*/
 /*eslint max-len: 0, no-underscore-dangle: 0 */
 
 if (window.location.search.indexOf('isNestedBoard=1') >= 0) {
     tauFeatures['comet.notifications'] = false;
 }
 
-
 tau.mashups
     .addDependency('jQuery')
     .addDependency('Underscore')
     .addDependency('libs/parseUri')
     .addDependency('tau/core/class')
-
     .addDependency('tau/configurator')
-
     .addDependency('tp3/mashups/popup')
     .addCSS('NestedBoards.css')
     .addMashup(function($, _, parseUri, Class, configurator, Popup) {
@@ -23,23 +20,16 @@ tau.mashups
         var appConfigurator;
 
         configurator.getGlobalBus().on('configurator.ready', function(e) {
-
             var configurator_ = e.data;
-
             if (configurator_._id && !configurator_._id.match(/global/) && !appConfigurator) {
-
                 appConfigurator = configurator_;
-
             }
-
         });
 
         var reg = configurator.getBusRegistry();
 
         var addBusListener = function(busName, eventName, listener) {
-
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
@@ -47,13 +37,11 @@ tau.mashups
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
                 }
             });
-
         };
 
         var nestedBoardsConfig = {
@@ -68,6 +56,9 @@ tau.mashups
             feature: [{
                 type: 'userstory',
                 name: 'Stories Board'
+            }, {
+                type: 'bug',
+                name: 'Bugs Board'
             }],
 
             testplan: [{
@@ -104,7 +95,6 @@ tau.mashups
         };
 
         var typesByParent = _.reduce(nestedBoardsConfig, function(res, v, k) {
-
             v.forEach(function(type) {
                 res[type.type] = res[type.type] || [];
                 res[type.type].push(k);
@@ -112,15 +102,12 @@ tau.mashups
             });
 
             return res;
-
         }, {});
 
         var boardSettings;
 
         var Mashup = Class.extend({
-
             init: function() {
-
                 var uri = parseUri(window.location.href);
                 this.request = uri.queryKey;
 
@@ -129,28 +116,19 @@ tau.mashups
                 }.bind(this));
 
                 if (this.request.isNestedBoard) {
-
                     $('body').addClass('fullscreen');
-
                     addBusListener('board_plus', 'board.configuration.ready', function(e, boardConfig) {
-
                         this.updateConfiguration(boardConfig);
-
                     }.bind(this));
-
                 } else {
-
                     addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
                         this.renderToolbar($el);
                     }.bind(this));
-
                 }
             },
 
             renderToolbar: function($el) {
-
                 var $toolbar = $el.find('.i-role-nestedboardstoolbar');
-
                 if (!$toolbar.length) {
                     $toolbar = $('<div class="tau-inline-group-nestedboardstoolbar i-role-nestedboardstoolbar"></div>')
                         .appendTo($el.find('.tau-select-block'));
@@ -177,7 +155,6 @@ tau.mashups
             },
 
             handleButton: function(entityTypeName, type) {
-
                 var activityPopup = new Popup();
                 activityPopup.show();
                 activityPopup.showLoading();
@@ -189,15 +166,12 @@ tau.mashups
                 acidStore.get({
                     fields: ['acid']
                 }).then(function(data) {
-
                     var acid = data.acid;
-
                     var cards = _.values(clipboardManager._cache);
 
                     var clipboardData = cards.reduce(function(res, item) {
                         res[item.data.type] = res[item.data.type] || [];
                         res[item.data.type].push(item.data.id);
-
                         return res;
                     }, {});
 
@@ -207,24 +181,19 @@ tau.mashups
                         "&clipboardData=" + encodeURIComponent(JSON.stringify(clipboardData)) +
                         "&axisType=" + entityTypeName +
                         "&cellType=" + type +
-                        '#page=board/' + boardSettings.settings.id
-                        ;
+                        '#page=board/' + boardSettings.settings.id;
 
                     var $frame = $('<iframe class="nestedboardsframe" src="' + url + '"></iframe>');
-
                     $frame.load(function() {
                         activityPopup.hideLoading();
                     });
 
                     $container.append($frame);
-                    $container.css({
-                        padding: 0
-                    });
+                    $container.css({padding: 0});
                 });
             },
 
             updateConfiguration: function(boardConfig) {
-
                 var clipboardData = JSON.parse(decodeURIComponent(this.request.clipboardData));
                 var cellType = this.request.cellType;
                 var axisType = this.request.axisType;
@@ -233,7 +202,6 @@ tau.mashups
                 var cellIds = [];
 
                 _.forEach(clipboardData, function(ids, entityType) {
-
                     if (axisType === entityType) {
                         axisIds = axisIds.concat(ids);
                     }
@@ -291,11 +259,8 @@ tau.mashups
                 if (boardConfig.colorSettings && boardConfig.colorSettings.customEncoding) {
                     boardConfig.colorSettings.customEncoding = [];
                 }
-
             }
-
         });
 
         return new Mashup();
-
     });
