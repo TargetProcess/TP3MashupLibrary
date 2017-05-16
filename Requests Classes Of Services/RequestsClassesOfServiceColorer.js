@@ -23,6 +23,7 @@ tau.mashups
 
                 this.includeIdeas = 0; //0 by default
                 this.includeInitialStateOnly = 1; //1 by default
+                this.includeWeekends = 0; // 0 means do not include weekends into elapsed hours calculation
                 this.hourLimits = [0, 1, 18, 24]; //[0, 1, 18, 24] by default
                 this.leftInQueueNormalDayLimit = 1;
                 this.leftInQueueWarningDayLimit = 3;
@@ -96,7 +97,7 @@ tau.mashups
             };
 
             this._getColor = function(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied) {
-                var hoursDiff = getHoursDiff(createdDate, lastCommentDate);
+                var hoursDiff = this.getHoursDiff(createdDate, lastCommentDate);
                 if ((lastCommentDate) && (lastCommentUserKind == 'User')) {
                     var leftInQueueDiff = hoursDiff;
                     if (isReplied) {
@@ -122,28 +123,49 @@ tau.mashups
                     }
                 }
                 return (resultColor ? 'background: ' + resultColor : '');
+            };
 
-                function getHoursDiff(createdDate, lastCommentDate) {
-                    var timeDiff = getTimeDiff(createdDate, lastCommentDate);
-                    return Math.floor(timeDiff / (1000 * 3600));
+            this.getHoursDiff = function(createdDate, lastCommentDate) {
+                var localDate = this.extractDate(new Date());
+                if (lastCommentDate) {
+                    var lastCommentLocalDate = this.extractDate(lastCommentDate);
+                    return this.getHoursDiffEx(lastCommentLocalDate, localDate);
+                }
+                if (createdDate) {
+                    var createdLocalDate = this.extractDate(createdDate);
+                    return this.getHoursDiffEx(createdLocalDate, localDate);
                 }
 
-                function getTimeDiff(createdDate, lastCommentDate) {
-                    var localDate = extractDate(new Date());
-                    if (lastCommentDate) {
-                        var lastCommentLocalDate = extractDate(lastCommentDate);
-                        return Math.abs(localDate.getTime() - lastCommentLocalDate.getTime());
+                return 0;
+            };
+
+            // calculate hours depending on weekends
+            this.getHoursDiffEx = function(startDate, endDate) {
+                if (this.includeWeekends) {
+                    return Math.floor(Math.abs(startDate.getTime() - endDate.getTime()) / 36e5);
+                }
+
+                var totalHours = 0;
+                var timestamp = startDate.getTime() + 36e5;
+                var endTime = endDate.getTime();
+                var curDate = new Date(timestamp);
+
+                while (timestamp <= endTime) {
+                    var dayOfWeek = curDate.getDay();
+                    var isWorkday = dayOfWeek !== 6 && dayOfWeek !== 0;
+                    if (isWorkday) {
+                        totalHours++;
                     }
-                    if (createdDate) {
-                        var createdLocalDate = extractDate(createdDate);
-                        return Math.abs(localDate.getTime() - createdLocalDate.getTime());
-                    }
-                    return 0;
+
+                    timestamp += 36e5;
+                    curDate.setTime(timestamp);
                 }
 
-                function extractDate(date) {
-                    return du.parse(date);
-                }
+                return totalHours;
+            };
+
+            this.extractDate = function(date) {
+                return du.parse(date);
             };
 
             this.renderCard = function(card) {
@@ -165,7 +187,7 @@ tau.mashups
                     self.renderCard(card);
                 });
             };
-        }
+        };
 
         new Colorer().init();
     });
