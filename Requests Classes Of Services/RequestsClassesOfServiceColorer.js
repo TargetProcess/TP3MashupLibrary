@@ -23,6 +23,7 @@ tau.mashups
 
                 this.includeIdeas = 0; //0 by default
                 this.includeInitialStateOnly = 1; //1 by default
+                this.includeWeekends = 0; // 0 means do not include weekends into elapsed hours calculation
                 this.hourLimits = [0, 1, 18, 24]; //[0, 1, 18, 24] by default
                 this.leftInQueueNormalDayLimit = 1;
                 this.leftInQueueWarningDayLimit = 3;
@@ -96,6 +97,7 @@ tau.mashups
             };
 
             this._getColor = function(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied) {
+                var self = this;
                 var hoursDiff = getHoursDiff(createdDate, lastCommentDate);
                 if ((lastCommentDate) && (lastCommentUserKind == 'User')) {
                     var leftInQueueDiff = hoursDiff;
@@ -124,21 +126,41 @@ tau.mashups
                 return (resultColor ? 'background: ' + resultColor : '');
 
                 function getHoursDiff(createdDate, lastCommentDate) {
-                    var timeDiff = getTimeDiff(createdDate, lastCommentDate);
-                    return Math.floor(timeDiff / (1000 * 3600));
-                }
-
-                function getTimeDiff(createdDate, lastCommentDate) {
                     var localDate = extractDate(new Date());
                     if (lastCommentDate) {
                         var lastCommentLocalDate = extractDate(lastCommentDate);
-                        return Math.abs(localDate.getTime() - lastCommentLocalDate.getTime());
+                        return getHoursDiffEx(lastCommentLocalDate, localDate);
                     }
                     if (createdDate) {
                         var createdLocalDate = extractDate(createdDate);
-                        return Math.abs(localDate.getTime() - createdLocalDate.getTime());
+                        return getHoursDiffEx(createdLocalDate, localDate);
                     }
+
                     return 0;
+                }
+
+                // calculate hours depending on weekends
+                function getHoursDiffEx(startDate, endDate) {
+                    if (self.includeWeekends) {
+                        return Math.floor(Math.abs(startDate.getTime() - endDate.getTime()) / 36e5);
+                    }
+
+                    var totalHours = 0;
+
+                    var curDate = startDate;
+
+                    curDate.setTime(curDate.getTime() + 36e5);
+                    while (curDate <= endDate) {
+                        var isWorkday = curDate.getDay() !== 6 && curDate.getDay() !== 0;
+                        if (isWorkday) {
+                            totalHours++;
+                        }
+
+                        curDate.setTime(curDate.getTime() + 36e5);
+                    }
+
+                    console.log('Total hours between ', startDate, ' and ', endDate, ' is ', totalHours);
+                    return totalHours;
                 }
 
                 function extractDate(date) {
