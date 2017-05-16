@@ -7,11 +7,11 @@ tau.mashups
     .addDependency('tau/core/bus.reg')
     .addDependency('tau/configurator')
     .addDependency("tau/utils/utils.date")
-    .addMashup(function (m, um, $, _, context, busRegistry, configurator, du) {
+    .addMashup(function(m, um, $, _, context, busRegistry, configurator, du) {
 
-        var Colorer = function () {
+        var Colorer = function() {
 
-            this.init = function () {
+            this.init = function() {
                 var self = this;
 
                 this.requestCardElements = [];
@@ -30,14 +30,14 @@ tau.mashups
                 this.colors = ['#d8ffa0', '', '#fffdb0', '#ffb090']; //['#d8ffa0', '', '#fffdb0', '#ffb090'] by default
                 this.grayColor = '#e4e4e4'; //'#e4e4e4' by default
 
-                context.onChange(function (ctx) {
+                context.onChange(function(ctx) {
                     self.setContext(ctx);
                     self.refresh(ctx);
                 });
 
-                busRegistry.on('create', function (eventName, sender) {
+                busRegistry.on('create', function(eventName, sender) {
                     if (sender.bus.name == 'board_plus') {
-                        sender.bus.on('start.lifecycle', _.bind(function (e) {
+                        sender.bus.on('start.lifecycle', _.bind(function(e) {
                             this.requestCardElements = [];
                         }, self));
                         sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
@@ -46,11 +46,11 @@ tau.mashups
             };
 
             this._ctx = {};
-            this.setContext = function (ctx) {
+            this.setContext = function(ctx) {
                 this._ctx = ctx;
             };
 
-            this.refresh = function (ctx) {
+            this.refresh = function(ctx) {
                 if (this.requestCardElements.length == 0) {
                     return;
                 }
@@ -66,7 +66,7 @@ tau.mashups
                 $.ajax({
                     url: requestUrl,
                     context: this
-                }).done(function (data) {
+                }).done(function(data) {
                     this.requestAttributesLoaded = {};
                     var items = data.items || [];
                     for (var i = 0; i < items.length; i++) {
@@ -84,7 +84,7 @@ tau.mashups
 
             this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
-            this.cardAdded = function (eventName, sender) {
+            this.cardAdded = function(eventName, sender) {
                 var $element = sender.element;
                 if ($element.data('entityType') && $element.data('entityType').toLowerCase() === 'request') {
                     this.requestCardElements.push($element);
@@ -92,11 +92,11 @@ tau.mashups
                 this.refreshDebounced(this._ctx);
             };
 
-            this._getCardId = function (card) {
+            this._getCardId = function(card) {
                 return card.attr('data-entity-id');
             };
 
-            this._getColor = function (id, createdDate, lastCommentDate, lastCommentUserKind, isReplied) {
+            this._getColor = function(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied) {
                 var hoursDiff = this.getHoursDiff(createdDate, lastCommentDate);
                 if ((lastCommentDate) && (lastCommentUserKind == 'User')) {
                     var leftInQueueDiff = hoursDiff;
@@ -125,7 +125,7 @@ tau.mashups
                 return (resultColor ? 'background: ' + resultColor : '');
             };
 
-            this.getHoursDiff = function (createdDate, lastCommentDate) {
+            this.getHoursDiff = function(createdDate, lastCommentDate) {
                 var localDate = this.extractDate(new Date());
                 if (lastCommentDate) {
                     var lastCommentLocalDate = this.extractDate(lastCommentDate);
@@ -169,7 +169,7 @@ tau.mashups
                 return du.parse(date);
             };
 
-            this.renderCard = function (card) {
+            this.renderCard = function(card) {
                 var self = this;
                 var id = this._getCardId(card);
                 if (!(this.requestAttributesLoaded[id])) {
@@ -182,9 +182,9 @@ tau.mashups
                 card.attr('style', this._getColor(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied));
             };
 
-            this.renderAll = function () {
+            this.renderAll = function() {
                 var self = this;
-                $.each(this.requestCardElements, function (index, card) {
+                $.each(this.requestCardElements, function(index, card) {
                     self.renderCard(card);
                 });
             };
