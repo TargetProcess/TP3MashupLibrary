@@ -155,10 +155,9 @@ tau.mashups
                     var isWorkday = dayOfWeek !== 6 && dayOfWeek !== 0;
                     if (isWorkday) {
                         totalHours++;
-                        timestamp += 36e5;
-                    } else {
-                        timestamp += 2 * 24 * 36e5;
                     }
+
+                    timestamp += 36e5;
                     curDate.setTime(timestamp);
                 }
 
