@@ -146,20 +146,21 @@ tau.mashups
                     }
 
                     var totalHours = 0;
+                    var timestamp = startDate.getTime() + 36e5;
+                    var endTime = endDate.getTime();
+                    var curDate = new Date(timestamp);
 
-                    var curDate = startDate;
-
-                    curDate.setTime(curDate.getTime() + 36e5);
-                    while (curDate <= endDate) {
+                    while (timestamp <= endTime) {
                         var isWorkday = curDate.getDay() !== 6 && curDate.getDay() !== 0;
                         if (isWorkday) {
                             totalHours++;
+                            timestamp += 36e5;
+                        } else {
+                            timestamp += 2 * 24 * 36e5;
                         }
-
-                        curDate.setTime(curDate.getTime() + 36e5);
+                        curDate.setTime(timestamp);
                     }
 
-                    console.log('Total hours between ', startDate, ' and ', endDate, ' is ', totalHours);
                     return totalHours;
                 }
 
