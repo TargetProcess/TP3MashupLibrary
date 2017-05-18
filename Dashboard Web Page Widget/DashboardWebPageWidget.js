@@ -1,23 +1,29 @@
 tau.mashups
     .addDependency('jQuery')
     .addDependency('react')
+    .addDependency('react-dom')
     .addDependency('tau/configurator')
-    .addMashup(function($, React, configurator) {
-        var D = React.DOM;
+    .addMashup(function($, React, ReactDOM, configurator) {
+        var PropTypes = React.PropTypes;
 
         var WebpageWidget = React.createClass({
             displayName: 'tp_webpage_frame_mashup',
             propTypes: {
-                url: React.PropTypes.string,
-                height: React.PropTypes.string
+                url: PropTypes.string,
+                height: PropTypes.number,
             },
             render: function() {
                 var url = this.props.url;
+
                 if (!url) {
-                    return D.span(null, 'Please specify the URL of the web page in the widget settings');
+                    return React.createElement(
+                        'span',
+                        null,
+                        'Please specify the URL of the web page in the widget settings'
+                    );
                 }
 
-                return D.iframe({
+                return React.createElement('iframe', {
                     src: url,
                     frameBorder: 0,
                     target: '_parent',
@@ -32,8 +38,8 @@ tau.mashups
         var WidgetSettings = React.createClass({
             displayName: 'tp_webpage_frame_mashup.settings',
             propTypes: {
-                initialUrl: React.PropTypes.string,
-                initialHeight: React.PropTypes.number
+                initialUrl: PropTypes.string,
+                initialHeight: PropTypes.number
             },
             getInitialState: function() {
                 return {
@@ -47,21 +53,21 @@ tau.mashups
             },
 
             _onHeightInputChange: function(e) {
-                this.setState({ height: e.target.value });
+                this.setState({ height: parseInt(e.target.value || '0') });
             },
-
+r
             render: function() {
-                return D.ul(
+                return React.createElement('ul',
                     { className: 'tau-widget-settings-list tau-widget-settings-list--col' },
-                    D.li(
+                    React.createElement('li',
                         { className: 'tau-widget-settings-list__item' },
-                        D.label(
+                        React.createElement('label',
                             null,
-                            D.span(
+                            React.createElement('span',
                                 { className: 'tau-widget-settings-list__title' },
                                 'Link to the webpage'
                             ),
-                            D.input({
+                            React.createElement('input', {
                                 className: 'tau-in-text tau-x-large',
                                 type: 'url',
                                 placeholder: 'e.g. http://example.com',
@@ -70,15 +76,15 @@ tau.mashups
                             })
                         )
                     ),
-                    D.li(
+                    React.createElement('li',
                         { className: 'tau-widget-settings-list__item' },
-                        D.label(
+                        React.createElement('label',
                             null,
-                            D.span(
+                            React.createElement('span',
                                 { className: 'tau-widget-settings-list__title' },
                                 'Widget height in pixels'
                             ),
-                            D.input({
+                            React.createElement('input', {
                                 className: 'tau-in-text tau-x-large',
                                 type: 'number',
                                 placeholder: 'e.g. 600',
@@ -109,7 +115,7 @@ tau.mashups
                             height: settings.height
                         };
 
-                        React.render(React.createElement(WebpageWidget, props), placeholder);
+                        ReactDOM.render(React.createElement(WebpageWidget, props), placeholder);
                     },
                     insertSettings: function(placeholder, settings) {
                         var props = {
@@ -117,7 +123,7 @@ tau.mashups
                             initialHeight: settings.height
                         };
 
-                        var renderedView = React.render(React.createElement(WidgetSettings, props), placeholder);
+                        var renderedView = ReactDOM.render(React.createElement(WidgetSettings, props), placeholder);
                         return function getCurrentWidgetSettings() {
                             var state = renderedView.state;
                             return {
