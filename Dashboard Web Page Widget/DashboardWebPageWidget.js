@@ -10,7 +10,7 @@ tau.mashups
             displayName: 'tp_webpage_frame_mashup',
             propTypes: {
                 url: PropTypes.string,
-                height: PropTypes.number,
+                height: PropTypes.number
             },
             render: function() {
                 var url = this.props.url;
@@ -53,9 +53,9 @@ tau.mashups
             },
 
             _onHeightInputChange: function(e) {
-                this.setState({ height: parseInt(e.target.value || '0') });
+                this.setState({ height: parseInt(e.target.value || '0', 10) });
             },
-r
+
             render: function() {
                 return React.createElement('ul',
                     { className: 'tau-widget-settings-list tau-widget-settings-list--col' },
