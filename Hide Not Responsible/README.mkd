@@ -6,7 +6,8 @@ When this button is pressed, only the cards which each person is responsible for
 ## How to activate it
 
 1. Install the mashup from the Targetprocess Mashups Library
-2. Open the board where 'Person' is selected as a lane, and press 'Hide not Responsible' button
+2. Choose if the button should be pressed by default (hideByDefault: true) or not (hideByDefault: false) in mashup's config
+3. Open the board where 'Person' is selected as a lane, and press 'Hide not Responsible' button
 
 As a result, instead of a board with a lot of duplicated cards:
 
