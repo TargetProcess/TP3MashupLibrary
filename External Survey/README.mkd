@@ -1,0 +1,36 @@
+# External Survey Mashup
+
+This is small mashup for one time survey.
+
+## Config parameters:
+
+- **link** - link template to external survay page(Google form for example).
+- **linkLabel** - display text for the link.
+- **appendAccountAndEmailToLink** - true if account and user's email should be injected into link.
+- **accountLinkName** - key for account placeholder in link.
+- **emailLinkName** - key for email placeholder in link.
+- **linkLabel** - display text for the link.
+- **header** - header text of the mashup's popup.
+- **text** - main text of the mashup's popup.
+- **clientStorageKey** - key for boolean flag that will stored into client storage for user in case user will follow the link.
+- **hideUserVoice** - true if this mashup should hide user voice widget.
+- **doNotShowSecondTime** - true if this mashup should not be shown after user followed the link once.
+
+## Example of correct link with placeholders for account and user email :
+
+Config:
+```
+link = https://some-example-survey.com?${account}&${email}
+accountLinkName = account
+emailLinkName = email
+```
+
+User will be navigated to:
+```
+https://some-example-survey.com?account=someaccount&$email=test@test.test
+```
+
+## How to activate it:
+
+1. Install the mashup from the Targetprocess Mashups Library
+2. Press "Clap" icon link on top-bar.
