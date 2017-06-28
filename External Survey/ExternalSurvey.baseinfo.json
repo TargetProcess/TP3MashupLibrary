@@ -1,0 +1,7 @@
+{
+    "Name": "External survey mashup",
+    "ShortDescription": "Single time show mashup for providing configurable text and external link for survey",
+    "CompatibleTpVersion": {
+        "Minimum": "3.11.5"
+    }
+}
