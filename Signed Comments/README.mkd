@@ -1,13 +1,12 @@
 Signed Comments
 ==================
 
-The users will be able to set their personal signatures for the comments they're adding to bugs, stories, requests
-and tasks.
+Users will be able to set their personal signature for comments they add to work items.
 
 How to activate it:
 
 1. Install the mashup from the Targetprocess Mashups Library
-2. Go to your ```Settings > Personal Setting``` to set up your signature.
+2. Go to your ```Settings > Signature``` to set up your signature.
 
-![Signed Comments](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Signed%20Comments/SignedComments.png)
+![Signature Settings](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Signed%20Comments/Signature.png)
 

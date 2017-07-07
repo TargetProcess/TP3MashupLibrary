@@ -1,6 +1,6 @@
 {
-  "ShortDescription": "The users will be able to set their personal signatures for the comments they're adding to bugs, stories, requests and tasks.",
+  "ShortDescription": "Users will be able to set their personal signature for comments they add to work items.",
   "CompatibleTpVersion": {
-    "Minimum": "2.24.4"
+    "Minimum": "3.11.0"
   }
 }
