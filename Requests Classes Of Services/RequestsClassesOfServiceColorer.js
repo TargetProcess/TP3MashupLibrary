@@ -122,7 +122,7 @@ tau.mashups
                         resultColor = this.colors[i];
                     }
                 }
-                return (resultColor ? 'background: ' + resultColor : '');
+                return (resultColor ? 'background: ' + resultColor : null);
             };
 
             this.getHoursDiff = function(createdDate, lastCommentDate) {
@@ -178,7 +178,10 @@ tau.mashups
                 var lastCommentDate = this.lastCommentDates[id];
                 var lastCommentUserKind = this.lastCommentUserKinds[id];
                 var isReplied = this.isReplied[id];
-                card.attr('style', this._getColor(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied));
+                var cardColor = this._getColor(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied);
+                if (cardColor) {
+                    card.attr('style', cardColor);
+                }
             };
 
             this.renderAll = function() {
