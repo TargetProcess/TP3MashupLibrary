@@ -45,6 +45,7 @@ tau
             addCSSRule('.tau-board-view .tau-cols-header>ul,.tau-board-grid-view .tau-grid>table', 'border-right: none !important;');
             addCSSRule('.tau-boardclipboard', 'background: #3d424d !important; border: none !important; padding-bottom: 34px !important; bottom: 0px !important;');
             addCSSRule('.t3-views-navigator, .tau-app-main-pane', 'background: #292c33 !important;');
+            addCSSRule('.t3-views-navigator .t3-group', 'background: #292c33 !important;');
             addCSSRule('.tau-app>.tau-app-body>.tau-app-main-pane', 'border-left: 2px solid #14161A !important;');
             addCSSRule('.tau-timeline>.tau-timeline-canvas>.tau-timeline-flow, ._tc-timeline-navigator:before, ._tc-timeline-navigator:after, ._tc-timeline-navigator>.tc-focus-range:before, ._tc-timeline-navigator>.tc-focus-range:after, ._tc-timeline-navigator', 'background: transparent !important;');
             addCSSRule('.t3-views-navigator>.t3-search', 'border: 1px solid #555960 !important;');
