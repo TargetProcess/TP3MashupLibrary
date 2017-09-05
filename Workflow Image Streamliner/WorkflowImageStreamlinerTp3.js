@@ -6,7 +6,7 @@ tau.mashups
     .addDependency('WorkflowImageStreamlinerView')
     .addDependency('libs/jquery/jquery.ui.tauBubble')
     .addMashup(function(_, $, appBus, Model, View) {
-        appBus.done(function(bus) {
+        function subscribe(bus) {
             bus.on('setup.workflow.rendered', function(evt) {
                 var model = new Model(evt.data.processId, evt.data.entityType);
                 var $placeholder = evt.data.element.find('.i-role-workflow-setup-toolbox');
@@ -27,5 +27,11 @@ tau.mashups
                     content: '<div style="width:500px; height:500px;"><div class="tau-loader"></div></div>'
                 });
             });
-        });
+        }
+
+        if (appBus.then) {
+            appBus.then(subscribe);
+        } else {
+            subscribe(appBus);
+        }
     });
