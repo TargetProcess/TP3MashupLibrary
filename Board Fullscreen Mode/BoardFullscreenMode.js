@@ -1,106 +1,112 @@
 tau
-    .mashups
-    .addDependency('jQuery')
-    .addDependency('tau/configurator')
-    .addCSS('BoardFullscreenMode.css')
-    .addMashup(function($, configurator) {
+.mashups
+.addDependency('jQuery')
+.addDependency('tau/configurator')
+.addCSS('BoardFullscreenMode.css')
+.addMashup(function($, configurator) {
 
-        'use strict';
+    'use strict';
 
-        var reg = configurator.getBusRegistry();
+    var reg = configurator.getBusRegistry();
 
-        var addBusListener = function(busName, eventName, listener) {
+    var addBusListener = function(busName, eventName, listener) {
 
-            reg.on('create', function(e, data) {
+        reg.on('create', function(e, data) {
 
-                var bus = data.bus;
-                if (bus.name === busName) {
-                    bus.on(eventName, listener);
-                }
-            });
-
-            reg.on('destroy', function(e, data) {
-
-                var bus = data.bus;
-                if (bus.name === busName) {
-                    bus.removeListener(eventName, listener);
-                }
-            });
-
-            reg.getByName(busName).done(function(bus) {
+            var bus = data.bus;
+            if (bus.name === busName) {
                 bus.on(eventName, listener);
-            });
-        };
+            }
+        });
 
-        var eventName;
-        var isFullScreenName;
-        var requestFullScreenName;
-        var args = [];
+        reg.on('destroy', function(e, data) {
 
-        if (document.body.webkitRequestFullScreen) {
-            requestFullScreenName = 'webkitRequestFullScreen';
-            eventName = 'webkitfullscreenchange';
-            isFullScreenName = 'webkitIsFullScreen';
-            args = [Element.ALLOW_KEYBOARD_INPUT];
-        } else if (document.body.mozRequestFullScreen) {
-            requestFullScreenName = 'mozRequestFullScreen';
-            eventName = 'mozfullscreenchange';
-            isFullScreenName = 'mozFullScreen';
-        } else if (document.body.msRequestFullscreen) {
-            requestFullScreenName = 'msRequestFullscreen';
-            eventName = 'MSFullscreenChange';
-            isFullScreenName = 'msFullscreenElement';
-        } else if (document.body.requestFullScreen) {
-            requestFullScreenName = 'requestFullScreen';
-            isFullScreenName = 'fullScreen';
-            eventName = 'fullscreenchange';
+            var bus = data.bus;
+            if (bus.name === busName) {
+                bus.removeListener(eventName, listener);
+            }
+        });
+
+        reg.getByName(busName).done(function(bus) {
+            bus.on(eventName, listener);
+        });
+    };
+
+    var eventName;
+    var isFullScreenName;
+    var requestFullScreenName;
+    var args = [];
+
+    if (document.body.webkitRequestFullScreen) {
+        requestFullScreenName = 'webkitRequestFullScreen';
+        eventName = 'webkitfullscreenchange';
+        isFullScreenName = 'webkitIsFullScreen';
+        args = [Element.ALLOW_KEYBOARD_INPUT];
+    } else if (document.body.mozRequestFullScreen) {
+        requestFullScreenName = 'mozRequestFullScreen';
+        eventName = 'mozfullscreenchange';
+        isFullScreenName = 'mozFullScreen';
+    } else if (document.body.msRequestFullscreen) {
+        requestFullScreenName = 'msRequestFullscreen';
+        eventName = 'MSFullscreenChange';
+        isFullScreenName = 'msFullscreenElement';
+    } else if (document.body.requestFullScreen) {
+        requestFullScreenName = 'requestFullScreen';
+        isFullScreenName = 'fullScreen';
+        eventName = 'fullscreenchange';
+    }
+
+    var appendFullscreenButton = function appendFullscreenButton(e, renderData) {
+        var $el = renderData.element;
+
+        var $button = $(
+            '<button class="tau-btn tau-btn--icon i-role-board-tooltip tau-extension-board-tooltip" id="btnFullScreen" ' +
+                'data-title="Fullscreen" alt="Toggle full screen">' +
+                '<span class="tau-btn__icon"><span class="tau-icon-general tau-icon-fullscreen"></span></span>' +
+            '</button>');
+
+        if (!$el.find('#btnFullScreen').length) {
+            var $elWrapper = $el.find('.tau-board-header__control--actions');
+            var $elAnchor = $elWrapper.length ? $elWrapper: $el.find('[role=actions-button]').parent();
+
+            $elAnchor.before($('<div class="tau-board-header__control--mashup"></div>').html($button));
         }
 
-        addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
-            var $el = renderData.element;
-
-            var $button = $(
-                '<button class="tau-btn tau-btn--icon i-role-board-tooltip tau-extension-board-tooltip" id="btnFullScreen" ' +
-                    'data-title="Fullscreen" alt="Toggle full screen">' +
-                    '<span class="tau-btn__icon"><span class="tau-icon-general tau-icon-fullscreen"></span></span>' +
-                '</button>');
-
-            if (!$el.find('#btnFullScreen').length) {
-
-                var $elWrapper = $el.find('.tau-board-header__control--actions');
-                var $elAnchor = $elWrapper.length ? $elWrapper: $el.find('[role=actions-button]');
-
-                $elAnchor.before($('<div class="tau-board-header__control--mashup"></div>').html($button));
+        $button.click(function() {
+            if (requestFullScreenName) {
+                var el = document.body;
+                if (requestFullScreenName in el) {
+                    el[requestFullScreenName].apply(el, args);
+                }
             }
 
-            $button.click(function() {
-
-                if (requestFullScreenName) {
-                    var el = document.body;
-                    if (requestFullScreenName in el) {
-                        el[requestFullScreenName].apply(el, args);
-                    }
-                }
-
-                $(document.body).toggleClass('fullscreen');
-                if (!eventName) {
-                    $(document.body).one('keydown', function(e) {
-                        if (e.keyCode === $.ui.keyCode.ESCAPE) {
-                            $(document.body).removeClass('fullscreen');
-                        }
-                    });
-                }
-            });
-
-            if (eventName) {
-                $(document).on(eventName, function() {
-
-                    if (!document[isFullScreenName]) {
+            $(document.body).toggleClass('fullscreen');
+            if (!eventName) {
+                $(document.body).one('keydown', function(e) {
+                    if (e.keyCode === $.ui.keyCode.ESCAPE) {
                         $(document.body).removeClass('fullscreen');
                     }
                 });
             }
-
         });
 
+        if (eventName) {
+            $(document).on(eventName, function() {
+
+                if (!document[isFullScreenName]) {
+                    $(document.body).removeClass('fullscreen');
+                }
+            });
+        }
+    };
+
+    var toolbarComponents = [
+        'board.toolbar',
+        'dashboard.toolbar',
+        'customReport.toolbar'
+    ];
+
+    toolbarComponents.forEach(function(componentName) {
+        addBusListener(componentName, 'afterRender', appendFullscreenButton);
     });
+});
