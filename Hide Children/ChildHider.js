@@ -107,7 +107,7 @@ tau.mashups
             _getApiUrl: function(entityType, entityIds, parentSelector, acid) {
                 return configurator.getApplicationPath() + '/api/v2/' + entityType +
                     '?take=1000&where=(id in [' + entityIds.join(',') +
-                    '] and EntityState.isFinal==false)&select={id,parent:' +
+                    '])&select={id,parent:' +
                     parentSelector + '}&acid=' + acid;
             },
 
