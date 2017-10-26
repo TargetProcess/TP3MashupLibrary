@@ -72,8 +72,8 @@ tau.mashups
                     this.boardId = eventArgs.boardSettings.settings.id;
                 }.bind(this));
 
-                addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
-                    this.renderButton($el);
+                addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
+                    this.renderButton(renderData.element);
                 }.bind(this));
             },
 
@@ -156,25 +156,20 @@ tau.mashups
             },
 
             renderButton: function($el) {
-                var $container = $el.find('.tau-select-block');
+                var $container = $el.find('.i-role-filter-control').parent();
 
-                if (this.$btn && $container.find('.i-role-mashup-hide-button').is(this.$btn)) {
+                if (this.$btn && $container.parent().find('.i-role-mashup-hide-button').is(this.$btn)) {
                     return;
                 }
-
-                var $toolbar = $container.find('.i-role-clipboardfilter');
-                if (!$toolbar.length) {
-                    $toolbar = $(
-                        '<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-flex; display: -ms-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center;"></div>'
-                    ).appendTo($container);
-                }
-
-                $toolbar.children('.i-role-mashup-hide').remove();
 
                 this.$btn = $('<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">Hide Children</button>')
                     .on('click', this.toggle.bind(this));
 
-                $('<div class="i-role-mashup-hide" style="margin-right: 4px;">').append(this.$btn).appendTo($toolbar);
+
+                var $buttonBlock = $('<div class="tau-board-header__control" style="margin-left: 10px">');
+                $buttonBlock.append(this.$btn);
+
+                $container.after($buttonBlock);
             },
 
             _getStorageUrl: function() {
