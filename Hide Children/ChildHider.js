@@ -37,7 +37,9 @@ tau.mashups
             parentMap: [
                 {entityType: et.FEATURE, parentEntityType: et.EPIC},
                 {entityType: et.STORY, parentEntityType: et.FEATURE},
-                {entityType: et.TASK, parentEntityType: et.STORY}
+                {entityType: et.TASK, parentEntityType: et.STORY},
+                {entityType: et.BUG, parentEntityType: et.STORY},
+                {entityType: et.BUG, parentEntityType: et.FEATURE}
             ],
 
             init: function() {
