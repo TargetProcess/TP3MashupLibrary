@@ -7,7 +7,8 @@ tau.mashups
     .addDependency('tau/configurator')
     .addDependency('tau/core/class')
     .addDependency('tau/models/board.customize.units/const.entity.types.names')
-    .addMashup(function($, _, context, busRegistry, configurator, Class, et) {
+    .addDependency('ChildHider/ChildHider.config')
+    .addMashup(function($, _, context, busRegistry, configurator, Class, et, config) {
 
         'use strict';
 
@@ -34,13 +35,13 @@ tau.mashups
         };
 
         var ChildHider = Class.extend({
-            parentMap: [
-                {entityType: et.FEATURE, parentEntityType: et.EPIC},
-                {entityType: et.STORY, parentEntityType: et.FEATURE},
-                {entityType: et.TASK, parentEntityType: et.STORY},
-                {entityType: et.BUG, parentEntityType: et.STORY},
-                {entityType: et.BUG, parentEntityType: et.FEATURE}
-            ],
+            parentMap: _.compact([
+                config.hideFeature && {entityType: et.FEATURE, parentEntityType: et.EPIC},
+                config.hideUserStory && {entityType: et.STORY, parentEntityType: et.FEATURE},
+                config.hideTask && {entityType: et.TASK, parentEntityType: et.STORY},
+                config.hideBug && {entityType: et.BUG, parentEntityType: et.STORY},
+                config.hideBug && {entityType: et.BUG, parentEntityType: et.FEATURE}
+            ]),
 
             init: function() {
                 var self = this;
