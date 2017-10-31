@@ -74,8 +74,11 @@ tau.mashups
                     this.boardId = eventArgs.boardSettings.settings.id;
                 }.bind(this));
 
-                addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
-                    this.renderButton(renderData.element);
+                addBusListener('board.toolbar', 'toolbarData.ready:last + afterRender', function(e, toolbarData,
+                    renderData) {
+                    if (toolbarData.viewMode !== 'newlist') {
+                        this.renderButton(renderData.element);
+                    }
                 }.bind(this));
             },
 
