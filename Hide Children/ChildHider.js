@@ -168,8 +168,13 @@ tau.mashups
                     return;
                 }
 
-                this.$btn = $('<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">Hide Children</button>')
-                    .on('click', this.toggle.bind(this));
+                var buttonText = this.buttonText || 'Hide Children';
+                var buttonTemplate = [
+                    '<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">',
+                    buttonText,
+                    '</button>'
+                ].join('');
+                this.$btn = $(buttonTemplate).on('click', this.toggle.bind(this));
 
 
                 var $buttonBlock = $('<div class="tau-board-header__control" style="margin-left: 10px">');
@@ -234,11 +239,13 @@ tau.mashups
 
                 if (this.hideChildren) {
                     $cardsToHide.addClass('tau-hide');
-                    this.$btn.html('Show Children (' + cardsCount + ')');
+                    this.buttonText = 'Show Children (' + cardsCount + ')';
                 } else {
                     $cardsToHide.removeClass('tau-hide');
-                    this.$btn.html('Hide Children');
+                    this.buttonText = 'Hide Children';
                 }
+
+                this.$btn.html(this.buttonText);
             },
 
             refreshBoardSize: function() {
