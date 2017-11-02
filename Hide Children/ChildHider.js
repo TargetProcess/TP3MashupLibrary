@@ -239,9 +239,24 @@ tau.mashups
 
                 if (this.hideChildren) {
                     $cardsToHide.addClass('tau-hide');
+
+                    // hide dotted line around card on timeline
+                    $cardsToHide.closest('.i-role-card-planner').addClass('tau-hide');
+
+                    // hide whole timeline line if all cards on this line are hidden
+                    $cardsToHide.closest('.i-role-timeline-track').each(function(index, timelineTrack) {
+                        var $timelineTrack = $(timelineTrack);
+                        var cardsCount = $timelineTrack.find('.i-role-card').length;
+                        var hiddenCardsCount = $timelineTrack.find('.i-role-card.tau-hide').length;
+                        if (cardsCount === hiddenCardsCount) {
+                            $timelineTrack.addClass('tau-hide');
+                        }
+                    });
                     this.buttonText = 'Show Children (' + cardsCount + ')';
                 } else {
                     $cardsToHide.removeClass('tau-hide');
+                    $cardsToHide.closest('.i-role-card-planner').removeClass('tau-hide');
+                    $cardsToHide.closest('.i-role-timeline-track').removeClass('tau-hide');
                     this.buttonText = 'Hide Children';
                 }
 
