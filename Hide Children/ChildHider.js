@@ -7,7 +7,8 @@ tau.mashups
     .addDependency('tau/configurator')
     .addDependency('tau/core/class')
     .addDependency('tau/models/board.customize.units/const.entity.types.names')
-    .addMashup(function($, _, context, busRegistry, configurator, Class, et) {
+    .addDependency('ChildHider/ChildHider.config')
+    .addMashup(function($, _, context, busRegistry, configurator, Class, et, config) {
 
         'use strict';
 
@@ -34,11 +35,13 @@ tau.mashups
         };
 
         var ChildHider = Class.extend({
-            parentMap: [
-                {entityType: et.FEATURE, parentEntityType: et.EPIC},
-                {entityType: et.STORY, parentEntityType: et.FEATURE},
-                {entityType: et.TASK, parentEntityType: et.STORY}
-            ],
+            parentMap: _.compact([
+                config.hideFeature && {entityType: et.FEATURE, parentEntityType: et.EPIC},
+                config.hideUserStory && {entityType: et.STORY, parentEntityType: et.FEATURE},
+                config.hideTask && {entityType: et.TASK, parentEntityType: et.STORY},
+                config.hideBug && {entityType: et.BUG, parentEntityType: et.STORY},
+                config.hideBug && {entityType: et.BUG, parentEntityType: et.FEATURE}
+            ]),
 
             init: function() {
                 var self = this;
@@ -72,8 +75,11 @@ tau.mashups
                     this.boardId = eventArgs.boardSettings.settings.id;
                 }.bind(this));
 
-                addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
-                    this.renderButton($el);
+                addBusListener('board.toolbar', 'toolbarData.ready:last + afterRender', function(e, toolbarData,
+                    renderData) {
+                    if (toolbarData.viewMode !== 'newlist') {
+                        this.renderButton(renderData.element);
+                    }
                 }.bind(this));
             },
 
@@ -105,7 +111,7 @@ tau.mashups
             _getApiUrl: function(entityType, entityIds, parentSelector, acid) {
                 return configurator.getApplicationPath() + '/api/v2/' + entityType +
                     '?take=1000&where=(id in [' + entityIds.join(',') +
-                    '] and EntityState.isFinal==false)&select={id,parent:' +
+                    '])&select={id,parent:' +
                     parentSelector + '}&acid=' + acid;
             },
 
@@ -156,25 +162,25 @@ tau.mashups
             },
 
             renderButton: function($el) {
-                var $container = $el.find('.tau-select-block');
+                var $container = $el.find('.i-role-filter-control').parent();
 
-                if (this.$btn && $container.find('.i-role-mashup-hide-button').is(this.$btn)) {
+                if (this.$btn && $container.parent().find('.i-role-mashup-hide-button').is(this.$btn)) {
                     return;
                 }
 
-                var $toolbar = $container.find('.i-role-clipboardfilter');
-                if (!$toolbar.length) {
-                    $toolbar = $(
-                        '<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-flex; display: -ms-flexbox; display: inline-flex; -ms-flex-align: center; align-items: center;"></div>'
-                    ).appendTo($container);
-                }
+                var buttonText = this.buttonText || 'Hide Children';
+                var buttonTemplate = [
+                    '<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">',
+                    buttonText,
+                    '</button>'
+                ].join('');
+                this.$btn = $(buttonTemplate).on('click', this.toggle.bind(this));
 
-                $toolbar.children('.i-role-mashup-hide').remove();
 
-                this.$btn = $('<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">Hide Children</button>')
-                    .on('click', this.toggle.bind(this));
+                var $buttonBlock = $('<div class="tau-board-header__control" style="margin-left: 10px">');
+                $buttonBlock.append(this.$btn);
 
-                $('<div class="i-role-mashup-hide" style="margin-right: 4px;">').append(this.$btn).appendTo($toolbar);
+                $container.after($buttonBlock);
             },
 
             _getStorageUrl: function() {
@@ -233,11 +239,28 @@ tau.mashups
 
                 if (this.hideChildren) {
                     $cardsToHide.addClass('tau-hide');
-                    this.$btn.html('Show Children (' + cardsCount + ')');
+
+                    // hide dotted line around card on timeline
+                    $cardsToHide.closest('.i-role-card-planner').addClass('tau-hide');
+
+                    // hide whole timeline line if all cards on this line are hidden
+                    $cardsToHide.closest('.i-role-timeline-track').each(function(index, timelineTrack) {
+                        var $timelineTrack = $(timelineTrack);
+                        var cardsCount = $timelineTrack.find('.i-role-card').length;
+                        var hiddenCardsCount = $timelineTrack.find('.i-role-card.tau-hide').length;
+                        if (cardsCount === hiddenCardsCount) {
+                            $timelineTrack.addClass('tau-hide');
+                        }
+                    });
+                    this.buttonText = 'Show Children (' + cardsCount + ')';
                 } else {
                     $cardsToHide.removeClass('tau-hide');
-                    this.$btn.html('Hide Children');
+                    $cardsToHide.closest('.i-role-card-planner').removeClass('tau-hide');
+                    $cardsToHide.closest('.i-role-timeline-track').removeClass('tau-hide');
+                    this.buttonText = 'Hide Children';
                 }
+
+                this.$btn.html(this.buttonText);
             },
 
             refreshBoardSize: function() {
