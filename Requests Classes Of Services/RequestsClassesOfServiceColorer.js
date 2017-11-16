@@ -1,13 +1,9 @@
 tau.mashups
-    .addDependency('tp/mashups')
-    .addDependency('user/mashups')
-    .addDependency('jQuery')
-    .addDependency('Underscore')
     .addDependency('tp3/mashups/context')
     .addDependency('tau/core/bus.reg')
     .addDependency('tau/configurator')
     .addDependency("tau/utils/utils.date")
-    .addMashup(function(m, um, $, _, context, busRegistry, configurator, du) {
+    .addMashup(function(context, busRegistry, configurator, du) {
 
         var Colorer = function() {
 
@@ -27,9 +23,11 @@ tau.mashups
                 this.hourLimits = [0, 1, 18, 24]; //[0, 1, 18, 24] by default
                 this.leftInQueueNormalDayLimit = 1;
                 this.leftInQueueWarningDayLimit = 3;
-                this.colors = ['#d8ffa0', '', '#fffdb0', '#ffb090']; //['#d8ffa0', '', '#fffdb0', '#ffb090'] by default
+                this.colors = ['#d8ffa0', '', '#fffdb0', '#ff5060']; //['#d8ffa0', '', '#fffdb0', '#ffb090'] by default
                 this.grayColor = '#e4e4e4'; //'#e4e4e4' by default
-
+				this.expireDaysLimit = 30;//requests last modified earlier are not colored
+				this.excludeProjectIdsList = '1,13,50149';//comma-separated, no spaces
+				
                 context.onChange(function(ctx) {
                     self.setContext(ctx);
                     self.refresh(ctx);
@@ -54,7 +52,7 @@ tau.mashups
                 if (this.requestCardElements.length == 0) {
                     return;
                 }
-                var acid = ctx.acid;
+                //var acidParameter = '&acid=' + ctx.acid;;
                 var searchCriteria = '';
                 if (this.includeInitialStateOnly) {
                     searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'EntityState.isInitial==true';
@@ -62,7 +60,20 @@ tau.mashups
                 if (!(this.includeIdeas)) {
                     searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'RequestType.Name!="Idea"';
                 }
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Request?take=1000' + (searchCriteria ? '&where=' + searchCriteria : '') + '&select={id,createDate:CreateDate,lastCommentDate:LastCommentDate,lastCommentUserKind:LastCommentedUser.Kind, isReplied:IsReplied}&acid=' + acid;
+				if (!(this.excludeProjectIds)) {
+					searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'not (Project.ID in [' + this.excludeProjectIdsList + '])';
+				}
+				if (this.expireDaysLimit != 0) {
+					var formatDate = function(date) {
+						return _.lpad(date.getFullYear(), 2, 0) + '-' +
+							_.lpad(date.getMonth() + 1, 2, 0) + '-' +
+							date.getDate();
+					};
+					var fromDate = new Date(new Date() - this.expireDaysLimit * 24 * 3600000);
+					var dateCondition = 'ModifyDate>=DateTime.Parse("' + formatDate(fromDate) + '")';
+					searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + dateCondition;
+				}
+                var requestUrl = configurator.getApplicationPath() + '/api/v2/Request?take=1000' + (searchCriteria ? '&where=(' + searchCriteria + ')' : '') + '&select={id,createDate:CreateDate,lastCommentDate:LastCommentDate,lastCommentUserKind:LastCommentedUser.Kind, isReplied:IsReplied}';//+acidParameter
                 $.ajax({
                     url: requestUrl,
                     context: this
@@ -191,6 +202,5 @@ tau.mashups
                 });
             };
         };
-
         new Colorer().init();
     });
