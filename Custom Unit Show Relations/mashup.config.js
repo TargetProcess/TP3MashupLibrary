@@ -1,1 +1,0 @@
-tau.mashups.addModule("CustomUnitShowRelations/config", {});
