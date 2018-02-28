@@ -21,7 +21,7 @@ tau.mashups
                 id: 'custom_rich_text',
                 classId: 'tau-board-unit_type_custom-rich-text',
                 name: 'Description',
-                types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST ],
+                types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST, types.IMPEDIMENT ],
                 sections: 1,
                 sizes: [ sizes.M, sizes.L, sizes.XL ],
                 template: {
@@ -42,7 +42,7 @@ tau.mashups
                 id: 'custom_rich_text_list',
                 classId: 'tau-board-unit_type_custom-rich-text',
                 name: 'Description',
-                types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST ],
+                types: [ types.PROJECT, types.FEATURE, types.EPIC, types.STORY, types.TASK, types.BUG, types.REQUEST, types.IMPEDIMENT ],
                 sections: 1,
                 sizes: [ sizes.LIST ],
                 template: {
