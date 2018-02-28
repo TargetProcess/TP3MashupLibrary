@@ -1,0 +1,5 @@
+# Custom Unit Attached Image
+
+The mashup adds a new "Attached Image Thumbnail" custom unit to the Customise Cards tab in a View Setup area. The unit shows the small preview of the first or last picture attached to an entity.
+
+![Attached Image Thumbnail Custom Unit](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Custom Unit Attached Image/CustomUnitAttachedImage.png?raw=true)
