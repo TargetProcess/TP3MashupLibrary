@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "The mashup adds a new 'Image' unit to the Customize Cards. Thumbnail of the first or last attached image is displayed.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.12.6"
+  }
+}
