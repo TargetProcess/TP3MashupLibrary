@@ -55,7 +55,7 @@ tau.mashups
                             if (getLast) {
                                 attachments.reverse();
                             }
-                            for (var i = 0; i <= attachments.length; i++) {
+                            for (var i = 0; i < attachments.length; i++) {
                                 if((attachments[i].mimeType != null) && (attachments[i].mimeType.indexOf('image') >= 0)) {
                                     return attachments[i].thumbnailUri;
                                 }
@@ -67,7 +67,7 @@ tau.mashups
                             if (getLast) {
                                 attachments.reverse();
                             }
-                            for (var i = 0; i <= attachments.length; i++) {
+                            for (var i = 0; i < attachments.length; i++) {
                                 if((attachments[i].mimeType != null) && (attachments[i].mimeType.indexOf('image') >= 0)) {
                                     return attachments[i].name;
                                 }
