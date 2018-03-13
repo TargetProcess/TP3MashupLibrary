@@ -1,7 +1,0 @@
-﻿Copy Card Links
-==================
-The Copy Card Links mashup will allow you to quickly copy the selected cards short links (as `http://your_account.tpondemand.com/entity/12345`) onto the clipboard via Ctrl+C (Cmd+C). To send several cards links to someone in one click:
-
-1. Select cards on a board
-2. Press Ctrl+C (Cmd+C)
-3. Press Ctrl+V (Cmd+V) to paste links in a chat window.
