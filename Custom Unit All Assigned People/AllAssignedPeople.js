@@ -6,8 +6,18 @@ tau.mashups
 .addDependency('tau/models/board.customize.units/const.card.sizes')
 .addDependency('tau/models/board.customize.units/board.customize.units.base')
 .addDependency('tau/models/board.customize.units/board.customize.units.interaction')
-.addMashup(function ($, _, globalConfigurator, et, sz, helper, interactionUtils) {
+.addDependency('react')
+.addDependency('react-dom')
+.addDependency('@targetprocess/avatar')
+.addMashup(function ($, _, globalConfigurator, et, sz, helper, interactionUtils, react, reactDOM, avatar) {
     var openUnitEditor = interactionUtils.openUnitEditor.bind(interactionUtils);
+
+    var size = 22;
+    var UnitAvatar = function(url) {
+        var tmp = document.createElement('div');
+        reactDOM.render(react.createElement(avatar['default'], {size: size, url: url + size}, null), tmp);
+        return tmp.innerHTML;
+    };
 
 
     var sampleAssignedUsers = {
@@ -75,9 +85,11 @@ tau.mashups
               '<div class="tau-avatar',
               isResponsible(user) ? '' : ' tau-avatar-not-currentResponsible',
               '">',
-              '<img src="' + user.avatarUri + '20"',
+              '<span',
               settings.isDesignMode ? '' : (' title="' + getUserText(user) + '"'),
               '>',
+              UnitAvatar(user.avatarUri),
+              '</span>',
               '</div>'
             ];
           });
