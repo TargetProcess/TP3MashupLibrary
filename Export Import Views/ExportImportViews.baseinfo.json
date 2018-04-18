@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "This mashup allow to Export and Import views settings",
+  "CompatibleTpVersion": {
+    "Minimum": "2.24.4"
+  }
+}
