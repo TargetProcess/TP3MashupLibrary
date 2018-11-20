@@ -1,46 +1,61 @@
 tau.mashups.addModule("CustomFieldConstraints/config", [
     {
-        // fields for Tasks, Bugs, User Stories, Requests, Features, Epics, Test Plans, Test Plan Runs and Projects
-
-        "process": "Kanban", //Process Name the custom field belongs to
+        // Fields for Tasks, Bugs, User Stories, Requests, Features, Epics, Test Plans, Test Plan Runs and Projects.
+        // Process Name the custom field belongs to
+        "process": "Kanban",
         "constraints": {
-            "userstory": { //Entity Type the custom field was created for
+            // Entity Type the custom field was created for.
+            "userstory": {
                 "entityStates": [
                     {
-                        "name": "Closed", //when moving to this state in the workflow the custom field will be required
-                        "requiredCustomFields": ["Resolution", "Summary"] //Custom Fields, which will be required
+                        // When moving to this state in the workflow the custom field will be required.
+                        "name": "Closed",
+                        // Custom Fields, which will be required.
+                        "requiredCustomFields": ["Resolution", "Summary"]
                     }
                 ],
                 "customFields": [
                     {
-                        "name": "Resolution", //Custom Field, which contains the constrained value
-                        "valueIn": ["Rejected", "Postponed"], //values, which makes a dependent Custom Field required
-                        "requiredCustomFields": ["Reason"] //Custom Fields, which will be required
+                        // Custom Field, which contains the constrained value
+                        "name": "Resolution",
+                        // Values, which makes a dependent Custom Field required
+                        "valueIn": ["Rejected", "Postponed"],
+                        // Custom Fields, which will be required.
+                        "requiredCustomFields": ["Reason"]
                     },
                     {
-                        "name": "BillingType", //Custom Field, which contains the constrained value
-                        "valueNotIn": ["Internal"], //values, which doesn't make a dependent Custom Field required
-                        "requiredCustomFields": ["Customer"] //Custom Fields, which will be required
+                        // Custom Field, which contains the constrained value.
+                        "name": "BillingType",
+                        // Values, which doesn't make a dependent Custom Field required.
+                        "valueNotIn": ["Internal"],
+                        // Custom Fields, which will be required.
+                        "requiredCustomFields": ["Customer"]
                     }
                 ]
             }
         }
     },
     {
-        // fields for Users, Requesters, Teams, Team Iteration and Programs
-
+        // Fields for Users, Requesters, Teams, Team Iteration and Programs.
         "constraints": {
-            "user": { //Entity Type the custom field was created for
+            // Entity Type the custom field was created for.
+            "user": {
                 "customFields": [
                     {
-                        "name": "Office", //Custom Field, which contains the constrained value
-                        "valueIn": ["Remote"], //values, which makes a dependent Custom Field required
-                        "requiredCustomFields": ["Location"] //Custom Fields, which will be required
+                        // Custom Field, which contains the constrained value.
+                        "name": "Office",
+                        // Values, which makes a dependent Custom Field required.
+                        "valueIn": ["Remote"],
+                        // Custom Fields, which will be required.
+                        "requiredCustomFields": ["Location"]
                     },
                     {
-                        "name": "BillingType", //Custom Field, which contains the constrained value
-                        "valueNotIn": ["Internal"], //values, which doesn't make a dependent Custom Field required
-                        "requiredCustomFields": ["Employer"] //Custom Fields, which will be required
+                        // Custom Field, which contains the constrained value.
+                        "name": "BillingType",
+                        // Values, which doesn't make a dependent Custom Field required.
+                        "valueNotIn": ["Internal"],
+                        // Custom Fields, which will be required.
+                        "requiredCustomFields": ["Employer"]
                     }
                 ]
             }
