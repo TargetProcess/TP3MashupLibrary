@@ -110,12 +110,16 @@ tau.mashups
                         height: 400
                     },
                     insert: function(placeholder, settings) {
-                        var props = {
-                            url: settings.url,
-                            height: settings.height
-                        };
+                        var render = function(props) {
+                            ReactDOM.render(
+                                React.createElement(WebpageWidget, props),
+                                placeholder
+                            )
+                        }
+                        
+                        render(settings);
 
-                        ReactDOM.render(React.createElement(WebpageWidget, props), placeholder);
+                        return {update: render};
                     },
                     insertSettings: function(placeholder, settings) {
                         var props = {
