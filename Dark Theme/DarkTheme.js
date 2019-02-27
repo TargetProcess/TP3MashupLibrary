@@ -4,8 +4,13 @@ tau
     .addMashup(function(topMenu) {
 
         'use strict';
-
+        
         var init = function() {
+            var cook = getCookie("TPtheme");
+            if(cook == "Light"){
+                $st.remove();
+            }
+            else{
 
             var style = document.createElement("style");
             style.setAttribute('id', 'tv-style');
@@ -45,13 +50,13 @@ tau
             addCSSRule('.tau-board-view .tau-cols-header>ul,.tau-board-grid-view .tau-grid>table', 'border-right: none !important;');
             addCSSRule('.tau-boardclipboard', 'background: #3d424d !important; border: none !important; padding-bottom: 34px !important; bottom: 0px !important;');
             addCSSRule('.t3-views-navigator, .tau-app-main-pane', 'background: #292c33 !important;');
-            addCSSRule('.t3-views-navigator .t3-group', 'background: #292c33 !important;');
             addCSSRule('.tau-app>.tau-app-body>.tau-app-main-pane', 'border-left: 2px solid #14161A !important;');
             addCSSRule('.tau-timeline>.tau-timeline-canvas>.tau-timeline-flow, ._tc-timeline-navigator:before, ._tc-timeline-navigator:after, ._tc-timeline-navigator>.tc-focus-range:before, ._tc-timeline-navigator>.tc-focus-range:after, ._tc-timeline-navigator', 'background: transparent !important;');
             addCSSRule('.t3-views-navigator>.t3-search', 'border: 1px solid #555960 !important;');
+            addCSSRule('.t3-views-navigator .t3-group', 'background: #292c33 !important;');
             addCSSRule('.tau-sp-collapsed .t3-search, .tp3-active', 'border-color: transparent !important;');
             addCSSRule('.tau-sp-collapsed .t3-views-navigator>.t3-search', 'border-color: transparent !important;');
-            addCSSRule('.tau-grid .tau-quick-add, .tau-timeline-grid .tau-quick-add, .tau-cols-header .tau-quick-add', 'background: transparent !important;');
+            addCSSRule('.tau-grid .tau-quick-add, .tau-timeline-grid .tau-quick-add, .tau-cols-header, .tau-rows-header, .tau-quick-add', 'background: transparent !important;');
             addCSSRule('.tau-grid .tau-quick-add button, .tau-timeline-grid .tau-quick-add button, .tau-cols-header .tau-quick-add button', 'background: #8fBf4d !important; border: none !important; box-shadow: none !important;');
             addCSSRule('.tau-feedback-btn', 'display: none !important;');
             addCSSRule('.tau-axis-limit_overhead_x.tau-cellholder, .tau-axis-limit_overhead_y.tau-cellholder', 'background: #594747 !important;');
@@ -73,15 +78,38 @@ tau
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
             addCSSRule('.boardsettings-filter__contener:after', 'background: #292c33 !important; box-shadow: none !important;');
-            addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;')
-        };
+            addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;');
+        }};
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
+            var d = new Date();
+            d.setTime(d.getTime() + (365*24*60*60*1000));
+            var expires = "expires="+ d.toUTCString();
             if ($st.length) {
+                document.cookie = "TPtheme=Light; " + expires;
                 $st.remove();
+                
             } else {
+                document.cookie = "TPtheme=Dark; " + expires;
                 init();
+                
             }
         });
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for(var i = 0; i <ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) === 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+        window.onload = init();
 
     });
