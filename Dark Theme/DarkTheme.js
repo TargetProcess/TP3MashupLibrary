@@ -7,11 +7,8 @@ tau
         
         var init = function() {
             var cook = getCookie("TPtheme");
-            if(cook == "Light"){
-                $st.remove();
-            }
-            else{
-
+            if(cook !== "Dark") return;
+                
             var style = document.createElement("style");
             style.setAttribute('id', 'tv-style');
             style.appendChild(document.createTextNode(""));
@@ -25,8 +22,7 @@ tau
                     sheet.insertRule(selector + "{" + rules + "}", index);
                 } else {
                     sheet.addRule(selector, rules, index);
-                }
-            };
+                }};
 
             // add rules here
             // add !important to make sure default rules will be overwritten
@@ -79,37 +75,42 @@ tau
             addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
             addCSSRule('.boardsettings-filter__contener:after', 'background: #292c33 !important; box-shadow: none !important;');
             addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;');
-        }};
+        };
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
             var d = new Date();
             d.setTime(d.getTime() + (365*24*60*60*1000));
-            var expires = "expires="+ d.toUTCString();
+            var expires = ";expires="+ d.toUTCString();
+            // If using https proto, set secure cookie to protect against stealing via regular http: proto calls.
+            var isHttps = window.location.protocol === 'https:';
+            // Cookie to only be transmitted over secure protocol as https.
+            var secure = isHttps ? ';secure' : '';
+            // SameSite prevents the browser from sending this cookie along with cross-site requests.
+            // The strict value will prevent the cookie from being sent by the browser to the target
+            // site in all cross-site browsing context, even when following a regular link.
+            var sameSite = ";samesite=strict";                
+
             if ($st.length) {
-                document.cookie = "TPtheme=Light; " + expires;
+                document.cookie = "TPtheme=Light" + expires + secure + sameSite;
                 $st.remove();
-                
             } else {
-                document.cookie = "TPtheme=Dark; " + expires;
+                document.cookie = "TPtheme=Dark" + expires + secure + sameSite;
                 init();
-                
-            }
+            }  
         });
         function getCookie(cname) {
             var name = cname + "=";
-            var decodedCookie = decodeURIComponent(document.cookie);
-            var ca = decodedCookie.split(';');
-            for(var i = 0; i <ca.length; i++) {
-                var c = ca[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(name) === 0) {
-                    return c.substring(name.length, c.length);
-                }
-            }
-            return "";
+            var themeCookies = document.cookie.split(';').filter(function(cookie) {
+                return cookie.indexOf(name) >= 0;
+            });
+
+            // No such cookie found.
+            if (themeCookies.length === 0) return '';
+
+            // Cookie has format key=value.
+            return themeCookies[0].split('=')[1];
         }
-        window.onload = init();
+        init();
 
     });
+    
