@@ -1,7 +1,8 @@
 tau
     .mashups
+    .addDependency('jQuery')
     .addDependency('tp3/mashups/topmenu')
-    .addMashup(function(topMenu) {
+    .addMashup(function($, topMenu) {
 
         'use strict';
         
