@@ -63,7 +63,7 @@ tau
             addCSSRule('.tau-board-grid-view .tau-cellholder.tau-selected.tau-selected_x.tau-selected_y', 'background: #525866 !important;');
             addCSSRule('.tau-selection-counter', 'background: transparent !important;');
             addCSSRule('.tau-selection-counter.tau-selected', 'background: #FFF2B2 !important;');
-            addCSSRule('.tau-boardclipboard .i-role-action-clear', 'height: 26px !important; border-radius: 2px !important; background: transparent !important; border-color: #555960 !important;');
+            addCSSRule('.tau-boardclipboard .i-role-action-clear', 'background: transparent !important; border-color: #555960 !important;');
             addCSSRule('.tau-boardclipboard .i-role-action-clear::before', 'top: 9px !important;');
             addCSSRule('.tau-no-data-in-slice h2, .tau-no-data-in-slice .tau-txt', 'font-weight: 400 !important; color: #fff !important; text-shadow: none !important;');
             addCSSRule('.tau-card-v2_isInPast .tau-name, .tau-selected .tau-name, .tau-card-v2_type_build .tau-name', 'color: #000 !important;');
