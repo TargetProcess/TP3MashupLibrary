@@ -1,12 +1,15 @@
 tau
     .mashups
+    .addDependency('jQuery')
     .addDependency('tp3/mashups/topmenu')
-    .addMashup(function(topMenu) {
+    .addMashup(function($, topMenu) {
 
         'use strict';
-
+        
         var init = function() {
-
+            var cook = getCookie("TPtheme");
+            if(cook !== "Dark") return;
+                
             var style = document.createElement("style");
             style.setAttribute('id', 'tv-style');
             style.appendChild(document.createTextNode(""));
@@ -20,8 +23,7 @@ tau
                     sheet.insertRule(selector + "{" + rules + "}", index);
                 } else {
                     sheet.addRule(selector, rules, index);
-                }
-            };
+                }};
 
             // add rules here
             // add !important to make sure default rules will be overwritten
@@ -45,13 +47,13 @@ tau
             addCSSRule('.tau-board-view .tau-cols-header>ul,.tau-board-grid-view .tau-grid>table', 'border-right: none !important;');
             addCSSRule('.tau-boardclipboard', 'background: #3d424d !important; border: none !important; padding-bottom: 34px !important; bottom: 0px !important;');
             addCSSRule('.t3-views-navigator, .tau-app-main-pane', 'background: #292c33 !important;');
-            addCSSRule('.t3-views-navigator .t3-group', 'background: #292c33 !important;');
             addCSSRule('.tau-app>.tau-app-body>.tau-app-main-pane', 'border-left: 2px solid #14161A !important;');
             addCSSRule('.tau-timeline>.tau-timeline-canvas>.tau-timeline-flow, ._tc-timeline-navigator:before, ._tc-timeline-navigator:after, ._tc-timeline-navigator>.tc-focus-range:before, ._tc-timeline-navigator>.tc-focus-range:after, ._tc-timeline-navigator', 'background: transparent !important;');
             addCSSRule('.t3-views-navigator>.t3-search', 'border: 1px solid #555960 !important;');
+            addCSSRule('.t3-views-navigator .t3-group', 'background: #292c33 !important;');
             addCSSRule('.tau-sp-collapsed .t3-search, .tp3-active', 'border-color: transparent !important;');
             addCSSRule('.tau-sp-collapsed .t3-views-navigator>.t3-search', 'border-color: transparent !important;');
-            addCSSRule('.tau-grid .tau-quick-add, .tau-timeline-grid .tau-quick-add, .tau-cols-header .tau-quick-add', 'background: transparent !important;');
+            addCSSRule('.tau-grid .tau-quick-add, .tau-timeline-grid .tau-quick-add, .tau-cols-header, .tau-rows-header, .tau-quick-add', 'background: transparent !important;');
             addCSSRule('.tau-grid .tau-quick-add button, .tau-timeline-grid .tau-quick-add button, .tau-cols-header .tau-quick-add button', 'background: #8fBf4d !important; border: none !important; box-shadow: none !important;');
             addCSSRule('.tau-feedback-btn', 'display: none !important;');
             addCSSRule('.tau-axis-limit_overhead_x.tau-cellholder, .tau-axis-limit_overhead_y.tau-cellholder', 'background: #594747 !important;');
@@ -73,15 +75,43 @@ tau
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
             addCSSRule('.boardsettings-filter__contener:after', 'background: #292c33 !important; box-shadow: none !important;');
-            addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;')
+            addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;');
         };
         topMenu.addItem('TV').onClick(function() {
             var $st = $(document).find('#tv-style');
+            var d = new Date();
+            d.setTime(d.getTime() + (365*24*60*60*1000));
+            var expires = ";expires="+ d.toUTCString();
+            // If using https proto, set secure cookie to protect against stealing via regular http: proto calls.
+            var isHttps = window.location.protocol === 'https:';
+            // Cookie to only be transmitted over secure protocol as https.
+            var secure = isHttps ? ';secure' : '';
+            // SameSite prevents the browser from sending this cookie along with cross-site requests.
+            // The strict value will prevent the cookie from being sent by the browser to the target
+            // site in all cross-site browsing context, even when following a regular link.
+            var sameSite = ";samesite=strict";                
+
             if ($st.length) {
+                document.cookie = "TPtheme=Light" + expires + secure + sameSite;
                 $st.remove();
             } else {
+                document.cookie = "TPtheme=Dark" + expires + secure + sameSite;
                 init();
-            }
+            }  
         });
+        function getCookie(cname) {
+            var name = cname + "=";
+            var themeCookies = document.cookie.split(';').filter(function(cookie) {
+                return cookie.indexOf(name) >= 0;
+            });
+
+            // No such cookie found.
+            if (themeCookies.length === 0) return '';
+
+            // Cookie has format key=value.
+            return themeCookies[0].split('=')[1];
+        }
+        init();
 
     });
+    
