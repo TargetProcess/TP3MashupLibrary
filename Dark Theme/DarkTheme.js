@@ -27,12 +27,14 @@ tau
             // Add !important to make sure default rules will be overwritten.
             addCSSRule('.tau-btn-active-highlight', 'box-shadow: 0px 0px 5px 0px #FFE6B3; border-color: #FFF2B2 !important; color: #FFF2B2 !important;');
             addCSSRule('.tau-app-body > header, .tau-btn-add-bg', 'background: #14161a !important;');
+            addCSSRule('.i-role-views-menu, .i-role-board-menu', 'border-right: 1px solid #1A1A1D !important;');
             addCSSRule('.tau-context-filter', 'background: #292c33 !important; box-shadow: none !important; padding: 2px 4px !important; margin-top: -1px !important; font-size: 12px !important; font-weight: 400 !important;');
             addCSSRule('.tau-board, .tau-board-header', 'background: #292c33 !important;');
             addCSSRule('.tau-board-header .tau-board-name', 'color: #fff !important; font-weight: 400 !important; letter-spacing: .2px !important;');
             addCSSRule('.tau-board-header .tau-btn, .tau-board-header input, .tau-board-header .boardsettings-filter__status--off, .tau-inline-group-nestedboardstoolbar .tau-btn, .tau-selection-counter', 'background: transparent !important; border-radius: 2px !important; border-color: #5c5f66 !important; font-weight: normal !important; text-shadow: none !important; color: #a1a7b3 !important; font-size: 12px !important');
             addCSSRule('.tau-board-header .tau-btn:hover, .tau-board-header input:hover, .tau-board-header .tau-checked', 'border-color: #fff !important; z-index: 10 !important;');
             addCSSRule('.tau-board-header .tau-boardsettings__filtertools', 'background: #292c33 !important; box-shadow: 0px 0px 4px #292c33 !important;');
+            addCSSRule('.board-settings__header .board-settings-tabs', 'margin-left: 0px; !important;');
             addCSSRule('.ui-slider', 'height: 1px !important; border: none !important; background: #b4b9c3 !important;');
             addCSSRule('.ui-slider-handle', 'margin-top: -5px !important; background: #fff !important; border: 3px solid #292c33 !important; box-shadow: none !important; border-radius: 10px !important;');
             addCSSRule('.tau-board .tau-board-body-wrapper', 'border-top: none !important;');
