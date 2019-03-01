@@ -39,7 +39,7 @@ tau
             addCSSRule('.ui-slider-handle', 'margin-top: -5px !important; background: #fff !important; border: 3px solid #292c33 !important; box-shadow: none !important; border-radius: 10px !important;');
             addCSSRule('.tau-board .tau-board-body-wrapper', 'border-top: none !important;');
             addCSSRule('.tau-axiscell__item .i-role-name, .tau-x-header .tau-label, .i-role-timeline-header-cell .tau-label, .tau-timeline-scale .i-role-timeline-header-cell .i-role-cell, .tau-period-label, .tau-boardclipboard-title, .tau-scale-ruler', 'color: #fff !important; text-shadow: none !important;');
-            addCSSRule('.tau-boardclipboard-title', 'font-weight: 400 !important; font-size: 12px !important; opacity: .9 !important;');
+            addCSSRule('.tau-boardclipboard-title', 'font-weight: 400 !important; opacity: .9 !important;');
             addCSSRule('.i-role-axis-mark-selector', 'background: #989CA6 !important; border: none !important;');
             addCSSRule('.tau-cards-count span', 'background: #292c33 !important; box-shadow: none !important;');
             addCSSRule('.tau-board-view .tau-grid .tau-cellholder , .tau-board-view .tau-cols-header .tau-cellholder, .tau-board-view .tau-cols-header, .tau-board-view .tau-rows-header, .tau-x-header, .tau-board-view .tau-rows-header .tau-cellholder, .tau-board-view .tau-backlog-body .tau-cellholder, .tau-board-view .tau-timeline .tau-cellholder, .tau-board-view .tau-backlog', 'border-color: #595C63 !important;');
