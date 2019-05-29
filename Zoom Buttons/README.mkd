@@ -1,0 +1,23 @@
+Zoom Buttons
+============
+
+This mashup enable Zoom Buttons for changing card sizes quickly.
+It is a remote-control for the "Zoom slider" which is now hidden in the (Actions) Menu.
+Much easier to Navigate if you have the buttons like it was in the original Target Process UI.
+The Buttons only trigger the slider in the hidden Menu, so functionality is exactly same as you
+would use the slider directy. It only saves some clicks.
+
+As soon as you install it from Targetprocess Mashups Library, you'll see Zoom button at the topbar.
+Click it and you change the card sizes.
+
+New Buttons
+![New Buttons](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Zoom%20Buttons/ZoomButtons-1.png)
+
+Controls that Menu (Zoom)
+![Old Menu](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Zoom%20Buttons/ZoomButtons-2.png)
+
+
+How to activate it:
+
+1. Install the mashup from the Targetprocess Mashups Library
+2. Press the Zoom Buttons (Min,S,M,L,XL) on top-bar.
