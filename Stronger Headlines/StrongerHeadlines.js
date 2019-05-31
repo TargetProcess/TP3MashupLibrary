@@ -1,7 +1,6 @@
 tau.mashups
-    .addDependency('tp3/mashups/topmenu')
     .addDependency('tau/core/bus.reg')
-    .addMashup(function(topMenu) {
+    .addMashup(function() {
         'use strict';
         var initHeadlineTheme = function() {
             var style = document.createElement("style");
