@@ -13,7 +13,7 @@ the column for "status" is still visible, because in my case thats important inf
 
 By changing the CSS one can show and hide specific columns, if you find the css selector for the column.
 
-Before, Very noisy list lot of redundant information
+Before, very noisy list lot of redundant information
 ![Before](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-1.png)
 
 After, simplified View, more like a normal Tree-List, much less redundant labels
