@@ -1,11 +1,10 @@
 tau.mashups
     .addDependency('tp3/mashups/topmenu')
-    .addDependency('tau/core/bus.reg')
     .addMashup(function(topMenu) {
         'use strict';
         var initTreeTheme = function() {
             var style = document.createElement("style");
-            style.setAttribute('id', 'tree-color-style');
+            style.setAttribute('id', 'tree-style');
             style.appendChild(document.createTextNode(""));
             document.head.appendChild(style);
             var sheet = style.sheet;
@@ -16,10 +15,9 @@ tau.mashups
             addCSSRule(".i-role-cardsholder:not(:hover) :not(.tau-list-time) > .tau-list-line > .tau-elems-table  .tau-elems-cell:not(.tau-elems-cell--details-trigger):not(:nth-child(1)):not(:nth-child(2)):not(.tau-list-state_full_length-cell) ","opacity: 0;");
          };
         
-
         // Add menu item to toggle the theme
         topMenu.addItem('Tree').onClick(function() {
-                var $xt = $(document).find('#tree-color-style');
+                var $xt = $(document).find('#tree-style');
                 if ($xt.length) {
                     $xt.remove();
                 } else {
@@ -29,5 +27,4 @@ tau.mashups
         
         // comment the following line to prevent auto-apply
         initTreeTheme();
-
     });
