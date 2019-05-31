@@ -23,5 +23,5 @@ After, simplified View, more like a normal Tree-List, much less redundant labels
 How to activate it:
 
 1. Install the mashup from the Targetprocess Mashups Library
-2. Automatically TreeViews will have some hidden fields, which show up again on hover.
-3. If you miss too many fields, just deaktivate the mashup.
+2. Automatically Tree-Views will have some hidden fields, which show up again on hover.
+3. You can toggle the simplified view on and off with the "Tree" link in the top menu. 
