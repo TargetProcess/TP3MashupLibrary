@@ -13,8 +13,8 @@ tau
         var addBusListener = function(busName, eventName, listener) {
 
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
+
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
 
@@ -22,8 +22,8 @@ tau
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
+
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
                 }
@@ -31,7 +31,6 @@ tau
                 if ( zoomTimer !== null ) {
                     clearTimeout( zoomTimer );
                 }
-
             });
 
             reg.getByName(busName).done(function(bus) {
@@ -42,9 +41,10 @@ tau
         var appendZoomButtons = function appendFullscreenButton(e, renderData) {
             var $el = renderData.element;
 
+            // Add buttons, if they are not yet in the DOM
             if (!$el.find('.btnZoom').length) {
                 var $elWrapper = $el.find('.tau-board-header__control--actions');
-                var $elAnchor = $elWrapper.length ? $elWrapper: $el.find('[role=actions-button]').parent();
+                var $elAnchor  = $elWrapper.length ? $elWrapper : $el.find('[role=actions-button]').parent();
 
                 var $elGroup = $('<div id="zoom-buttons" class="tau-board-header__control--mashup" style="display:flex;margin-left:10px;align-items:center;"></div>');
 
@@ -65,11 +65,10 @@ tau
             }
 
             // initially we have to open the menu and wait until the slider is loaded in dom, or reading slider does not work
-            // try x times and then give up, maybe its dashboard and we dont want to poll
+            // try x times and then give up, maybe it is a dashboard and we dont want to poll constantly
 
             // initialize when buttons are rendered, which is also boardchange
             waitForSlider(10); // try 10 times and then give up, might be dashboard
-
         };
 
         var toolbarComponents = [
@@ -80,24 +79,36 @@ tau
             addBusListener(componentName, 'afterRender', appendZoomButtons);
         });
 
+        // Move slider in action-menu, when zoom button is triggered
         $(document).on('click','.btnZoom', function(){
             var zoom = $(this).attr('data-zoom');
 
+            // init remember menu state, asume its closed
             var was_open = false;
+
+            // Remeber state of action-menu (open/closed) before changing slider
             if ( isActionMenuOpen() ) {
                 was_open = true;
             }
 
-            if ( !was_open ) openActionMenu();
+            // open the action-menu, so we can click on the slider-widget
+            // slider does not react or is not rendered in DOM when closed
+            // if it is already open, we don't need to open it
+            if ( !was_open ) {
+                openActionMenu();
+            }
 
             // console.log( "was open btnZoom: ", was_open );
 
             $('.ui-slider--zoomer').slider('value', zoom);                     // set zoom
 
-            // update highlight
+            // update highlight for button, which one looks active
             setZoomHighlight( zoom );
 
-            if ( !was_open ) closeActionMenu();
+            // restore menu state, so that UI has no side-effect
+            if ( !was_open ) {
+                closeActionMenu();
+            }
 
         });
 
@@ -179,8 +190,9 @@ tau
 
 
 
+
         var isActionMenuOpen = function() {
-            return $('.tau-board-header__control--actions .tau-actions-btn.tau-checked').length;
+            return $('.tau-board-header__control--actions .tau-actions-btn.tau-checked').length !== 0;
         };
 
         var openActionMenu = function() {
