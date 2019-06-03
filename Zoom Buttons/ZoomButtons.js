@@ -6,30 +6,42 @@ tau
 
         'use strict';
 
-        var zoomTimer = null;
+        var zoom_wait                   = null;
+        var zoom_timer                  = null;
+        var zoom_tries                  = 10;
+        var zoom_slider_id              = ".i-role-board-actions-group .tau-zoom-level .ui-slider--zoomer";
+        var zoom_listview_id            = 'button.tau-btn.tau-btn--view-switch.i-role-board-tooltip.tau-btn-list-view.tau-checked';
+        var zoom_wrapper_id             = '.tau-board-header__control--actions';
+        var zoom_actionbutton_off_id    = '.tau-board-header__control--actions .tau-actions-btn:not(.tau-checked)';
+        var zoom_actionbutton_on_id     = '.tau-board-header__control--actions .tau-actions-btn.tau-checked';
+        var zoom_actionbubble_id        = '.tau-board-actions-bubble';
+
 
         var reg = configurator.getBusRegistry();
 
         var addBusListener = function(busName, eventName, listener) {
 
             reg.on('create', function(e, data) {
-                var bus = data.bus;
 
+                var bus = data.bus;
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
-
                 }
             });
 
             reg.on('destroy', function(e, data) {
-                var bus = data.bus;
 
+                var bus = data.bus;
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
                 }
 
-                if ( zoomTimer !== null ) {
-                    clearTimeout( zoomTimer );
+                if ( zoom_timer !== null ) {
+                    clearTimeout( zoom_timer );
+                }
+
+                if ( zoom_wait !== null ) {
+                    clearTimeout( zoom_wait );
                 }
             });
 
@@ -38,12 +50,11 @@ tau
             });
         };
 
-        var appendZoomButtons = function appendFullscreenButton(e, renderData) {
+        var appendZoomButtons = function(e, renderData) {
             var $el = renderData.element;
 
-            // Add buttons, if they are not yet in the DOM
-            if (!$el.find('.btnZoom').length) {
-                var $elWrapper = $el.find('.tau-board-header__control--actions');
+            if ( $el.find('.btnZoom').length === 0) {
+                var $elWrapper = $el.find(zoom_wrapper_id);
                 var $elAnchor  = $elWrapper.length ? $elWrapper : $el.find('[role=actions-button]').parent();
 
                 var $elGroup = $('<div id="zoom-buttons" class="tau-board-header__control--mashup" style="display:flex;margin-left:10px;align-items:center;"></div>');
@@ -64,11 +75,12 @@ tau
                 $elAnchor.before( $elGroup  );
             }
 
-            // initially we have to open the menu and wait until the slider is loaded in dom, or reading slider does not work
-            // try x times and then give up, maybe it is a dashboard and we dont want to poll constantly
+            // initially we have to open the menu and wait until the slider is loaded in dom,
+            // try x times and then give up, maybe its dashboard and we don't want to poll anymore
 
             // initialize when buttons are rendered, which is also boardchange
-            waitForSlider(10); // try 10 times and then give up, might be dashboard
+            waitForSlider(); // try 10 times and then give up, might be dashboard
+
         };
 
         var toolbarComponents = [
@@ -79,135 +91,159 @@ tau
             addBusListener(componentName, 'afterRender', appendZoomButtons);
         });
 
-        // Move slider in action-menu, when zoom button is triggered
         $(document).on('click','.btnZoom', function(){
+
+            // read value from clicked button, stored as data-value
             var zoom = $(this).attr('data-zoom');
 
-            // init remember menu state, asume its closed
-            var was_open = false;
+            // remember current menu state
+            var was_open = isActionMenuOpen();
 
-            // Remeber state of action-menu (open/closed) before changing slider
-            if ( isActionMenuOpen() ) {
-                was_open = true;
-            }
+            // try to open menu, to access the slider
+            openActionMenuOrKeep( was_open );
 
-            // open the action-menu, so we can click on the slider-widget
-            // slider does not react or is not rendered in DOM when closed
-            // if it is already open, we don't need to open it
-            if ( !was_open ) {
-                openActionMenu();
-            }
+            // set zoom of board by controlling slider inside the menu
+            $(zoom_slider_id).slider('value', zoom);
 
-            // console.log( "was open btnZoom: ", was_open );
-
-            $('.ui-slider--zoomer').slider('value', zoom);                     // set zoom
-
-            // update highlight for button, which one looks active
+            // mark the clicked button as active
             setZoomHighlight( zoom );
 
-            // restore menu state, so that UI has no side-effect
-            if ( !was_open ) {
-                closeActionMenu();
-            }
+            // restore remembered state
+            closeActionMenuOrKeep( was_open );
 
         });
 
         var checkZoomButton = function(){
 
-            var was_open = false;
-            if ( isActionMenuOpen() ) {
-                was_open = true;
-            }
+            // remember current menu state
+            var was_open = isActionMenuOpen();
 
-            // console.log( "checked: ", was_open );
+            // try to open menu, to access the slider
+            openActionMenuOrKeep( was_open );
 
-            if ( !was_open ) openActionMenu();
+            if ( $(zoom_slider_id).length !== 0 ) {
 
-            if ( $('.ui-slider--zoomer').length ) {
-                var zoom = $('.ui-slider--zoomer').slider('value');                     // read zoom from slider
+                // read zoom value from slider, might be changed by user
+                var zoom = $(zoom_slider_id).slider('value');
+
+                // mark the zoom button to sync with the slider
                 setZoomHighlight( zoom );
             }
-            if ( !was_open ) closeActionMenu();
+
+            // restore remembered state
+            closeActionMenuOrKeep( was_open );
 
             // try again when menu is open
             if ( was_open ) {
-                zoomTimer = setTimeout(checkZoomButton, 1000);  // try again, slider was not ready
+                zoom_timer = setTimeout(checkZoomButton, 1000);  // try again, slider was not ready
             }
         };
 
-        var waitForSlider = function( tries ) {
+        var waitForSlider = function() {
 
+            // count down one, to break after x tries
+            zoom_tries--;
+
+            // force open menu to read values, board-change means menu is closed
             openActionMenu();
 
-            // console.log( 'wait before');
+            // if board-type is not compatible, simply close the menu
+            // test for listview, then we can quickly hide the buttons
+            if ( $(zoom_listview_id).length !== 0) {
 
-            if ( $('button.tau-btn.tau-btn--view-switch.i-role-board-tooltip.tau-btn-list-view.tau-checked').length ) {
-                // list view, just close and skip
-                // hide buttons ?
+                // Hide buttons from Top Menu
                 $('#zoom-buttons').hide();
+
+                // close menu, because we opened it
                 closeActionMenu();
+
+                // we gave up, wrong board type
                 return false;
             }
 
+            // when the board has a slider then sync the active button highlight
+            if ( $(zoom_slider_id).length !== 0 ) {
 
+                // read zoom from slider
+                var zoom = $(zoom_slider_id).slider('value');
 
-            if ( $('.ui-slider--zoomer').length ) {
-                // console.log( 'wait inner');
-
-                var zoom = $('.ui-slider--zoomer').slider('value');                     // read zoom from slider
+                // mark active button
                 setZoomHighlight( zoom );
 
-
+                // done, close the menu which we opened
                 closeActionMenu();
 
                 // start polling sync when menu is toggled, only open, only if triggered manually
-                $('.tau-board-header__control--actions .tau-actions-btn:not(.tau-checked)').on('click', function() {
-                    // console.log('toggle menu');
+                $(zoom_actionbutton_off_id).on('click', function() {
+
+                    // poll for slider-changes when it was manually opened
                     if( !$(this).hasClass('zoom-open') ) {
-                        // console.log('start poll');
-                        zoomTimer = setTimeout(checkZoomButton, 1000);  // test if slider has changed
-                    } else {
-                        // console.log('no poll');
+
+                        // test if slider has changed
+                        zoom_timer = setTimeout(checkZoomButton, 1000);
                     }
 
                     return true;
                 });
 
-
+                // successfully initialized
                 return true;
+
             } else {
-                // console.log('menu is ok');
-                if ( tries > 0 ) {
-                    setTimeout( function() { waitForSlider( tries -1 ) }, 1000 );  // try again, slider was not ready
+
+                // Did not work, maybe page was not ready
+                // try 10 times and then give up, probably wrong board type (eg. tree or list)
+
+                if ( zoom_tries > 0 ) {
+
+                    // try again, slider was not ready
+                    zoom_wait = setTimeout( waitForSlider, 1000 );
+
                 } else {
-                    // give up , to many tries without menu
+
+                    // give up , too many tries without menu
                     closeActionMenu();
                 }
 
+                // we gave up
                 return false;
             }
         };
 
-
-
-
         var isActionMenuOpen = function() {
-            return $('.tau-board-header__control--actions .tau-actions-btn.tau-checked').length !== 0;
+            return $(zoom_actionbutton_on_id).length !== 0;
+        };
+
+        var openActionMenuOrKeep = function( was_open ){
+            if ( !was_open ) {
+                openActionMenu();
+            }
+        };
+
+        var closeActionMenuOrKeep = function( was_open ) {
+            if ( !was_open ) {
+                closeActionMenu();
+            }
         };
 
         var openActionMenu = function() {
-            $('.tau-board-header__control--actions .tau-actions-btn:not(.tau-checked)').addClass('zoom-open'); // mark
-            $('.tau-board-header__control--actions .tau-actions-btn:not(.tau-checked)').click(); // open
+            $(zoom_actionbubble_id).css('opacity',0);               // make menu invisible (but open)
+            $(zoom_actionbutton_off_id).addClass('zoom-open');      // mark auto-opened
+            $(zoom_actionbutton_off_id).click();                    // open
         };
 
         var closeActionMenu = function() {
-            $('.tau-board-header__control--actions .tau-actions-btn.tau-checked').click(); // close
-            $('.tau-board-header__control--actions .tau-actions-btn').removeClass('zoom-open'); // unmark
+            $(zoom_actionbubble_id).css('opacity',1);               // make menu visible (but closed)
+            $(zoom_actionbutton_on_id).removeClass('zoom-open');    // unmark auto-opened
+            $(zoom_actionbutton_on_id).click();                     // close
         };
 
         var setZoomHighlight = function ( zoom ) {
-            $('.btnZoom.tau-checked:not(#btnZoom'+zoom+')').removeClass('tau-checked'); // clear other buttons , but keep active
-            $('#btnZoom'+zoom+':not(.tau-checked)').addClass('tau-checked');        // mark active button
-        };
 
+            // clear other buttons , but keep active
+            $('.btnZoom.tau-checked:not(#btnZoom'+zoom+')').removeClass('tau-checked');
+
+            // mark active button
+            $('#btnZoom'+zoom+':not(.tau-checked)'        ).addClass(   'tau-checked');
+        };
     });
