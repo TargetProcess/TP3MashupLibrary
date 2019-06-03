@@ -1,6 +1,5 @@
 tau.mashups
     .addDependency('tp3/mashups/topmenu')
-    .addDependency('tau/core/bus.reg')
     .addMashup(function(topMenu) {
         'use strict';
         var initTreeTheme = function() {
