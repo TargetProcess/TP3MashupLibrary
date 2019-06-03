@@ -1,5 +1,4 @@
 tau.mashups
-    .addDependency('tau/core/bus.reg')
     .addMashup(function() {
         'use strict';
         var initHeadlineTheme = function() {
