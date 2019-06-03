@@ -9,6 +9,7 @@ tau
         var zoom_wait                   = null;
         var zoom_timer                  = null;
         var zoom_tries                  = 10;
+        var zoom_menu_opacity           = null;
         var zoom_slider_id              = ".i-role-board-actions-group .tau-zoom-level .ui-slider--zoomer";
         var zoom_listview_id            = 'button.tau-btn.tau-btn--view-switch.i-role-board-tooltip.tau-btn-list-view.tau-checked';
         var zoom_wrapper_id             = '.tau-board-header__control--actions';
@@ -227,15 +228,28 @@ tau
         };
 
         var openActionMenu = function() {
-            $(zoom_actionbubble_id).css('opacity',0);               // make menu invisible (but open)
-            $(zoom_actionbutton_off_id).addClass('zoom-open');      // mark auto-opened
-            $(zoom_actionbutton_off_id).click();                    // open
+            // make menu invisible (but open)
+            zoom_menu_opacity = $(zoom_actionbubble_id).css('opacity');
+            $(zoom_actionbubble_id).css('opacity',0);
+
+            // mark menu as auto-opened
+            $(zoom_actionbutton_off_id).addClass('zoom-open');
+
+            // open menu
+            $(zoom_actionbutton_off_id).click();
         };
 
         var closeActionMenu = function() {
-            $(zoom_actionbubble_id).css('opacity',1);               // make menu visible (but closed)
-            $(zoom_actionbutton_on_id).removeClass('zoom-open');    // unmark auto-opened
-            $(zoom_actionbutton_on_id).click();                     // close
+            // make menu visible (but closed)
+            if ( zoom_menu_opacity !== null ) {
+                $(zoom_actionbubble_id).css('opacity',zoom_menu_opacity);
+            }
+
+            // unmark menu as auto-opened
+            $(zoom_actionbutton_on_id).removeClass('zoom-open');
+
+            // close menu
+            $(zoom_actionbutton_on_id).click();
         };
 
         var setZoomHighlight = function ( zoom ) {
