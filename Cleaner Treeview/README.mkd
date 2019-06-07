@@ -1,27 +1,21 @@
 Cleaner Treeview
 ============
+This mashup will let you hide some table-headers and fields making the list/tree look cleaner and easier to read. On the mouse hover the fields appear and can be edited.
 
-This mashup enable cleaner Look for the Treeview.
-It hides a lot of table-headers and fields to make the list/tree look much cleaner and easier to read.
-On mouse hover the fields are still visible and editable. (they are only hidden with css opacity)
-The (+) Button is now hidden, but this functionality is easy to reach with a right-click "add ..." from the context menu.
-Or alternatively click on the parent Ticket and then Edit the Sub-Tickets as usual, also with the (+) Button.
-
-The 1st Table-Head Row is always Visible, which is useful in the sub-pages and still having enough navigation there.
-
-the column for "status" is still visible, because in my case thats important information i dont want to hide.
-
-By changing the CSS one can show and hide specific columns, if you find the css selector for the column.
-
-Before, very noisy list lot of redundant information
+The mashup is not applied:
 ![Before](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-1.png)
 
-After, simplified View, more like a normal Tree-List, much less redundant labels
+The mashup is applied:
 ![After](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-2.png)
 
+## To apply the mashup
 
-How to activate it:
+* Install the mashup from the Targetprocess Mashups Library to active it.
+* Refresh your page:
+	* Windows: ctrl + F5
+	* Mac/Apple: Apple + R or command + R
+	* Linux: F5
 
-1. Install the mashup from the Targetprocess Mashups Library
-2. Automatically Tree-Views will have some hidden fields, which show up again on hover.
-3. You can toggle the simplified view on and off with the "Tree" link in the top menu. 
+__Notice__:
+The (+) button is hidden for all levels except of first. 
+A new entity can be added on the detail view of the parent entity.
