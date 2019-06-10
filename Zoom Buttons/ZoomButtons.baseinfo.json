@@ -1,5 +1,5 @@
 {
-  "ShortDescription": "Zoom Buttons",
+  "ShortDescription": "The mashup provides an easy way to change the size of cards.",
   "CompatibleTpVersion": {
       "Minimum": "3.13.6"
   }
