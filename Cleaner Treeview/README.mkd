@@ -3,12 +3,12 @@
 This mashup will let you hide some table-headers and fields making the list/tree look cleaner and easier to read. On the mouse hover the fields appear and can be edited.
 
 The mashup is not applied:
-![The mashup is not applied]
-(https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-1.png)
+
+![The mashup is not applied](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-1.png)
 
 The mashup is applied:
-![The mashup is applied]
-(https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-2.png)
+
+![The mashup is applied](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Cleaner%20Treeview/CleanerTreeview-2.png)
 
 ## To apply the mashup
 
