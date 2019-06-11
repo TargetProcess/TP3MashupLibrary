@@ -1,5 +1,5 @@
-Cleaner Treeview
-============
+# Cleaner Treeview
+
 This mashup will let you hide some table-headers and fields making the list/tree look cleaner and easier to read. On the mouse hover the fields appear and can be edited.
 
 The mashup is not applied:

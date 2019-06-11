@@ -12,8 +12,8 @@ tau.mashups
             // Modify Headlines
             addCSSRule(".markdown-editor.i-role-preview"            ,"padding-left:2em !important");
             addCSSRule(".ui-description__inner , .cke_editable"     ,"padding-left:2em !important");
-            addCSSRule("h1"                                         ,"width:100%;box-shadow:rgba(0, 0, 0, 0.5) -1px -4px 3px -3px;margin-top:1em !important;margin-left:-1em !important;padding-top:1em !important;");
-            addCSSRule("h2"                                         ,"margin-top:1em;color:#333 !important;font-style:normal;text-decoration:underline dotted;margin-left:-0.5em !important; "); 
+            addCSSRule(".tau-page-entity h1"                        ,"width:100%;box-shadow:rgba(0, 0, 0, 0.5) -1px -4px 3px -3px;margin-top:1em !important;margin-left:-1em !important;padding-top:1em !important;");
+            addCSSRule(".tau-page-entity h2"                        ,"margin-top:1em;color:#333 !important;font-style:normal;text-decoration:underline dotted;margin-left:-0.5em !important; ");
         };
      
         // comment the following line to prevent auto-apply
