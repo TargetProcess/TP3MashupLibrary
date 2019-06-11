@@ -1,21 +1,20 @@
 # Stronger Headlines
 
-This mashup enable makes H1 and H2 bigger with dashed underline, it makes it easier to read longer ticket descriptions
-by separating sections with h1, h2. Works with Markdown Body-Text and also with RTF-Body-Text.
+This Mashup makes H1 and H2 headers in reach text more conspicuous by adding dotted underline. It makes reading long descriptions easily by separating sections with H1 and H2 headers, works with both text editor type: WYSIWYG and Markdown.
 
-As soon as you install it from Targetprocess Mashups Library, all H1, H2 Headlines will be formatted easier to read.
+The mashup is not applied:
 
-Before, similar to normal text
 ![Before](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Stronger%20Headlines/StrongerHeadlines-1.png)
 
-After, with stronger headlines
+The mashup is applied:
+
 ![After](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Stronger%20Headlines/StrongerHeadlines-2.png)
 
 
-## How to activate it:
+## To apply the mashup
 
-1. Install the mashup from the Targetprocess Mashups Library
-2. Automatically adds some CSS to all H1, H2
-
-
-(The CSS could be loaded directly, but the normal Mashups does not allow external css).
+* Install the mashup from the Targetprocess Mashups Library to active it.
+* Refresh your page:
+	* Windows: ctrl + F5
+	* Mac/Apple: Apple + R or command + R
+	* Linux: F5
