@@ -13,7 +13,7 @@ The mashup is applied:
 
 ## To apply the mashup
 
-* Install the mashup from the Targetprocess Mashups Library to active it.
+* Install the mashup from the Targetprocess Mashups Library to activate it.
 * Refresh your page:
 	* Windows: ctrl + F5
 	* Mac/Apple: Apple + R or command + R
