@@ -7,6 +7,20 @@ tau.mashups
     .addDependency('tau/models/board.customize.units/board.customize.units.base')
     .addMashup(function($, _, globalConfigurator, types, sizes, helper) {
         var getLast = true;
+
+        function getImageProperty(originAttachments, property, defaultValue) {
+            var attachments = [].concat(originAttachments);
+            if (getLast) {
+                attachments.reverse();
+            }
+            for (var i = 0; i < attachments.length; i++) {
+                if((attachments[i].mimeType !== null) && (attachments[i].mimeType.indexOf('image') >= 0)) {
+                    return property(attachments[i]);
+                }
+            }
+            return defaultValue;
+        }
+
         var units = [
             {
                 id: 'attachment_image_thumbnail_large',
@@ -51,28 +65,10 @@ tau.mashups
                     ],
                     customFunctions: {
                         getImage: function(originAttachments) {
-                            var attachments = [].concat(originAttachments);
-                            if (getLast) {
-                                attachments.reverse();
-                            }
-                            for (var i = 0; i < attachments.length; i++) {
-                                if((attachments[i].mimeType != null) && (attachments[i].mimeType.indexOf('image') >= 0)) {
-                                    return attachments[i].thumbnailUri;
-                                }
-                            }
-                            return "";
+                            return getImageProperty(originAttachments, (img) => img.thumbnailUri, "");
                         },
                         getTitle: function(originAttachments) {
-                            var attachments = [].concat(originAttachments);
-                            if (getLast) {
-                                attachments.reverse();
-                            }
-                            for (var i = 0; i < attachments.length; i++) {
-                                if((attachments[i].mimeType != null) && (attachments[i].mimeType.indexOf('image') >= 0)) {
-                                    return attachments[i].name;
-                                }
-                            }
-                            return "";
+                            return getImageProperty(originAttachments, (img) => img.name, "");
                         }
                     }
                 },
