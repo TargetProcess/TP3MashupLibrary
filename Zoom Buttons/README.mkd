@@ -1,0 +1,16 @@
+Zoom Buttons
+============
+
+The Zoom Buttons mashup allows you to easily change the size of cards by adding buttons on the top-bar.
+
+New Buttons
+![New Buttons]
+(https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Zoom%20Buttons/ZoomButtons-1.png)
+
+## To apply the mashup
+
+* Install the mashup from the Targetprocess Mashups Library to active it.
+* Refresh your page:
+	* Windows: ctrl + F5
+	* Mac/Apple: Apple + R or command + R
+	* Linux: F5
