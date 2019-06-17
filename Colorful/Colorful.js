@@ -4,7 +4,7 @@ tau.mashups
         'use strict';
         var initColorfulTheme = function() {
             var style = document.createElement("style");
-            style.setAttribute('id', 'qs-color-style');
+            style.setAttribute('id', 'tree-color-style');
             style.appendChild(document.createTextNode(""));
             document.head.appendChild(style);
             var sheet = style.sheet;
@@ -41,7 +41,7 @@ tau.mashups
 
         // Add menu item to toggle the theme
         topMenu.addItem('Colorful').onClick(function() {
-            var $xt = $(document).find('#qs-color-style');
+            var $xt = $(document).find('#tree-color-style');
             if ($xt.length) {
                 $xt.remove();
             } else {
