@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "This mashup hides some table-headers and fields making the list view look cleaner.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.13.6"
+  }
+}
