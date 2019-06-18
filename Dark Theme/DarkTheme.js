@@ -39,17 +39,19 @@ tau
             addCSSRule('.ui-slider-handle', 'margin-top: -5px !important; background: #fff !important; border: 3px solid #292c33 !important; box-shadow: none !important; border-radius: 10px !important;');
             addCSSRule('.tau-board .tau-board-body-wrapper', 'border-top: none !important;');
             addCSSRule('.tau-axiscell__item .i-role-name, .tau-x-header .tau-label, .i-role-timeline-header-cell .tau-label, .tau-timeline-scale .i-role-timeline-header-cell .i-role-cell, .tau-period-label, .tau-boardclipboard-title, .tau-scale-ruler', 'color: #fff !important; text-shadow: none !important;');
+            addCSSRule('.tau-axiscell__item .tau-label__text_current', 'color: rgba(255,255,255,0.7) !important; text-shadow: none !important;');
             addCSSRule('.tau-boardclipboard .i-role-action-clear', 'background: transparent !important; border-color: #555960 !important;');
             addCSSRule('.tau-boardclipboard', 'background: #3d424d !important; border: none !important;');
             addCSSRule('.tau-boardclipboard-title', 'font-weight: 400 !important; opacity: .9 !important;');
             addCSSRule('.i-role-axis-mark-selector', 'background: #989CA6 !important; border: none !important;');
-            addCSSRule('.tau-cards-count span', 'background: #292c33 !important; box-shadow: none !important;');
+            addCSSRule('.tau-cards-count span', 'color: rgba(0,0,0,0.7) !important; background: #ffffff !important; box-shadow: none !important;');
             addCSSRule('.tau-board-view .tau-grid .tau-cellholder , .tau-board-view .tau-cols-header .tau-cellholder, .tau-board-view .tau-cols-header, .tau-board-view .tau-rows-header, .tau-x-header, .tau-board-view .tau-rows-header .tau-cellholder, .tau-board-view .tau-backlog-body .tau-cellholder, .tau-board-view .tau-timeline .tau-cellholder, .tau-board-view .tau-backlog', 'border-color: #595C63 !important;');
             addCSSRule('.tau-board-grid-view .tau-cellholder.tau-selected, .tau-cellholder_dndcrossing_true', 'background: #3D424D !important;');
             addCSSRule('.tau-board-view .tau-cols-header>ul,.tau-board-grid-view .tau-grid>table', 'border-right: none !important;');
             addCSSRule('.t3-views-navigator, .tau-app-main-pane', 'background: #292c33 !important;');
             addCSSRule('.tau-app>.tau-app-body>.tau-app-main-pane', 'border-left: 2px solid #14161A !important;');
             addCSSRule('.tau-timeline>.tau-timeline-canvas>.tau-timeline-flow, ._tc-timeline-navigator:before, ._tc-timeline-navigator:after, ._tc-timeline-navigator>.tc-focus-range:before, ._tc-timeline-navigator>.tc-focus-range:after, ._tc-timeline-navigator', 'background: transparent !important;');
+            addCSSRule('.tau-timeline .tau-timeline-card .tau-card-planner .tau-card-v2', 'background: rgba(255,255,255,0.7) !important;');
             addCSSRule('.t3-views-navigator>.t3-search', 'border: 1px solid #555960 !important;');
             addCSSRule('.t3-views-navigator .t3-group', 'background: #292c33 !important;');
             addCSSRule('.tau-sp-collapsed .t3-search, .tp3-active', 'border-color: transparent !important;');
@@ -70,11 +72,14 @@ tau
             addCSSRule('.tau-page-items, .tau-page-items .tau-count', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-page-items .tau-count:hover', 'color: #fff !important;');
             addCSSRule('.tau-page-items .tau-count.tau-active', 'color: #fff !important; background: #989CA6 !important');
+            addCSSRule('.tau-pages-navigator__text', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-board-view .tau-label__date', 'color: #A1A7B3 !important; opacity: 1 !important');
+            addCSSRule('.tau-board-view .tau-label__date_current .time-left', 'color: rgba(161,167,179,0.5) !important;');
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: #A1A7B3 !important;');
             addCSSRule('.tau-paging-info', 'color: #fff !important; font-weight: 400 !important');
             addCSSRule('.boardsettings-filter__contener:after', 'background: #292c33 !important; box-shadow: none !important;');
             addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;');
+            addCSSRule('.i-role-axis-item .tau-state', 'color: #A1A7B3 !important;');
         };
 
         topMenu.addItem('TV').onClick(function() {
