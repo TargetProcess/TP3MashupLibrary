@@ -21,3 +21,6 @@ The mashup is applied:
 __Notice__:
 The (+) button is hidden for all levels except of first. 
 A new entity can be added on the detail view of the parent entity.
+
+You can toggle the mashup on and off temporarily with the "tree" link in the navigation. 
+Then all fields are visibe for editing or adding sub-items, then switch back to clean view after editing. 
