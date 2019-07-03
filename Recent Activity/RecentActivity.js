@@ -168,7 +168,7 @@ tau
 
                 return $
                     .when(this.doQuery({
-                        resource: entityTypeName + 'History',
+                        resource: entityTypeName + 'SimpleHistory',
                         fields: processFields(fields),
                         where: [
                             this.buildProjectCondition(entityTypeName + '.Project'),
