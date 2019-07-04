@@ -1,6 +1,6 @@
 {
   "ShortDescription": "Shows recent activity timeline: new comments, new entities, status updates for User Stories, Tasks and Bugs.",
   "CompatibleTpVersion": {
-    "Minimum": "2.24.4"
+    "Minimum": "3.13.5"
   }
 }
