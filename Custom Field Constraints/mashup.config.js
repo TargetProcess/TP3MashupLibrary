@@ -6,6 +6,8 @@ tau.mashups.addModule("CustomFieldConstraints/config", [
         "constraints": {
             // Entity Type the custom field was created for.
             "userstory": {
+                // Note user sees in popup when constraints are violated.
+                "note": "Please, specify the following custom fields:",
                 "entityStates": [
                     {
                         // When moving to this state in the workflow the custom field will be required.
@@ -40,6 +42,8 @@ tau.mashups.addModule("CustomFieldConstraints/config", [
         "constraints": {
             // Entity Type the custom field was created for.
             "user": {
+                // Note user sees in popup when constraints are violated.
+                "note": "Please, specify the following user custom fields:",
                 "customFields": [
                     {
                         // Custom Field, which contains the constrained value.
