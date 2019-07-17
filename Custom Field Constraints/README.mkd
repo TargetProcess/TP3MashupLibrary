@@ -10,7 +10,8 @@ After the mashup has been installed, it will need to be configured. Click the Cu
 * Specify a _Process Name_, which the custom field belongs to, as a ```‘process:’``` value (for entities dependent on a process).
 * Specify an _Entity Type_, which the custom field was created for, as a ```‘constraints:’``` value.
 
-_Note: It's also possible to customize the text that will be shown above needed custom fields when pop-up is opened instead of ```Please specify the following custom fields```. To do that please specify _Note_ as a ```‘entitytype:’``` value._
+_Note: It's also possible to customize the message that will be shown above needed custom fields when pop-up is opened instead of ```Please specify the following custom fields```. To do that please specify _Message_ as a ```‘note:’``` value._
+
 
 ## To configure Entity State Constraints
 
@@ -27,8 +28,7 @@ specify the Entity State for related Project Workflow instead of a Team one._
 * Specify the _Name_ of a Custom Field, which contains the constrained value, as a ```‘name:’```  in a ```‘customFields:’``` section.
 * Specify the _Constrained value_, which makes a dependent Custom Field required, as a ```‘valueIn:’``` in a ```‘customFields:’``` section.
 * In case you need to make a custom field required, when any value except the specified one, is provided, use ```‘valueNotIn’``` instead of ```‘valueIn’``` operator.
-* Specify a _Name_ of a Custom Field, which should become required, as a ```‘requiredCustomFields:’``` in a ```‘customFields:’``` section.
-* _Optional_: Specify the popup's _note_ when need to provide the value for required custom field.
+
 
 ## To apply the mashup
 
