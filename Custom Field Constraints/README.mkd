@@ -28,7 +28,7 @@ specify the Entity State for related Project Workflow instead of a Team one._
 * Specify the _Name_ of a Custom Field, which contains the constrained value, as a ```‘name:’```  in a ```‘customFields:’``` section.
 * Specify the _Constrained value_, which makes a dependent Custom Field required, as a ```‘valueIn:’``` in a ```‘customFields:’``` section.
 * In case you need to make a custom field required, when any value except the specified one, is provided, use ```‘valueNotIn’``` instead of ```‘valueIn’``` operator.
-
+* Specify a _Name_ of a Custom Field, which should become required, as a ```‘requiredCustomFields:’``` in a ```‘customFields:’``` section.
 
 ## To apply the mashup
 
