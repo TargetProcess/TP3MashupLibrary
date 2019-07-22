@@ -10,7 +10,7 @@ After the mashup has been installed, it will need to be configured. Click the Cu
 * Specify a _Process Name_, which the custom field belongs to, as a ```‘process:’``` value (for entities dependent on a process).
 * Specify an _Entity Type_, which the custom field was created for, as a ```‘constraints:’``` value.
 
-_Note: It's also possible to customize the message that will be shown above needed custom fields when pop-up is opened instead of ```Please specify the following custom fields```. To do that please specify _Message_ as a ```‘note:’``` value._
+_Note: It's also possible to customize the message that will be shown above needed custom fields when pop-up is opened instead of ```Please specify the following custom fields```. To do that please specify _Message_ as a ```‘validationMessage:’``` value._
 
 
 ## To configure Entity State Constraints
