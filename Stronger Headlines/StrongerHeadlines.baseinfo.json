@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "This Mashup makes H1 and H2 headers in reach text more conspicuous by adding dotted underline.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.13.6"
+  }
+}

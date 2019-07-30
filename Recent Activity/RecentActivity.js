@@ -1,4 +1,4 @@
-/* globals tau */
+/*global tau*/
 tau
     .mashups
     .addDependency('jQuery')
@@ -7,13 +7,10 @@ tau
     .addDependency('tp3/mashups/popup')
     .addDependency('tp3/mashups/context')
     .addDependency('tau/utils/utils.date')
-    .addMashup(function($, _, topmenu, Popup, context, du) {
+    .addDependency('tau/core/templates-factory')
+    .addMashup(function($, _, topmenu, Popup, context, du, templates) {
 
         'use strict';
-
-        var extractDate = function(date) {
-            return du.parse(date);
-        };
 
         var extractFullName = function(user) {
             return _.compact([user.firstName, user.lastName]).join(' ').trim() || 'Anonymous';
@@ -28,20 +25,70 @@ tau
                 }).join(',');
             } else if (_.isObject(fields)) {
                 var key = _.keys(fields)[0];
-                prefix += _.keys(fields)[0] + '.';
+                prefix += key + '.';
                 return 'new(' + processFields(fields[key], prefix) + ') as ' + key;
             } else {
                 return prefix + fields;
             }
         };
 
-        var Controller = {
+        var HistoryItem = function(entityType, eventDate, state, entity, user) {
+            var project = entity.project;
+
+            this.EntityType = entityType;
+            this.EventDate = du.parse(eventDate);
+            this.State = state;
+            this.EntityName = entity.name;
+            this.User = extractFullName(user);
+            this.UserId = user.id;
+            this.ProjectAbbreviation = (project && project.abbreviation) ? project.abbreviation : '';
+            this.Color = (project && project.color) ? project.color : '';
+            this.Id = entity.id;
+        };
+
+        var htmlTemplate = templates.register({
+            name: 'recent.activity.template.main',
+            engine: 'jqote2',
+            markup: [
+                '<div id="ac_filter" style="font-size: 12px;">',
+                '<label><input type="checkbox" <%= this.flags.added ? "checked" : "" %> class="ac_event_filter" value="added"> Add </label> ',
+                '<label><input type="checkbox" <%= this.flags.comments ? "checked" : "" %> class="ac_event_filter" value="comments"> Comment </label> ',
+                '<label><input type="checkbox" <%= this.flags.changes ? "checked" : "" %>  class="ac_event_filter" value="changes"> State Change </label> ',
+                '</div>',
+                '<div id="ac_main" style="height: 100%; overflow: scroll;"><table style="font-size: 11px !important;">',
+                '<%= fn.sub("recent.activity.template.group", this.groups) %>',
+                '</table></div>'
+            ]
+        });
+
+        templates.register({
+            name: 'recent.activity.template.group',
+            engine: 'jqote2',
+            markup: [
+                '<tr><td colspan="3"><h2><%= this.eventDate %></h2></td></tr>',
+                '<%= fn.sub("recent.activity.template.row", this.items) %>'
+            ]
+        });
+
+        templates.register({
+            name: 'recent.activity.template.row',
+            engine: 'jqote2',
+            markup: [
+                '<tr><td><img width="16" height="16" src="<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>">',
+                ' <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>',
+                '<td><span class="delimiter">—</span> <span style="background:<%= this.color %>;"><%= this.projectAbr %></span>',
+                ' <%= this.entityType %> <a href="<%= this.path %>/entity/<%= this.entityId %>"><%! this.entityName %></a>',
+                ' by <%! this.user %></td></tr>'
+            ]
+        });
+
+        var controller = {
 
             DAYS_AGO: 2,
+            dataToLoad: null,
 
             init: function() {
 
-                this.acid = '';
                 this.projects = [];
                 this.appPath = '';
 
@@ -56,7 +103,6 @@ tau
                 });
 
                 context.onChange(function(ctx) {
-                    this.acid = ctx.acid;
                     this.projects = ctx.selectedProjects;
                 }.bind(this));
 
@@ -69,6 +115,10 @@ tau
                             this.popup = new Popup();
                             this.popup.show();
                             this.$el = this.popup.$container;
+                            this.$el.on('click', '#ac_filter :checkbox', function(e) {
+                                this.dataToLoad[e.currentTarget.value] = e.currentTarget.checked;
+                                this.execute();
+                            }.bind(this));
                             this.execute();
                         }.bind(this));
 
@@ -79,10 +129,7 @@ tau
             execute: function() {
 
                 return $
-                    .when(context.getAcid(), this.popup.showLoading())
-                    .then(function(acid) {
-                        this.acid = acid;
-                    }.bind(this))
+                    .when(this.popup.showLoading())
                     .then(this.loadData.bind(this))
                     .then(this.renderHtml.bind(this))
                     .then(this.popup.hideLoading.bind(this.popup));
@@ -98,34 +145,35 @@ tau
                     this.dataToLoad.comments ? this.loadComments() : []
                 ];
                 return $
-                    .when.apply(null, toLoad)
-                    .then(function() {
-                        return Array.prototype.concat.apply([], _.toArray(arguments));
+                    .when.all(toLoad)
+                    .then(function(data) {
+                        return _.flatten(data);
                     });
             },
 
             loadChanges: function(entityTypeName) {
 
-                var fields = [
-                    'date',
-                    'modifier', {
-                        'entityState': ['name']
-                    }
-                ];
                 var entityFields = {};
                 entityFields[entityTypeName] = [
                     'id',
-                    'name', {
-                        'project': ['color', 'abbreviation']
-                    }
+                    'name',
+                    {'project': ['color', 'abbreviation']}
                 ];
-                fields.push(entityFields);
+                var fields = [
+                    'date',
+                    'modifier',
+                    {'entityState': ['name']},
+                    entityFields
+                ];
 
                 return $
                     .when(this.doQuery({
-                        resource: entityTypeName + 'History',
+                        resource: entityTypeName + 'SimpleHistory',
                         fields: processFields(fields),
-                        where: [this.buildProjectCondition(entityTypeName + '.Project'), this.buildDateCondition('Date')]
+                        where: [
+                            this.buildProjectCondition(entityTypeName + '.Project'),
+                            this.buildDateCondition('Date')
+                        ]
                     }))
                     .then(function(items) {
                         return this.processChanges(items, entityTypeName);
@@ -135,17 +183,9 @@ tau
             processChanges: function(items, entityType) {
 
                 return items.map(function(item) {
-                    return {
-                        EntityType: entityType,
-                        EventDate: extractDate(item.date),
-                        State: item.entityState.name,
-                        EntityName: item[entityType].name,
-                        User: extractFullName(item.modifier),
-                        UserId: item.modifier.id,
-                        ProjectAbbreviation: (item[entityType].project && item[entityType].project.abbreviation) ? item[entityType].project.abbreviation : '',
-                        Color: (item[entityType].project && item[entityType].project.color) ? item[entityType].project.color : '',
-                        Id: item[entityType].id
-                    };
+                    var entity = item[entityType];
+                    return new HistoryItem(_.titleize(entityType), item.date, item.entityState.name,
+                        entity, item.modifier);
                 });
             },
 
@@ -154,12 +194,10 @@ tau
                 var fields = processFields([
                     'id',
                     'name',
-                    'owner', {
-                        'entityType': ['name']
-                    },
-                    'createDate', {
-                        'project': ['color', 'abbreviation']
-                    }
+                    'owner',
+                    {'entityType': ['name']},
+                    'createDate',
+                    {'project': ['color', 'abbreviation']}
                 ]);
 
                 return $
@@ -177,17 +215,8 @@ tau
             processAdded: function(items) {
 
                 return items.map(function(general) {
-                    return {
-                        EntityType: general.entityType.name,
-                        EventDate: extractDate(general.createDate),
-                        State: 'Added',
-                        EntityName: general.name,
-                        User: extractFullName(general.owner),
-                        UserId: general.owner.id,
-                        ProjectAbbreviation: (general.project && general.project.abbreviation) ? general.project.abbreviation : '',
-                        Color: (general.project && general.project.color) ? general.project.color : '',
-                        Id: general.id
-                    };
+                    return new HistoryItem(general.entityType.name, general.createDate, 'Added',
+                        general, general.owner);
                 });
             },
 
@@ -196,13 +225,13 @@ tau
                 var fields = processFields([
                     'description',
                     'owner',
-                    'createDate', {
+                    'createDate',
+                    {
                         'general': [
                             'id',
                             'name',
-                            'entityType', {
-                                'project': ['color', 'abbreviation']
-                            }
+                            'entityType',
+                            {'project': ['color', 'abbreviation']}
                         ]
                     }
                 ]);
@@ -221,18 +250,9 @@ tau
             processComments: function(items) {
 
                 return items.map(function(comment) {
-
-                    return {
-                        EntityType: comment.general.entityType.name,
-                        EventDate: extractDate(comment.createDate),
-                        State: 'Comment',
-                        EntityName: comment.general.name,
-                        User: extractFullName(comment.owner),
-                        UserId: comment.owner.id,
-                        ProjectAbbreviation: (comment.general.project && comment.general.project.abbreviation) ? comment.general.project.abbreviation : '',
-                        Color: (comment.general.project && comment.general.project.color) ? comment.general.project.color : '',
-                        Id: comment.general.id
-                    };
+                    var entity = comment.general;
+                    return new HistoryItem(entity.entityType.name, comment.createDate, 'Comment',
+                        entity, comment.owner);
                 });
             },
 
@@ -245,10 +265,9 @@ tau
                     });
                 }
 
-                where = where.join(' and ');
                 var data = {
                     select: '{' + options.fields + '}',
-                    where: where,
+                    where: where.join(' and '),
                     take: options.take || 100,
                     format: 'json'
                 };
@@ -294,95 +313,66 @@ tau
             buildDateCondition: function(dateFieldName) {
 
                 var format = function(date) {
-                    return _.lpad(date.getFullYear(), 2, 0) + '-' + _.lpad(date.getMonth() + 1, 2, 0) + '-' + date.getDate();
+                    return _.lpad(date.getFullYear(), 2, 0) + '-' +
+                        _.lpad(date.getMonth() + 1, 2, 0) + '-' +
+                        date.getDate();
                 };
 
                 var from = format(new Date(new Date() - this.DAYS_AGO * 24 * 3600000));
                 var to = format(new Date());
 
-                return _.sprintf('(%s >= DateTime.Parse("%s")) and (%s <= DateTime.Parse("%s"))', dateFieldName, from, dateFieldName, to);
+                return _.sprintf('(%s >= DateTime.Parse("%s")) and (%s <= DateTime.Parse("%s"))',
+                    dateFieldName, from, dateFieldName, to);
             },
 
             renderHtml: function(items) {
 
-                items = _.sortBy(items, function(item) {
-                    return item.EventDate;
+                items = _
+                    .chain(items)
+                    .sortBy(function(item) {
+                        return item.EventDate;
+                    })
+                    .reverse()
+                    .map(function(item) {
+                        var months = [
+                            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+                        ];
+                        var format = function(date) {
+                            return (months[date.getMonth()]) + '-' + date.getDate();
+                        };
+
+                        var eventDate = item.EventDate;
+
+                        return {
+                            eventDate: format(eventDate),
+                            path: this.appPath,
+                            date: _.lpad(eventDate.getHours(), 2, 0) + ':' + _.lpad(eventDate.getMinutes(), 2, 0),
+                            state: item.State,
+                            entityType: item.EntityType.toString(),
+                            entityId: item.Id,
+                            entityName: item.EntityName,
+                            projectAbr: item.ProjectAbbreviation,
+                            color: item.Color || 'transparent',
+                            userId: item.UserId,
+                            user: item.User,
+                            doneStyle: (item.State === 'Done' || item.State === 'Closed') ?
+                                'style="text-decoration: line-through;"' : ''
+                        };
+                    }, this)
+                    .value();
+
+                var groups = _.groupBy(items, function(item) {
+                    return item.eventDate;
+                });
+                groups = _.map(groups, function(items, eventDate) {
+                    return {eventDate: eventDate, items: items};
                 });
 
-                items.reverse();
-
-                var format = function(date) {
-                    var months = [
-                        'Jan',
-                        'Feb',
-                        'Mar',
-                        'Apr',
-                        'May',
-                        'Jun',
-                        'Jul',
-                        'Aug',
-                        'Sep',
-                        'Oct',
-                        'Nov',
-                        'Dec'
-                    ];
-
-                    return (months[date.getMonth()]) + '-' + date.getDate();
-                };
-
-                var grouped = _.groupBy(items, function(item) {
-                    return format(item.EventDate);
-                });
-
-                this.$el.find('#ac_filter').remove();
-                this.$el.find('#ac_main').remove();
-
-                var html = $.jqote('<div id="ac_filter" style="font-size: 12px">' +
-                    '<label><input type="checkbox" <%= this.added ? "checked" : "" %> class="ac_event_filter" value="added"> Add </label> ' +
-                    '<label><input type="checkbox" <%= this.comments ? "checked" : "" %> class="ac_event_filter" value="comments"> Comment </label> ' +
-                    '<label><input type="checkbox" <%= this.changes ? "checked" : "" %>  class="ac_event_filter" value="changes"> State Change </label> ' +
-                    '</div>', this.dataToLoad);
-
-                html += '<div id="ac_main" style="height: 100%; overflow: scroll"><table style="font-size: 11px !important">';
-
-                var tmpl = ['<tr><td><img width="16" height="16" src="<%= this.path %>/avatar.ashx?size=16&UserId=<%= this.userId %>">',
-                    ' <b><%= this.date %></b></td><td <%=this.doneStyle %>><%= this.state %></td>',
-                    '<td><span class="delimeter">—</span> <span style="background:<%= this.color %>"><%= this.projectAbr %></span>',
-                    ' <%= this.entityType %> <a href="<%= this.path %>/entity/<%= this.entityId %>"><%= this.entityName %></a>',
-                    ' by <%= this.user %></td></tr>'
-                ].join('');
-
-                _.forEach(grouped, function(val, key) {
-                    html += '<tr><td colspan="3"><h2>' + key + '</h2></td></tr>';
-                    _.forEach(val, function(item) {
-
-                        html += $.jqote(
-                            tmpl, {
-                                path: this.appPath,
-                                date: _.lpad(item.EventDate.getHours(), 2, 0) + ':' + _.lpad(item.EventDate.getMinutes(), 2, 0),
-                                state: item.State,
-                                entityType: item.EntityType.toString(),
-                                entityId: item.Id,
-                                entityName: item.EntityName,
-                                projectAbr: item.ProjectAbbreviation,
-                                color: item.Color,
-                                userId: item.UserId,
-                                user: item.User,
-                                doneStyle: (item.State === 'Done' || item.State === 'Closed') ? 'style="text-decoration: line-through;"' : ''
-                            });
-                    }.bind(this));
-                }.bind(this));
-
-                html += '</table></div>';
-
-                this.$el.append(html);
-
-                this.$el.find('#ac_filter').on('click', ':checkbox', function(e) {
-                    this.dataToLoad[e.currentTarget.value] = e.currentTarget.checked;
-                    this.execute();
-                }.bind(this));
+                this.$el.find('#ac_filter,#ac_main').remove();
+                htmlTemplate.render({flags: this.dataToLoad, groups: groups}).appendTo(this.$el);
             }
         };
 
-        return Controller.init();
+        return controller.init();
     });

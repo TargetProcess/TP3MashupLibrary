@@ -16,10 +16,10 @@ body.fullscreen {
 
 body.fullscreen .tau-app-header,
 body.fullscreen .tau-board-header,
+body.fullscreen .app-header,
 body.fullscreen .tau-board-settings,
 body.fullscreen .tau-app-secondary-pane,
 body.fullscreen .tau-boardclipboard,
-body.fullscreen .tau-boardtools,
 body.fullscreen .i-role-axis-mark-selector,
 body.fullscreen .tau-board-view-switch  {
     display: none !important;
@@ -32,4 +32,21 @@ body.fullscreen .tau-board {
     top: 0 !important;
     height: 100% !important;
     border-bottom-width: 0 !important;
+}
+
+.tau-inline-group-nestedboardstoolbar {
+    display: -ms-flexbox;
+    display: inline-flex;
+    -ms-flex-align: center;
+    align-items: center;
+
+    vertical-align: middle;
+}
+
+.tau-inline-group-nestedboardstoolbar__control {
+    margin-right: 4px;
+}
+
+.tau-inline-group-nestedboardstoolbar__control:last-child {
+    margin-right: 0;
 }

@@ -12,11 +12,10 @@ tau
         'use strict';
 
         var reg = configurator.getBusRegistry();
+        var boardSettings;
 
         var addBusListener = function(busName, eventName, listener, isImmediate) {
-
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
@@ -24,7 +23,6 @@ tau
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
@@ -43,6 +41,10 @@ tau
             configurator = appConfigurator;
         });
 
+        addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
+            boardSettings = bs.boardSettings;
+        });
+
         var types = configurator.getStore().getTypes().getDictionary();
 
         var getCollection = function(typeName) {
@@ -50,7 +52,6 @@ tau
         };
 
         var getParents = function(typeName) {
-
             var type = types[typeName];
             if (type.parent) {
                 var parentType = types[type.parent];
@@ -83,7 +84,6 @@ tau
             };
 
             var loadPages = function loadPages(url, params) {
-
                 return loadSimple(url, params)
                     .then(function(res) {
                         var items = res.Items;
@@ -102,7 +102,6 @@ tau
         };
 
         var processResult = function(result) {
-
             if (_.isArray(result)) {
                 return result.map(function(v) {
                     return processResult(v);
@@ -122,20 +121,16 @@ tau
         };
 
         var stringify = function(obj) {
-
-            var res = "";
+            var res = '';
 
             if (obj) {
                 if (Array.isArray(obj)) {
-
-                    res = obj.map(stringify).join(",");
-                } else if (typeof obj === "object") {
-
+                    res = obj.map(stringify).join(',');
+                } else if (typeof obj === 'object') {
                     res = Object.keys(obj).map(function(key) {
-                        return key + "[" + stringify(obj[key]) + "]";
-                    }).join(",");
-                } else if (typeof obj !== "function") {
-
+                        return key + '[' + stringify(obj[key]) + ']';
+                    }).join(',');
+                } else if (typeof obj !== 'function') {
                     res = String(obj);
                 }
             }
@@ -173,7 +168,6 @@ tau
             },
 
             execute: function() {
-
                 if (!this.axisCache) {
                     this.axisCache = this.createAxisCache(this.$boardEl);
                 }
@@ -188,13 +182,13 @@ tau
             },
 
             reset: function() {
-                return this.$boardEl.find(
-                        '.tau-card.hiddenByResposible,.tau-card-v2.hiddenByResposible').show()
+                return this.$boardEl
+                    .find('.tau-card-v2.hiddenByResposible')
+                    .show()
                     .toggleClass('hiddenByResposible', false);
             },
 
             createAxisCache: function() {
-
                 return _.object(this.$boardEl.find('[data-dimension=' + this.usersAxis +
                     '] .i-role-cellaxis-viewtrigger').toArray().map(function(v) {
                     return [$(v).data('id'), $(v).data('entityId')];
@@ -202,12 +196,10 @@ tau
             },
 
             getCardsEl: function() {
-                return this.$boardEl.find(
-                    '.tau-card:not(.hiddenByResposible),.tau-card-v2:not(.hiddenByResposible)');
+                return this.$boardEl.find('.tau-card-v2:not(.hiddenByResposible)');
             },
 
             getCardsData: function($cards) {
-
                 var ids = $cards.map(function() {
                     if (!$(this).data('entity-type')) {
                         return null;
@@ -270,13 +262,11 @@ tau
             },
 
             applyToCards: function(data, $cards) {
-
                 var hash = _.object(data.map(function(v) {
                     return [v.id, v];
                 }));
 
                 $cards.toArray().forEach(function(v) {
-
                     var $el = $(v);
                     this.applyToCard(hash[$el.data('entity-id')], $el);
                 }.bind(this));
@@ -312,11 +302,39 @@ tau
         });
 
         var colorer = new Colorer();
+
+        var saveToStorage = function(isActive) {
+            try {
+                window.localStorage.setItem('mashup_hide_for_non_responsible_active', JSON.stringify(isActive));
+            } catch (e) {
+            }
+        };
+
+
         var store = {
             isActive: false,
             isApply: false,
 
             init: function($boardEl) {
+
+                var activeByStorageDefault = false;
+
+                if (mashupConfig.hideByDefaultForUsers &&
+                    mashupConfig.hideByDefaultForUsers.length &&
+                    mashupConfig.hideByDefaultForUsers.indexOf(window.loggedUser.id) >= 0) {
+                    activeByStorageDefault = true;
+                } else {
+                    activeByStorageDefault = Boolean(mashupConfig.hideByDefault);
+                }
+
+                var activeByStorage = activeByStorageDefault;
+                try {
+                    activeByStorage = JSON.parse(window.localStorage.getItem('mashup_hide_for_non_responsible_active'));
+                    activeByStorage = (activeByStorage === null) ? activeByStorageDefault : activeByStorage;
+                } catch (e) {
+                }
+
+                this.isActive = activeByStorage;
 
                 this.isApply = false;
                 this.fireChange();
@@ -325,15 +343,9 @@ tau
                     this.boardBus = bus;
                 }.bind(this));
 
-                configurator.service('boardSettings').get({
-                    fields: [
-                        'x',
-                        'y',
-                        'viewMode',
-                        'cells'
-                    ],
+                boardSettings.get({
+                    fields: ['x', 'y', 'viewMode', 'cells'],
                     callback: function(res) {
-
                         if (res.viewMode !== 'board') {
                             this.isApply = false;
                             return;
@@ -356,14 +368,12 @@ tau
                         this.isApply = Boolean(axis) && isCells;
 
                         if (this.isApply) {
-
                             colorer.usersAxis = axis;
                             colorer.$boardEl = $boardEl;
 
                             if (this.isActive) {
                                 this.activate();
                             }
-
                         }
 
                         this.fireChange();
@@ -380,9 +390,9 @@ tau
             },
 
             activate: function() {
-
                 if (this.isApply) {
                     this.isActive = true;
+                    saveToStorage(true);
                     $
                         .when(colorer.execute())
                         .then(this.resizeBoard.bind(this));
@@ -392,6 +402,7 @@ tau
 
             deactivate: function() {
                 this.isActive = false;
+                saveToStorage(false);
                 $
                     .when(colorer.reset())
                     .then(this.resizeBoard.bind(this));
@@ -399,7 +410,6 @@ tau
             },
 
             toggle: function() {
-
                 if (this.isActive) {
                     this.deactivate();
                 } else {
@@ -425,20 +435,24 @@ tau
             store.isApply = false;
         });
 
+        addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
+            boardSettings = bs.boardSettings;
+        });
+
         addBusListener('board_plus', 'overview.board.ready', function(e, renderData) {
             store.init(renderData.element);
         });
 
         addBusListener('board_plus', 'view.card.skeleton.built', _.debounce(store.execute.bind(store), 500));
 
-        var $button = $(
-            '<button class="tau-btn  tau-extension-board-tooltip" style="float:right;margin-right:10px;"' +
-            ' data-title="Show only responsible cards" >' +
-                'Hide not Responsible' +
-            '</button>');
+        var controlHTML = '<div class="tau-board-header__control" style="margin-left: 10px">' +
+            '<button class="tau-btn i-role-board-tooltip tau-extension-board-tooltip" style="float: right;"' +
+            ' data-title="Show only responsible cards">Hide not Responsible</button>' +
+            '</div>';
+        var $control = $(controlHTML);
+        var $button = $control.find('button');
 
-        var renderButton = function($el) {
-
+        var renderControl = function($el) {
             if (store.isApply) {
 
                 $button.text(store.isActive ?
@@ -447,20 +461,19 @@ tau
                 $button.data('title', store.isActive ?
                     'Show all cards assigned' :
                     'Show only responsible cards');
-                $el.find('[role=zoomer]').before($button);
+                $el.find('.i-role-filter-control').parent().after($control);
                 $button.off('click');
                 $button.on('click', store.toggle.bind(store));
             } else {
 
-                $button.detach();
+                $control.detach();
             }
         };
 
         addBusListener('board.toolbar', 'afterRender', function(e, renderData) {
-
-            renderButton(renderData.element);
+            renderControl(renderData.element);
             store.on('change', function() {
-                renderButton(renderData.element);
+                renderControl(renderData.element);
             });
         });
     });

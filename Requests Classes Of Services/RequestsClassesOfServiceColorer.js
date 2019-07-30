@@ -1,13 +1,9 @@
 tau.mashups
-    .addDependency('tp/mashups')
-    .addDependency('user/mashups')
-    .addDependency('jQuery')
-    .addDependency('Underscore')
     .addDependency('tp3/mashups/context')
     .addDependency('tau/core/bus.reg')
     .addDependency('tau/configurator')
     .addDependency("tau/utils/utils.date")
-    .addMashup(function(m, um, $, _, context, busRegistry, configurator, du) {
+    .addMashup(function(context, busRegistry, configurator, du) {
 
         var Colorer = function() {
 
@@ -23,12 +19,15 @@ tau.mashups
 
                 this.includeIdeas = 0; //0 by default
                 this.includeInitialStateOnly = 1; //1 by default
+                this.includeWeekends = 0; // 0 means do not include weekends into elapsed hours calculation
                 this.hourLimits = [0, 1, 18, 24]; //[0, 1, 18, 24] by default
                 this.leftInQueueNormalDayLimit = 1;
                 this.leftInQueueWarningDayLimit = 3;
-                this.colors = ['#d8ffa0', '', '#fffdb0', '#ffb090']; //['#d8ffa0', '', '#fffdb0', '#ffb090'] by default
+                this.colors = ['#d8ffa0', '', '#fffdb0', '#ff5060']; //['#d8ffa0', '', '#fffdb0', '#ffb090'] by default
                 this.grayColor = '#e4e4e4'; //'#e4e4e4' by default
-
+				this.expireDaysLimit = 30;//requests last modified earlier are not colored
+				this.excludeProjectIdsList = '1,13,50149';//comma-separated, no spaces
+				
                 context.onChange(function(ctx) {
                     self.setContext(ctx);
                     self.refresh(ctx);
@@ -53,7 +52,7 @@ tau.mashups
                 if (this.requestCardElements.length == 0) {
                     return;
                 }
-                var acid = ctx.acid;
+                //var acidParameter = '&acid=' + ctx.acid;;
                 var searchCriteria = '';
                 if (this.includeInitialStateOnly) {
                     searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'EntityState.isInitial==true';
@@ -61,18 +60,33 @@ tau.mashups
                 if (!(this.includeIdeas)) {
                     searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'RequestType.Name!="Idea"';
                 }
-                var requestUrl = configurator.getApplicationPath() + '/api/v2/Request?take=1000' + (searchCriteria ? '&where=' + searchCriteria : '') + '&select={id,CreateDate as createDate,LastCommentDate as lastCommentDate,LastCommentedUser.Kind as lastCommentUserKind, IsReplied as isReplied}&acid=' + acid;
+				if (!(this.excludeProjectIds)) {
+					searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + 'not (Project.ID in [' + this.excludeProjectIdsList + '])';
+				}
+				if (this.expireDaysLimit != 0) {
+					var formatDate = function(date) {
+						return _.lpad(date.getFullYear(), 2, 0) + '-' +
+							_.lpad(date.getMonth() + 1, 2, 0) + '-' +
+							date.getDate();
+					};
+					var fromDate = new Date(new Date() - this.expireDaysLimit * 24 * 3600000);
+					var dateCondition = 'ModifyDate>=DateTime.Parse("' + formatDate(fromDate) + '")';
+					searchCriteria = searchCriteria + (searchCriteria ? ' and ' : '') + dateCondition;
+				}
+                var requestUrl = configurator.getApplicationPath() + '/api/v2/Request?take=1000' + (searchCriteria ? '&where=(' + searchCriteria + ')' : '') + '&select={id,createDate:CreateDate,lastCommentDate:LastCommentDate,lastCommentUserKind:LastCommentedUser.Kind, isReplied:IsReplied}';//+acidParameter
                 $.ajax({
                     url: requestUrl,
                     context: this
                 }).done(function(data) {
                     this.requestAttributesLoaded = {};
-                    for (var i = 0; i < data.items.length; i++) {
-                        var id = data.items[i].id;
-                        this.createdDates[id] = data.items[i].createDate;
-                        this.lastCommentDates[id] = data.items[i].lastCommentDate;
-                        this.lastCommentUserKinds[id] = data.items[i].lastCommentUserKind;
-                        this.isReplied[id] = data.items[i].isReplied;
+                    var items = data.items || [];
+                    for (var i = 0; i < items.length; i++) {
+                        var item = items[i];
+                        var id = item.id;
+                        this.createdDates[id] = item.createDate;
+                        this.lastCommentDates[id] = item.lastCommentDate;
+                        this.lastCommentUserKinds[id] = item.lastCommentUserKind;
+                        this.isReplied[id] = item.isReplied;
                         this.requestAttributesLoaded[id] = true;
                     }
                     this.renderAll();
@@ -94,7 +108,7 @@ tau.mashups
             };
 
             this._getColor = function(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied) {
-                var hoursDiff = getHoursDiff(createdDate, lastCommentDate);
+                var hoursDiff = this.getHoursDiff(createdDate, lastCommentDate);
                 if ((lastCommentDate) && (lastCommentUserKind == 'User')) {
                     var leftInQueueDiff = hoursDiff;
                     if (isReplied) {
@@ -119,29 +133,50 @@ tau.mashups
                         resultColor = this.colors[i];
                     }
                 }
-                return (resultColor ? 'background: ' + resultColor : '');
+                return (resultColor ? 'background: ' + resultColor : null);
+            };
 
-                function getHoursDiff(createdDate, lastCommentDate) {
-                    var timeDiff = getTimeDiff(createdDate, lastCommentDate);
-                    return Math.floor(timeDiff / (1000 * 3600));
+            this.getHoursDiff = function(createdDate, lastCommentDate) {
+                var localDate = this.extractDate(new Date());
+                if (lastCommentDate) {
+                    var lastCommentLocalDate = this.extractDate(lastCommentDate);
+                    return this.getHoursDiffEx(lastCommentLocalDate, localDate);
+                }
+                if (createdDate) {
+                    var createdLocalDate = this.extractDate(createdDate);
+                    return this.getHoursDiffEx(createdLocalDate, localDate);
                 }
 
-                function getTimeDiff(createdDate, lastCommentDate) {
-                    var localDate = extractDate(new Date());
-                    if (lastCommentDate) {
-                        var lastCommentLocalDate = extractDate(lastCommentDate);
-                        return Math.abs(localDate.getTime() - lastCommentLocalDate.getTime());
+                return 0;
+            };
+
+            // calculate hours depending on weekends
+            this.getHoursDiffEx = function(startDate, endDate) {
+                if (this.includeWeekends) {
+                    return Math.floor(Math.abs(startDate.getTime() - endDate.getTime()) / 36e5);
+                }
+
+                var totalHours = 0;
+                var timestamp = startDate.getTime() + 36e5;
+                var endTime = endDate.getTime();
+                var curDate = new Date(timestamp);
+
+                while (timestamp <= endTime) {
+                    var dayOfWeek = curDate.getDay();
+                    var isWorkday = dayOfWeek !== 6 && dayOfWeek !== 0;
+                    if (isWorkday) {
+                        totalHours++;
                     }
-                    if (createdDate) {
-                        var createdLocalDate = extractDate(createdDate);
-                        return Math.abs(localDate.getTime() - createdLocalDate.getTime());
-                    }
-                    return 0;
+
+                    timestamp += 36e5;
+                    curDate.setTime(timestamp);
                 }
 
-                function extractDate(date) {
-                    return du.parse(date);
-                }
+                return totalHours;
+            };
+
+            this.extractDate = function(date) {
+                return du.parse(date);
             };
 
             this.renderCard = function(card) {
@@ -154,7 +189,10 @@ tau.mashups
                 var lastCommentDate = this.lastCommentDates[id];
                 var lastCommentUserKind = this.lastCommentUserKinds[id];
                 var isReplied = this.isReplied[id];
-                card.attr('style', this._getColor(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied));
+                var cardColor = this._getColor(id, createdDate, lastCommentDate, lastCommentUserKind, isReplied);
+                if (cardColor) {
+                    card.attr('style', cardColor);
+                }
             };
 
             this.renderAll = function() {
@@ -163,7 +201,6 @@ tau.mashups
                     self.renderCard(card);
                 });
             };
-        }
-
+        };
         new Colorer().init();
     });

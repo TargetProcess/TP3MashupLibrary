@@ -1,0 +1,6 @@
+{
+  "ShortDescription": "Custom Unit - Project name for Inbound and Outbound relation cards.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.2.8"
+  }
+}

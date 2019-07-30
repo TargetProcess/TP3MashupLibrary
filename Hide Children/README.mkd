@@ -1,10 +1,11 @@
 # Child Hider
 
-The Child Hider mashup provides a quick and easy way to hide child cards whose parents are already displayed on the board.  For example, if you have a feature with four user stories underneath it, the mashup provides a way to toggle showing these user stories when the parent feature is present on the current board.  The mashup provides this functionality as a toggle, so you can freely show and hide child cards with a click of the button.  Your previous setting is saved with the board on a per-user basis.
+The Child Hider mashup provides a quick and easy way to hide child cards whose parents are already displayed on the board, one-by-one or timeline view.  For example, if you have a feature with four user stories underneath it, the mashup provides a way to toggle showing these user stories when the parent feature is present on the current board.  The mashup provides this functionality as a toggle, so you can freely show and hide child cards with a click of the button.  Your previous setting is saved with the board on a per-user basis.
 
-![Child Hider](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide%20Children/ChildHider.jpg)
+![Child Hider](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Hide%20Children/ChildHider.png)
 
 ## How to use the mashup
 
-1. Install the mashup from the Targetprocess Mashups Library
-2. Look in the clipboard at the bottom of the board for the Show/Hide Children button
+1. Install the mashup from the Targetprocess Mashups Library.
+2. Select which entities will be hidden in config file. Features, user stories, bugs and tasks will be hidden by default.In order not to hide feature, set hideFeature to false in config.
+3. Look in the toolbar for the Show/Hide Children button.

@@ -1,6 +1,6 @@
 {
-	"ShortDescription": "The Child Hider mashup provides a quick and easy way to hide child cards whose parents are already displayed on the board.",
-	"CompatibleTpVersion": {
-		"Minimum": "3.2.8"
-	}		
+  "ShortDescription": "The Child Hider mashup provides a quick and easy way to hide child cards whose parents are already displayed on the board.",
+  "CompatibleTpVersion": {
+    "Minimum": "3.2.8"
+  }
 }

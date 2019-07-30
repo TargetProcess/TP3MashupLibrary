@@ -1,26 +1,35 @@
-/*globals require */
+/*global tau,tauFeatures*/
 /*eslint max-len: 0, no-underscore-dangle: 0 */
+
+if (window.location.search.indexOf('isNestedBoard=1') >= 0) {
+    tauFeatures['comet.notifications'] = false;
+}
+
 tau.mashups
     .addDependency('jQuery')
     .addDependency('Underscore')
     .addDependency('libs/parseUri')
     .addDependency('tau/core/class')
-
     .addDependency('tau/configurator')
-
     .addDependency('tp3/mashups/popup')
-    .addDependency('tau/storage/api.nocache')
     .addCSS('NestedBoards.css')
-    .addMashup(function($, _, parseUri, Class, configurator, Popup, storeapi) {
+    .addMashup(function($, _, parseUri, Class, configurator, Popup) {
 
         'use strict';
+
+        var appConfigurator;
+
+        configurator.getGlobalBus().on('configurator.ready', function(e) {
+            var configurator_ = e.data;
+            if (configurator_._id && !configurator_._id.match(/global/) && !appConfigurator) {
+                appConfigurator = configurator_;
+            }
+        });
 
         var reg = configurator.getBusRegistry();
 
         var addBusListener = function(busName, eventName, listener) {
-
             reg.on('create', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.on(eventName, listener);
@@ -28,15 +37,10 @@ tau.mashups
             });
 
             reg.on('destroy', function(e, data) {
-
                 var bus = data.bus;
                 if (bus.name === busName) {
                     bus.removeListener(eventName, listener);
                 }
-            });
-
-            reg.getByName(busName).done(function(bus) {
-                bus.on(eventName, listener);
             });
         };
 
@@ -52,6 +56,9 @@ tau.mashups
             feature: [{
                 type: 'userstory',
                 name: 'Stories Board'
+            }, {
+                type: 'bug',
+                name: 'Bugs Board'
             }],
 
             testplan: [{
@@ -88,7 +95,6 @@ tau.mashups
         };
 
         var typesByParent = _.reduce(nestedBoardsConfig, function(res, v, k) {
-
             v.forEach(function(type) {
                 res[type.type] = res[type.type] || [];
                 res[type.type].push(k);
@@ -98,37 +104,31 @@ tau.mashups
             return res;
         }, {});
 
+        var boardSettings;
+
         var Mashup = Class.extend({
-
             init: function() {
-
                 var uri = parseUri(window.location.href);
                 this.request = uri.queryKey;
 
-                addBusListener('application board', 'configurator.ready', function(e, appConfigurator) {
-                    configurator = appConfigurator;
+                addBusListener('board_plus', 'boardSettings.ready', function(e, bs) {
+                    boardSettings = bs.boardSettings;
                 }.bind(this));
 
                 if (this.request.isNestedBoard) {
                     $('body').addClass('fullscreen');
-                    this.patchSlice();
-
                     addBusListener('board_plus', 'board.configuration.ready', function(e, boardConfig) {
                         this.updateConfiguration(boardConfig);
                     }.bind(this));
                 } else {
-
                     addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
                         this.renderToolbar($el);
                     }.bind(this));
-
                 }
             },
 
             renderToolbar: function($el) {
-
                 var $toolbar = $el.find('.i-role-nestedboardstoolbar');
-
                 if (!$toolbar.length) {
                     $toolbar = $('<div class="tau-inline-group-nestedboardstoolbar i-role-nestedboardstoolbar"></div>')
                         .appendTo($el.find('.tau-select-block'));
@@ -142,7 +142,8 @@ tau.mashups
                     var $cards = $el.find('.tau-card-v2_type_' + entityTypeName);
                     if ($cards.length) {
                         _.forEach(config, function(subEntityConfig) {
-                            $toolbar.append(renderButton(entityTypeName, subEntityConfig));
+                            $('<div class="tau-inline-group-nestedboardstoolbar__control">').append(renderButton(entityTypeName, subEntityConfig))
+                                .appendTo($toolbar);
                         });
                     }
                 });
@@ -154,27 +155,23 @@ tau.mashups
             },
 
             handleButton: function(entityTypeName, type) {
-
                 var activityPopup = new Popup();
                 activityPopup.show();
                 activityPopup.showLoading();
                 var $container = activityPopup.$container;
 
-                var clipboardManager = configurator.getClipboardManager();
-                var acidStore = configurator.getAppStateStore();
+                var clipboardManager = appConfigurator.getClipboardManager();
+                var acidStore = appConfigurator.getAppStateStore();
 
                 acidStore.get({
                     fields: ['acid']
                 }).then(function(data) {
-
                     var acid = data.acid;
-
                     var cards = _.values(clipboardManager._cache);
 
                     var clipboardData = cards.reduce(function(res, item) {
                         res[item.data.type] = res[item.data.type] || [];
                         res[item.data.type].push(item.data.id);
-
                         return res;
                     }, {});
 
@@ -183,23 +180,20 @@ tau.mashups
                         "&acid=" + acid +
                         "&clipboardData=" + encodeURIComponent(JSON.stringify(clipboardData)) +
                         "&axisType=" + entityTypeName +
-                        "&cellType=" + type;
+                        "&cellType=" + type +
+                        '#page=board/' + boardSettings.settings.id;
 
                     var $frame = $('<iframe class="nestedboardsframe" src="' + url + '"></iframe>');
-
                     $frame.load(function() {
                         activityPopup.hideLoading();
                     });
 
                     $container.append($frame);
-                    $container.css({
-                        padding: 0
-                    });
+                    $container.css({padding: 0});
                 });
             },
 
             updateConfiguration: function(boardConfig) {
-
                 var clipboardData = JSON.parse(decodeURIComponent(this.request.clipboardData));
                 var cellType = this.request.cellType;
                 var axisType = this.request.axisType;
@@ -208,7 +202,6 @@ tau.mashups
                 var cellIds = [];
 
                 _.forEach(clipboardData, function(ids, entityType) {
-
                     if (axisType === entityType) {
                         axisIds = axisIds.concat(ids);
                     }
@@ -258,30 +251,16 @@ tau.mashups
                     filter: axisFilter,
                     types: [axisType]
                 };
-            },
 
-            patchSlice: function() {
+                if (boardConfig.user) {
+                    boardConfig.user.cardFilter = '';
+                }
 
-                var cellType = this.request.cellType;
-                var axisType = this.request.axisType;
-
-                var prevFn = storeapi.prototype._makeServiceCall;
-
-                storeapi.prototype._makeServiceCall = function(ajaxConfig) {
-
-                    if (ajaxConfig.url.match(/api\/board\/v1\//) && ajaxConfig.type.toLowerCase() === 'post') {
-                        var matched = ajaxConfig.url.match(/\/(\d+)/);
-                        if (matched) {
-                            var boardId = ajaxConfig.url.match(/\/(\d+)/)[1];
-                            ajaxConfig.url = configurator.getApplicationPath() + '/storage/v1/boards_private_' + axisType + "_" + cellType + '_boardlink/' + boardId;
-                        }
-                    }
-                    return prevFn.apply(this, arguments);
-                };
+                if (boardConfig.colorSettings && boardConfig.colorSettings.customEncoding) {
+                    boardConfig.colorSettings.customEncoding = [];
+                }
             }
-
         });
 
         return new Mashup();
-
     });

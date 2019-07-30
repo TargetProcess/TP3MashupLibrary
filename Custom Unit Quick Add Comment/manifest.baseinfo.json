@@ -1,0 +1,7 @@
+{
+    "Name": "Custom Unit Quick Add Comment",
+    "ShortDescription": "The mashup allows to quickly add a comment to an entity from the list view.",
+    "CompatibleTpVersion": {
+        "Minimum": "3.10.9"
+    }
+}

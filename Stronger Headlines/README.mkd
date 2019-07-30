@@ -1,0 +1,20 @@
+# Stronger Headlines
+
+This Mashup makes H1 and H2 headers in reach text more conspicuous by adding dotted underline. It makes reading long descriptions easily by separating sections with H1 and H2 headers, works with both text editor type: WYSIWYG and Markdown.
+
+The mashup is not applied:
+
+![Before](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Stronger%20Headlines/StrongerHeadlines-1.png)
+
+The mashup is applied:
+
+![After](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Stronger%20Headlines/StrongerHeadlines-2.png)
+
+
+## To apply the mashup
+
+* Install the mashup from the Targetprocess Mashups Library to activate it.
+* Refresh your page:
+	* Windows: ctrl + F5
+	* Mac/Apple: Apple + R or command + R
+	* Linux: F5

@@ -1,187 +1,290 @@
+/*global tau,loggedUser*/
 tau.mashups
-	.addDependency('tp/mashups')
-	.addDependency('user/mashups')
-	.addDependency('jQuery')
-	.addDependency('Underscore')
-	.addDependency('tp3/mashups/context')
-	.addDependency('tau/core/bus.reg')
-	.addDependency('tau/configurator')
+    .addDependency('jQuery')
+    .addDependency('Underscore')
+    .addDependency('tp3/mashups/context')
+    .addDependency('tau/core/bus.reg')
+    .addDependency('tau/configurator')
     .addDependency('tau/core/class')
-	.addMashup(function(m, um, $, _, context, busRegistry, configurator, Class) {
+    .addDependency('tau/models/board.customize.units/const.entity.types.names')
+    .addDependency('ChildHider/ChildHider.config')
+    .addMashup(function($, _, context, busRegistry, configurator, Class, et, config) {
 
-		'use strict';
+        'use strict';
 
-		var reg = configurator.getBusRegistry();
+        var reg = configurator.getBusRegistry();
 
-		var addBusListener = function(busName, eventName, listener) {
+        var addBusListener = function(busName, eventName, listener) {
+            reg.on('create', function(e, data) {
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.on(eventName, listener);
+                }
+            });
 
-			reg.on('create', function(e, data) {
+            reg.on('destroy', function(e, data) {
+                var bus = data.bus;
+                if (bus.name === busName) {
+                    bus.removeListener(eventName, listener);
+                }
+            });
 
-				var bus = data.bus;
-				if (bus.name === busName) {
-					bus.on(eventName, listener);
-				}
-			});
+            reg.getByName(busName).done(function(bus) {
+                bus.on(eventName, listener);
+            });
+        };
 
-			reg.on('destroy', function(e, data) {
+        var ChildHider = Class.extend({
+            parentMap: _.compact([
+                config.hideFeature && {entityType: et.FEATURE, parentEntityType: et.EPIC},
+                config.hideUserStory && {entityType: et.STORY, parentEntityType: et.FEATURE},
+                config.hideTask && {entityType: et.TASK, parentEntityType: et.STORY},
+                config.hideBug && {entityType: et.BUG, parentEntityType: et.STORY},
+                config.hideBug && {entityType: et.BUG, parentEntityType: et.FEATURE}
+            ]),
 
-				var bus = data.bus;
-				if (bus.name === busName) {
-					bus.removeListener(eventName, listener);
-				}
-			});
+            init: function() {
+                var self = this;
 
-			reg.getByName(busName).done(function(bus) {
-				bus.on(eventName, listener);
-			});
-		};
+                this.$board = null;
+                this.$btn = null;
+                this.acid = null;
+                this.boardId = 0;
 
-		var ChildHider = Class.extend({
+                this._clearCardsInfo();
 
-			parentMap: {
-				'Feature': 'Epic.Id',
-				'UserStory': 'Feature.Id',
-				'Task': 'UserStory.Id'
-			},
-			
-			_ctx: {},
+                this.refreshDebounced = _.debounce(this.refresh, 100, false);
 
-			init: function() {
-				var self = this;
+                context.onChange(function(ctx) {
+                    this.acid = ctx.acid;
+                    this.refresh(this.acid);
+                }.bind(this));
 
-				this.cards = [];
-				this.represented = [];
-				this.state = false;
-				this.$btn = null;
-				this.boardId = 0;
-				
-				this.refreshDebounced = _.debounce(this.refresh, 100, false);
+                busRegistry.on('create', function(eventName, sender) {
+                    if (sender.bus.name === 'board_plus') {
+                        sender.bus.on('start.lifecycle', self._clearCardsInfo.bind(self));
+                        sender.bus.on('view.card.skeleton.built', self.cardAdded.bind(self));
+                        sender.bus.on('overview.board.ready', function(event, board) {
+                            self.$board = board.element;
+                            self.restoreState();
+                        }.bind(self));
+                    }
+                });
 
-				context.onChange(function(ctx, data) {
-					this._ctx = ctx;
-					this.refresh(ctx);
-				}.bind(this));
+                addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
+                    this.boardId = eventArgs.boardSettings.settings.id;
+                }.bind(this));
 
-				busRegistry.on('create', function(eventName, sender) {
-					if (sender.bus.name == 'board_plus') {
-						sender.bus.on('start.lifecycle', _.bind(function(e) {
-							this.cards = [];
-							this.represented = [];
-							this.state = false;
-						}, self));
-						sender.bus.on('view.card.skeleton.built', _.bind(self.cardAdded, self));
-						sender.bus.on('overview.board.ready', _.bind(self.restoreState, self));
-					}
-				});
-				
-				addBusListener('application board', 'boardSettings.ready', function(e, eventArgs) {
-					this.boardId = eventArgs.boardSettings.settings.id;
-				}.bind(this));
+                addBusListener('board.toolbar', 'toolbarData.ready:last + afterRender', function(e, toolbarData,
+                    renderData) {
+                    if (toolbarData.viewMode !== 'newlist') {
+                        this.renderButton(renderData.element);
+                    }
+                }.bind(this));
+            },
 
-				addBusListener('board.clipboard', '$el.readyToLayout', function(e, $el) {
-					this.renderButton($el);
-				}.bind(this));
-			},
-			
-			apiGet: function(url, callback, _objects) {
-				if (_objects === undefined) {
-					_objects = []
-				};
-				$.ajax({
-					url: url,
-					method: 'GET',
-					async: false
-				}).then(function(response) {
-					if (response.hasOwnProperty("items")) {
-						_objects = $.merge(_objects, response.items);
-					}
-					if (response.hasOwnProperty("next")) {
-						getTpApi(response.next, callback, _objects);
-					} else {
-						callback(_objects);
-					}
-				});
-			},
+            _clearCardsInfo: function() {
+                this.cardsByType = {};
+                this.childrenIds = {};
+                this.hideChildren = false;
+            },
 
-			refresh: function(ctx) {
-				var acid = ctx.acid;
-				var cardIds = this.cards.map(function(c) {
-					return parseInt(c.attr('data-entity-id'));
-				});
-				var whereIdsStr = cardIds.join(',');
+            apiGet: function(url, callback, objects) {
+                objects = objects || [];
 
-				if (whereIdsStr == '') {
-					whereIdsStr = '0';
-				}
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    async: false
+                }).then(function(response) {
+                    if (response.hasOwnProperty('items')) {
+                        objects = $.merge(objects, response.items);
+                    }
+                    if (response.hasOwnProperty('next')) {
+                        this.apiGet(response.next, callback, objects);
+                    } else {
+                        callback(objects);
+                    }
+                });
+            },
 
-				_.each(this.parentMap, _.bind(function(parentSelector, entityType) {
-					this.apiGet(configurator.getApplicationPath() + '/api/v2/' + entityType + '?take=1000&where=(id in [' + whereIdsStr + '] and EntityState.isFinal==false)&select={id,' + parentSelector + ' as parent}&acid=' + acid, _.bind(function(data) {
-						if (data === undefined) return;
-						for (var i = 0; i < data.length; i++) {
-							var id = data[i].id;
-							var parentId = data[i].parent;
-							if (_.contains(cardIds, parentId))
-								this.represented.push(id);
-						}
-					}, this));
-				}, this));
-			},
+            _getApiUrl: function(entityType, entityIds, parentSelector, acid) {
+                return configurator.getApplicationPath() + '/api/v2/' + entityType +
+                    '?take=1000&where=(id in [' + entityIds.join(',') +
+                    '])&select={id,parent:' +
+                    parentSelector + '}&acid=' + acid;
+            },
 
-			renderButton: function($el) {
-				var $toolbar = $el.find('.i-role-clipboardfilter');
+            _processResponse: function(parentIds, data) {
+                if (data === undefined) {
+                    return;
+                }
 
-				if (!$toolbar.length) {
-					$toolbar = $('<div class="tau-inline-group-clipboardfilter i-role-clipboardfilter" style="vertical-align: middle; display: inline-block;"></div>')
-						.appendTo($el.find('.tau-select-block'));
-				}
+                var hasChanges = false;
+                for (var i = 0; i < data.length; i++) {
+                    var childId = data[i].id;
+                    var parentId = data[i].parent;
+                    if (parentId && _.contains(parentIds, parentId) && this.childrenIds[childId] !== childId) {
+                        this.childrenIds[childId] = childId;
+                        hasChanges = true;
+                    }
+                }
 
-				$toolbar.children('.mashup-hider').remove();
+                if (hasChanges) {
+                    this.updateCardsVisibility();
+                }
+            },
 
-				this.$btn = $('<button class="tau-btn mashup-hider">Hide Children</button>')
-					.on('click', this.toggle.bind(this));
+            refresh: function(acid) {
+                _.each(this.parentMap, function(entry) {
+                    var parentIds = this.cardsByType[entry.parentEntityType] || [];
+                    if (!parentIds.length) {
+                        return;
+                    }
 
-				$toolbar.append(this.$btn);
-			},
-			
-			restoreState: function() {
-				$.ajax({
-					url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
-					method: 'GET'
-				}).then(_.bind(function(response) {
-					if (_.has(response.userData, this.boardId)) {
-						if ((response.userData[this.boardId] == "0") != (!this.state)) {
-							this.toggle();
-						}
-					}
-				}, this));
-			},
-			
-			saveState: function() {
-				var data = {"userData": {}};
-				data['userData'][this.boardId.toString()] = this.state ? "1" : "0";
-				$.ajax({
-					url: configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id,
-					method: 'POST',
-					data: JSON.stringify(data),
-					contentType: 'application/json; charset=utf8'
-				});
-			},
+                    // sort and remove duplicate ids, e.g. on timeline or on one-to-many board
+                    var cardIds = this.cardsByType[entry.entityType];
+                    cardIds = _
+                        .chain(cardIds)
+                        .sortBy(_.identity)
+                        .uniq(true)
+                        .value();
+                    if (!cardIds.length) {
+                        return;
+                    }
 
-			toggle: function() {
-				this.state = !this.state;
-				_.each(this.represented, _.bind(function(id) {
-					$('div[role=card][data-entity-id=' + id + ']')[this.state ? 'hide' : 'show']();
-				}, this));
-				this.$btn.html(this.state ? 'Show Children ('+this.represented.length+')' : 'Hide Children');
-				this.saveState();
-			},
+                    var parentSelector = entry.parentEntityType + '.id';
+                    var url = this._getApiUrl(entry.entityType, cardIds, parentSelector, acid);
+                    this.apiGet(url, function(data) {
+                        this._processResponse(parentIds, data);
+                    }.bind(this));
+                }, this);
+            },
 
-			cardAdded: function(eventName, sender) {
-				this.cards.push(sender.element);
-				this.refreshDebounced(this._ctx);
-			},
-		});
+            renderButton: function($el) {
+                var $container = $el.find('.i-role-filter-control').parent();
 
-		return new ChildHider();
+                if (this.$btn && $container.parent().find('.i-role-mashup-hide-button').is(this.$btn)) {
+                    return;
+                }
 
-	});
+                var buttonText = this.buttonText || 'Hide Children';
+                var buttonTemplate = [
+                    '<button class="tau-btn mashup-hider i-role-mashup-hide-button" style="margin: 0;">',
+                    buttonText,
+                    '</button>'
+                ].join('');
+                this.$btn = $(buttonTemplate).on('click', this.toggle.bind(this));
+
+
+                var $buttonBlock = $('<div class="tau-board-header__control" style="margin-left: 10px">');
+                $buttonBlock.append(this.$btn);
+
+                $container.after($buttonBlock);
+            },
+
+            _getStorageUrl: function() {
+                return configurator.getApplicationPath() + '/storage/v1/childHider/U' + loggedUser.id;
+            },
+
+            restoreState: function() {
+                $.ajax({
+                    url: this._getStorageUrl(),
+                    method: 'GET'
+                }).then(function(response) {
+                    var userData = response.userData;
+                    if (_.has(userData, this.boardId)) {
+                        // '1' - hideChildren === true
+                        // '0' or undefined - hideChildren === false
+                        var shouldHideChildren = userData[this.boardId] === '1';
+                        if (shouldHideChildren !== this.hideChildren) {
+                            this.hideChildren = shouldHideChildren;
+                            this.updateCardsVisibility();
+                            this.refreshBoardSize();
+                        }
+                    }
+                }.bind(this));
+            },
+
+            saveState: function() {
+                var data = {userData: {}};
+                data.userData[this.boardId.toString()] = this.hideChildren ? '1' : '0';
+                $.ajax({
+                    url: this._getStorageUrl(),
+                    method: 'POST',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json; charset=utf8'
+                });
+            },
+
+            toggle: function() {
+                this.hideChildren = !this.hideChildren;
+                this.saveState();
+                this.updateCardsVisibility();
+                this.refreshBoardSize();
+            },
+
+            updateCardsVisibility: function() {
+                var $cards = $('.i-role-card', this.$board);
+                var $cardsToHide = $();
+                var cardsCount = 0;
+
+                _.each(this.childrenIds, function(id) {
+                    var $cardToHide = $cards.filter('[data-entity-id=' + id + ']');
+                    if ($cardToHide.length) {
+                        $cardsToHide = $cardsToHide.add($cardToHide);
+                        cardsCount++;
+                    }
+                });
+
+                if (this.hideChildren) {
+                    $cardsToHide.addClass('tau-hide');
+
+                    // hide dotted line around card on timeline
+                    $cardsToHide.closest('.i-role-card-planner').addClass('tau-hide');
+
+                    // hide whole timeline line if all cards on this line are hidden
+                    $cardsToHide.closest('.i-role-timeline-track').each(function(index, timelineTrack) {
+                        var $timelineTrack = $(timelineTrack);
+                        var cardsCount = $timelineTrack.find('.i-role-card').length;
+                        var hiddenCardsCount = $timelineTrack.find('.i-role-card.tau-hide').length;
+                        if (cardsCount === hiddenCardsCount) {
+                            $timelineTrack.addClass('tau-hide');
+                        }
+                    });
+                    this.buttonText = 'Show Children (' + cardsCount + ')';
+                } else {
+                    $cardsToHide.removeClass('tau-hide');
+                    $cardsToHide.closest('.i-role-card-planner').removeClass('tau-hide');
+                    $cardsToHide.closest('.i-role-timeline-track').removeClass('tau-hide');
+                    this.buttonText = 'Hide Children';
+                }
+
+                this.$btn.html(this.buttonText);
+            },
+
+            refreshBoardSize: function() {
+                configurator.getBusRegistry().getByName('board_plus').then(function(bus) {
+                    bus.fire('resize.executed', {
+                        onlyHeaders: false,
+                        refreshElement: true
+                    });
+                });
+            },
+
+            cardAdded: function(eventName, sender) {
+                var $card = sender.element && sender.element.filter('.i-role-card');
+                if ($card && $card.length) {
+                    var type = ($card.attr('data-entity-type') || '').toLowerCase();
+                    if (type) {
+                        this.cardsByType[type] = this.cardsByType[type] || [];
+                        var id = parseInt($card.attr('data-entity-id'), 10);
+                        this.cardsByType[type].push(id);
+                    }
+                }
+                this.refreshDebounced(this.acid);
+            }
+        });
+
+        return new ChildHider();
+    });
