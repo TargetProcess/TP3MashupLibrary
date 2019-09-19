@@ -1,6 +1,6 @@
 # Stronger Headlines
 
-This Mashup makes H1 and H2 headers in reach text more conspicuous by adding dotted underline. It makes reading long descriptions easily by separating sections with H1 and H2 headers, works with both text editor type: WYSIWYG and Markdown.
+This Mashup makes H1 and H2 headers in rich text more conspicuous by adding dotted underline. It makes reading long descriptions easier by separating sections with H1 and H2 headers, and works with both text editor types: WYSIWYG and Markdown.
 
 The mashup is not applied:
 
