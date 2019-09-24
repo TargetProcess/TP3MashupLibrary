@@ -12,4 +12,4 @@ entity types selected as Horizontal Lanes
 
 ![Iterations](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Customize%20Board%20Axes/iterations.png)
 
-See more examples [in our Github repository](https://github.com/TargetProcess/customize-board-axes/tree/initial-version/examples)
+See more examples [in our Github repository](https://github.com/TargetProcess/customize-board-axes/tree/master/examples)
