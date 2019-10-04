@@ -1,0 +1,7 @@
+{
+    "Name": "Custom Lane Headers",
+    "ShortDescription": "Allows to display additional data on Targetprocess board and roadmap lanes",
+    "CompatibleTpVersion": {
+        "Minimum": "3.13.8.45929"
+    }
+}
