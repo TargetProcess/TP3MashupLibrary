@@ -3,7 +3,7 @@ tau.mashups
     .addDependency('tau/const/entityType.names')
     .addMashup(function(customizeApi, entityTypes){
 
-        // This will add full project name to boards and timelines where Sprints/Iterations or User Stories
+        // This will add full project name to boards and roadmaps where Sprints/Iterations or User Stories
         // are selected as Horizontal Lanes
         customizeApi.registerDefaultAxisHeaderLayout([entityTypes.ITERATION, entityTypes.STORY], {
             sections: [
@@ -15,7 +15,7 @@ tau.mashups
             ]
         });
 
-        // This will add full name of the Release to boards and timelines where Features
+        // This will add full name of the Release to boards and roadmaps where Features
         // are selected as Horizontal Lanes
         customizeApi.registerDefaultAxisHeaderLayout([entityTypes.FEATURE], {
             sections: [
@@ -27,6 +27,6 @@ tau.mashups
             ]
         });
 
-        // See https://github.com/TargetProcess/customize-board-axes/tree/master/examples for more examples
-        // of axes customization
+        // See https://github.com/TargetProcess/custom-lane-headers/tree/master/examples for more examples
+        // of lanes customization
     });

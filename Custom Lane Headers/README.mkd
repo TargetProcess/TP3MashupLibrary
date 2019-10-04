@@ -1,0 +1,15 @@
+Custom Lane Headers
+==================
+
+The mashup demonstrates how to display additional data on lane headers on board or roadmap lanes
+
+It uses new API which allows to add more units to axes:
+* `customizeApi.registerDefaultAxisHeaderLayout(entityTypes, layout)` - adds units to all boards which have one of the provided
+entity types selected as Horizontal Lanes
+* `customizeApi.registerViewAxisHeaderLayout(viewId, entityTypes, layout)` - adds units only to the board or roadmap with provided ID
+
+![Teams](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Custom%20Lane%20Headers/teams.png)
+
+![Iterations](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/Custom%20Lane%20Headers/iterations.png)
+
+See more examples [in our Github repository](https://github.com/TargetProcess/custom-lane-headers/tree/master/examples)

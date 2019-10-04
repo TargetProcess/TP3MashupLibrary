@@ -1,7 +1,0 @@
-{
-    "Name": "Customize Board Axes",
-    "ShortDescription": "Allows to display additional data on Targetprocess boards and timelines",
-    "CompatibleTpVersion": {
-        "Minimum": "3.13.8.45929"
-    }
-}
