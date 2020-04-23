@@ -65,10 +65,10 @@ tau.mashups
                     ],
                     customFunctions: {
                         getImage: function(originAttachments) {
-                            return getImageProperty(originAttachments, (img) => img.thumbnailUri, "");
+                            return getImageProperty(originAttachments, function(img) { return img.thumbnailUri; }, "");
                         },
                         getTitle: function(originAttachments) {
-                            return getImageProperty(originAttachments, (img) => img.name, "");
+                            return getImageProperty(originAttachments, function(img) { return img.name; }, "");
                         }
                     }
                 },
