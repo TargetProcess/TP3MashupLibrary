@@ -145,10 +145,10 @@ tau
             addCSSRule('.tau-timeline .tau-timeline-flow .tau-cell-planner', 'background-color: rgba(255,255,255,0.05) !important;');
             addCSSRule('.tau-timeline .tau-timeline-flow .tau-cell-planner:before', 'background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.05) 100%) !important;');
             addCSSRule('.tau-timeline .tau-timeline-flow .tau-cell-planner:after', 'background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 100%) !important;');
-            addCSSRule('.dark-TPtheme .tau-timeline .tau-timeline-card .tau-card-planner .tau-card-v2', 'background: rgba(255, 255, 255, 0.05) !important');
+            addCSSRule('.dark-TPtheme .tau-timeline .tau-timeline-card .tau-card-planner .tau-card-v2:not(.i-role-encoded)', 'background: rgba(255, 255, 255, 0.05) !important');
             addCSSRule('.dark-TPtheme .tau-timeline > .tau-timeline-canvas > .tau-timeline-flow .tau-timeline-track > .tau-timeline-card > .tau-card-planner .tau-end-date', 'border-color: ' + gFontColorDefaultRevert + ';');
             addCSSRule('.dark-TPtheme .tau-timeline > .tau-timeline-canvas > .tau-timeline-flow .tau-timeline-track > .tau-timeline-card > .tau-card-planner', 'border-color: ' + gFontColorDefaultRevert + ';');
-            addCSSRule('.dark-TPtheme .tau-timeline > .tau-timeline-canvas > .tau-timeline-flow .tau-timeline-track > .tau-timeline-card > .tau-card-predictor', 'background-color: #3d4046;');
+            addCSSRule('.dark-TPtheme .tau-timeline > .tau-timeline-canvas > .tau-timeline-flow .tau-timeline-track > .tau-timeline-card > .tau-card-predictor', 'background-color: rgba(61, 64, 70, 0.6)');
             addCSSRule('.dark-TPtheme .tau-board-grid-view:not(.tau-ui-size-min):not(.tau-ui-size-xl) .tau-show-more-cards-trigger,' +
                 '.dark-TPtheme .tau-board-grid-view:not(.tau-ui-size-min):not(.tau-ui-size-xl) .tau-show-more-cards-trigger:before,' +
                 '.dark-TPtheme .tau-board-grid-view:not(.tau-ui-size-min):not(.tau-ui-size-xl) .tau-show-more-cards-trigger:after', 'background-color: ' + gBoardCard + ';');
