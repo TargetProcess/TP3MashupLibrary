@@ -32,11 +32,14 @@ tau
             var gBoardPanelBackgroundDarker = "#2D2E33";
             var gBoardPanelBackgroundLighter = "#36383E";
             var gBoardPanelBackgroundLighterHover = "#404249";
+
             var gBoardCard = "#4a4c51";
 
             var gFontColorDefaultRevert = "rgba(255,255,255,1)";
             var gFontColorSecondaryRevert = "rgba(255,255,255,0.6)";
             var gFontColorTertiaryRevert = "rgba(255,255,255,0.3)";
+
+            var gBorderColorTertiaryRevert = "rgba(255,255,255,0.15)";
 
             var gFontColorDefault = "rgba(0,0,0,1)";
             var gFontColorSecondary = "rgba(0,0,0,0.6)";
@@ -46,43 +49,47 @@ tau
             // INVERTED CARDS and UNITS with working visual encoding, made for board/board list/timeline view (not for inner lists and one-by-one view)
             // Units
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-card-v2.tau-card-v2_final-state', 'opacity: 0.5;');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-entity-full-name,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit__value-milestone-flexbox-wrapper__name,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_user-info__name,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_team_allocation-info__name,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_entity-name .tau-board-unit__value,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_entity-name-extended .tau-board-unit__value,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_entity-name-extended-plus .tau-board-unit__value,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .click-edit__link-text,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-project-abbreviation', 'color: ' + gFontColorDefaultRevert + ';');
-            addCSSRule('.dark-TPtheme .tau-board .tau-board-body > div:not(.tau-board-composite-view) .tau-card-v2:not(.tau-selected):not(.i-role-encoded) .tau-board-unit,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit__value-milestone-flexbox-wrapper__date,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit__points--dark,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_id a,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_entity-icon-id a,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_process a,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit_type_emoji-tags__others-counter', 'color: ' + gFontColorSecondaryRevert + ';');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit__points,' +
-                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit__value-remain', 'color: ' + gFontColorTertiaryRevert + ';');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-unit__points', 'color: ' + gFontColorTertiaryRevert + ';');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-project-abbreviation', 'border-color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-entity-full-name,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit__value-milestone-flexbox-wrapper__name,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_user-info__name,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_team_allocation-info__name,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_entity-name .tau-board-unit__value,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_entity-name-extended .tau-board-unit__value,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_entity-name-extended-plus .tau-board-unit__value,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .click-edit__link-text,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-project-abbreviation:not([style])', 'color: ' + gFontColorDefaultRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board .tau-board-body > div:not(.tau-board-composite-view) .tau-card-v2:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit__value-milestone-flexbox-wrapper__date,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit__points--dark,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_id a,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_entity-icon-id a,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_process a,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit_type_emoji-tags__others-counter', 'color: ' + gFontColorSecondaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit__points,' +
+                '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit__value-remain', 'color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-unit__points', 'color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-project-abbreviation', 'border-color: ' + gFontColorTertiaryRevert + ';');
 
             // Cards and list
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-card-v2:not(.tau-selected)', 'background: ' + gBoardCard + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-card-v2:not(.tau-selected):not(.tau-context-menu-selected)', 'background: ' + gBoardCard + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity', 'background: ' + gBoardCard + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity .tau-elems-cell', 'border-right-color: ' + gFontColorTertiary + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity:not(.i-role-encoded) .tau-elems-cell', 'border-right-color: ' + gBoardPanelBackgroundDarker + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-board-list-cell-resizer--inner', 'background-color: ' + gBoardPanelBackgroundDarker + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-sorting__title', 'border-bottom-color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-sorting__title:hover', 'border-bottom-color: transparent; color: ' + gFontColorSecondaryRevert + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-more__inner', 'background: none;');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-more__inner:before, ' +
                 '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-more__inner:after', 'display: none;');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-caption', 'background-color: #636469; color: ' + gFontColorSecondaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-caption', 'background-color: '+ gBoardPanelBackgroundDarker + '; color: ' + gFontColorSecondaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-caption .tau-cap', 'color: ' + gFontColorDefaultRevert + ' !important;');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-level-0:last-child > .tau-list-level-cardsholder > .tau-list-entity:last-child > .tau-list-line', 'border-bottom-color: ' + gBoardPanelBackgroundDarker + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity .tau-list-line', 'border-top-color: ' +  gFontColorTertiary + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity:not(.i-role-encoded) .tau-list-line', 'border-top-color: ' + gBoardPanelBackgroundDarker + ';');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-elems-table > .tau-elems-cell > .tau-board-unit', 'color: ' + gFontColorDefaultRevert + ';');
-            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded) .tau-board-list-view__counter .tau-counter', 'color: ' + gFontColorDefaultRevert + '; border-color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-elems-table > .tau-elems-cell > .tau-board-unit', 'color: ' + gFontColorDefaultRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-board-list-view__counter .tau-counter', 'color: ' + gFontColorDefaultRevert + '; border-color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-project-icon--bordered:after, ' +
+                '.dark-TPtheme .tau-board-header .context-filter .tau-project-icon--bordered:after', 'box-shadow: inset 0 0 1px ' + gFontColorSecondaryRevert + ';');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity.tau-list-entity_final-state, ' +
                 '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-list-entity.tau-list-entity_isInPast', 'background-color: inherit; opacity: 0.5;');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-page-items,' +
@@ -91,21 +98,26 @@ tau
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-count.tau-active', 'color:' + gFontColorDefaultRevert + '!important; background-color: ' + gBoardPanelBackgroundLighterHover + '!important');
             addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-paging-info', 'color: '+ gFontColorDefaultRevert + ';');
             addCSSRule('.dark-TPtheme .tau-board-list-view .tau-list-entity:hover, .dark-TPtheme .tau-board-list-view .tau-card_focusedit_true', 'opacity: 0.8;');
+            addCSSRule('.dark-TPtheme .tau-board-list-view .tau-sortable__placeholder-inner', 'background-color: ' + gBoardPanelBackgroundLighterHover + ' !important;');
+            addCSSRule('.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected) .tau-elems-cell_unit-empty-text', 'color: '+ gFontColorSecondaryRevert + ';');
 
             // Board
-            addCSSRule('.tau-app-body > header, .general-add-button-holder', 'background:' + gBoardPanelBackgroundDarker + '!important; border-bottom: 1px solid ' + gBoardPanelBackgroundDarkerBorder +  '!important;');
+            addCSSRule('body.dark-TPtheme', 'background-color: ' + gBoardPanelBackgroundLighter + ';');
+            addCSSRule('.dark-TPtheme .tau-page-navigation-button', 'background-color: ' + gFontColorTertiaryRevert + ';');
+            addCSSRule('.dark-TPtheme .t3-views-navigator, .dark-TPtheme .t3-group', 'background-color: ' + gBoardPanelBackgroundDarker + ';');
+            addCSSRule('.tau-app-body > header, .general-add-button-holder', 'background: #232428 !important; border-bottom: 1px solid ' + gBoardPanelBackgroundDarkerBorder +  '!important;');
             addCSSRule('.i-role-views-menu, .i-role-board-menu', 'border-right: 1px solid ' + gBoardPanelBackgroundDarkerBorder + '!important;');
             addCSSRule('.tau-bubble-tooltip .tau-bubble-board__inner', 'background:' + gBoardPanelBackgroundDarkerBorder + '!important;');
             addCSSRule('.tau-bubble-tooltip .tau-bubble-board__arrow:after', 'background:' + gBoardPanelBackgroundDarkerBorder + '!important;');
-            addCSSRule('.tau-board-header .context-filter__body, .tau-board-header .context-filter__revert-control, .tau-board-header .tau-btn, .tau-board-header input, .tau-boardclipboard .tau-btn, .tau-boardclipboard .i-role-action-clear, .refresh-histogram__control .tau-btn', 'background: transparent !important; border-color:' + gFontColorSecondaryRevert+ '!important; color: ' + gFontColorSecondaryRevert +' !important; font-size: 12px !important');
-            addCSSRule('.context-filter__body:hover ', 'border-color:' + gFontColorDefaultRevert + '!important;');
-            addCSSRule('.context-filter__projects:first-child:after, .context-filter__teams:first-child:after', 'background: ' + gFontColorSecondaryRevert + '!important;');
+            addCSSRule('.tau-board-header .context-filter__body, .tau-board-header .context-filter__revert-control, .tau-board-header .tau-btn, .tau-board-header input, .tau-boardclipboard .tau-btn, .tau-boardclipboard .i-role-action-clear, .refresh-histogram__control .tau-btn', 'background: ' + gBoardCard + ' !important; border-color:' + gBorderColorTertiaryRevert + '!important; color: ' + gFontColorSecondaryRevert +' !important; font-size: 12px !important');
+            addCSSRule('.dark-TPtheme .tau-board-header .context-filter__more', 'color: ' + gFontColorSecondaryRevert +' !important;');
+            addCSSRule('.tau-board-header .context-filter__body:hover, .tau-board-header .context-filter__revert-control:hover, .tau-board-header .tau-btn:hover, .tau-board-header input:hover, .tau-board-header .tau-checked, .tau-boardclipboard .tau-btn:hover', 'border-color: ' + gFontColorSecondaryRevert + '!important;');
+            addCSSRule('.context-filter__projects:first-child:after, .context-filter__teams:first-child:after', 'background: ' + gBorderColorTertiaryRevert + '!important;');
             addCSSRule('.boardsettings-filter__status--off', 'color: ' + gFontColorTertiaryRevert + '!important;');
             addCSSRule('.tau-board, .tau-board-header', 'background:' + gBoardPanelBackgroundLighter + '!important;');
             addCSSRule('.tau-board-header', 'border-bottom-color:' + gBoardPanelBackgroundDarkerBorder + '!important;');
             addCSSRule('.tau-board-header .tau-board-name', 'color: ' + gFontColorDefaultRevert + '!important;');
             addCSSRule('.tau-board-name--hovering:after', 'border-bottom-color: ' + gFontColorDefaultRevert + '!important;');
-            addCSSRule('.tau-board-header .tau-btn:hover, .tau-board-header input:hover, .tau-board-header .tau-checked, .tau-boardclipboard .tau-btn:hover', 'border-color: ' + gFontColorDefaultRevert + '!important;');
             addCSSRule('.tau-boardclipboard', 'background: ' + gBoardPanelBackgroundLighter + ' !important; border-top-color:' +  gBoardPanelBackgroundDarkerBorder + '!important;');
             addCSSRule('.tau-boardclipboard-title', 'color:' + gFontColorSecondaryRevert + '!important;');
             addCSSRule('.tau-axiscell__item .i-role-name, .tau-x-header .tau-label, .i-role-timeline-header-cell .tau-label, .tau-timeline-scale .i-role-timeline-header-cell .i-role-cell, .tau-period-label, .tau-boardclipboard-title, .tau-scale-ruler', 'color:' +  gFontColorDefaultRevert + '!important;');
@@ -118,7 +130,6 @@ tau
             addCSSRule('.tau-board-view .tau-label__velocity, .tau-board-view .tau-label__effort', 'color: ' + gFontColorSecondaryRevert + ' !important;');
             addCSSRule('.tau-board-grid-view .tau-label_mark', 'font-weight: normal !important;');
             addCSSRule('.i-role-axis-item .tau-state', 'color: ' + gFontColorSecondaryRevert +  '!important;');
-            addCSSRule('.tau-board .tau-customReport-body-wrapper', 'background:' + gBoardPanelBackgroundLighter + '!important; color:' + gFontColorSecondaryRevert + '!important;');
             addCSSRule('.tau-no-data-in-slice h2, .tau-no-data-in-slice .tau-txt', 'font-weight: normal !important; color: ' + gFontColorSecondaryRevert + ' !important;');
             addCSSRule('.tau-loader-logo', 'background-color: rgba(255,255,255, 0.1) !important;');
             addCSSRule('.tau-cellholder .tau-label:after, .tau-x-header .tau-label:after, .tau-backlog-header .tau-label:after', 'box-shadow: none !important;');
@@ -153,10 +164,13 @@ tau
                 '.dark-TPtheme .tau-board-grid-view:not(.tau-ui-size-min):not(.tau-ui-size-xl) .tau-show-more-cards-trigger:before,' +
                 '.dark-TPtheme .tau-board-grid-view:not(.tau-ui-size-min):not(.tau-ui-size-xl) .tau-show-more-cards-trigger:after', 'background-color: ' + gBoardCard + ';');
             addCSSRule('.dark-TPtheme .tau-show-more-cards-trigger button', 'color: ' + gFontColorDefaultRevert + ';')
+            addCSSRule('.dark-TPtheme .tau-rows-header:not(.tau-cellholder), .dark-TPtheme .tau-cols-header:not(.tau-cellholder)', 'background-color: ' + gBoardPanelBackgroundLighter + '!important;')
+
             addCSSRule('.tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cellholder .first-column', 'background: linear-gradient(to right, ' + gBoardPanelBackgroundLighter + ',' + gBoardPanelBackgroundLighter + ', rgba(41,44,51,0)) !important;');
             addCSSRule('.tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cellholder .first-row', 'background: linear-gradient(' + gBoardPanelBackgroundLighter + ',' + gBoardPanelBackgroundLighter + ', rgba(41,44,51,0)) !important;');
             addCSSRule('.tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cellholder:after', 'border-color: ' + gBoardPanelBackgroundDarkerBorder + '!important;');
-            addCSSRule('.tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cols-header, .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-rows-header, .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-x-header', 'background-color: ' + gBoardPanelBackgroundLighter + '!important;');
+            addCSSRule('.tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cols-header, .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-rows-header, .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-x-header', 'background-color: ' + gBoardPanelBackgroundLighter + '!important;');addCSSRule('.tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cols-header, .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-rows-header, .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-x-header', 'background-color: ' + gBoardPanelBackgroundLighter + '!important;');
+
 
             // limits + selected lanes
             addCSSRule('.tau-axis-limit_overhead_x.tau-cellholder, .tau-axis-limit_overhead_y.tau-cellholder', 'background: #594747 !important;');
