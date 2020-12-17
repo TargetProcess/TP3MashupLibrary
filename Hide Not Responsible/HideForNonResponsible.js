@@ -189,8 +189,12 @@ tau
             },
 
             createAxisCache: function() {
-                return _.object(this.$boardEl.find('[data-dimension=' + this.usersAxis +
-                    '] .i-role-cellaxis-viewtrigger').toArray().map(function(v) {
+                var selector = configurator.getFeaturesService().isEnabled("boardCssGrid") ?
+                    '.tau-' + this.usersAxis + '-header-cellholder .i-role-cellaxis-viewtrigger'
+                    : '[data-dimension=' + this.usersAxis +
+                    '] .i-role-cellaxis-viewtrigger'
+                
+                return _.object(this.$boardEl.find(selector).toArray().map(function(v) {
                     return [$(v).data('id'), $(v).data('entityId')];
                 }));
             },
