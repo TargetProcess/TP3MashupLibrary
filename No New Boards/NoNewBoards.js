@@ -55,8 +55,20 @@ tau.mashups
 
             addBusListener('actions-bubble', 'afterRender', function(e, data) {
                 var $element = data.element;
-                $element.find('.tau-board-actions-item:has(.clone-board-button)').hide();
-                $element.find('.tau-board-actions-item:has(.save-template-button)').hide();
+                $element.find('.board-actions__item.clone-board-button').hide();
+                $element.find('.board-actions__item.save-template-button').hide();
+                //To hide Export and Print options in Views, uncomment the lines below
+                //$element.find('.board-actions__item.tau-csv').hide();
+                //$element.find('.board-actions__item.tau-csv-customized').hide();
+                //$element.find('.board-actions__item.print-board-button').hide();
+            });
+        };
+        
+        var hideReportActionButtons = function() {
+
+            addBusListener('report-actions-bubble', 'afterRender', function(e, data) {
+                var $element = data.element;
+                $element.find('.board-actions__group.i-role-additional-actions-group').hide();
             });
         };
 
@@ -68,5 +80,7 @@ tau.mashups
             hideCreateViewButton();
             hideTemplatesTab();
             hideActionButtons();
+            //To hide Browse, Clone Export, Print options in Visual Reports, uncomment the line below
+            //hideReportActionButtons();
         }
     });
