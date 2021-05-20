@@ -14,7 +14,6 @@ tau.mashups
                 $trigger.appendTo($placeholder);
                 $trigger.tauBubble({
                     cleanupOnHide: true,
-                    zIndex: 5,
                     onShow: function() {
                         model.fetch().done(function(states) {
                             var $canvas = $('<canvas width="500" height="400"></canvas>');
