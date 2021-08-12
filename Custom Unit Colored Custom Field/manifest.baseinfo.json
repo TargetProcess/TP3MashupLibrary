@@ -1,6 +1,6 @@
 {
     "Name": "Custom Unit Colored Custom Field",
-    "ShortDescription": "This mashup allows a custom field to be required when an entity is moved to a specific state or a specific value is selected in another custom field.",
+    "ShortDescription": "The mashup adds new colored custom units to the Customize Cards tab in a View Setup area, based on custom fields and their values that are mapped in its code.",
     "CompatibleTpVersion": {
         "Minimum": "3.6.6"
     }
