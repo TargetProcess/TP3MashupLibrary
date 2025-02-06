@@ -2,7 +2,7 @@
 
 # Custom Field Constraints
 
-> ⚠️ **Warning:** the mashup supports so-called Native entities (Epic, Feature, Bug, Task ...) and doesn't support the Extendable Domain ones (like Objective, Key Result, Retrospective, IterationGoal etc.) yet. 
+> ⚠️ **Note:** the mashup supports so-called Native entities (Epic, Feature, Bug, Task ...) and doesn't support the Extendable Domain ones (like Objective, Key Result, Retrospective, IterationGoal etc.) yet. 
 
 The Custom Field Constraints mashup allows a custom field to be required in either of the following cases:
 
