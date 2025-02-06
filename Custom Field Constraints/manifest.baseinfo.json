@@ -1,7 +1,7 @@
 {
     "Name": "Custom Field Constraints",
-    "ShortDescription": "This mashup allows a custom field to be required when an entity is moved to a specific state or a specific value is selected in another custom field.",
+    "ShortDescription": "Allows a custom field to be required when an entity reaches a specific state or another field has a certain value. Unsupported for ExD entity types yet.",
     "CompatibleTpVersion": {
-        "Minimum": "3.12.1 (Not supported for ExD entity types yet)"
+        "Minimum": "3.12.1"
     }
 }
