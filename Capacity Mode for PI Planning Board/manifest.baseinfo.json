@@ -1,0 +1,7 @@
+{
+    "Name": "Capacity Mode for PI Planning Board",
+    "ShortDescription": "Updates the cell headers to show 'Capacity' instead of 'Velocity' for the TeamIteration entity.",
+    "CompatibleTpVersion": {
+        "Minimum": "2508.5.0-6662757"
+    }
+}
