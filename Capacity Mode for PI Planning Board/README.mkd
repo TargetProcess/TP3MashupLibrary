@@ -1,0 +1,6 @@
+Capacity Mode For The PI Planning Board
+==================
+
+This plugin updates TeamIteration cell headers to show “Capacity” instead of “Velocity”, aligning the board display with capacity-based planning.
+
+![Capacity](capacity-mode.png)
