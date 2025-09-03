@@ -1,6 +1,6 @@
 Capacity Mode For The PI Planning Board
 ==================
 
-This plugin updates TeamIteration cell headers to show “Capacity” instead of “Velocity”, aligning the board display with capacity-based planning.
+The mashup switches "Velocity" to "Capacity" when Team Iteration appears in a column or row header on the board.
 
-![Capacity](capacity-mode.png)
+![Capacity](https://github.com/TargetProcess/TP3MashupLibrary/tree/master/Capacity%20Mode%20for%20PI%20Planning%20Board)
