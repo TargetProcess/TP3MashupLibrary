@@ -3,4 +3,4 @@ Capacity Mode For The PI Planning Board
 
 The mashup switches "Velocity" to "Capacity" when Team Iteration appears in a column or row header on the board.
 
-![Capacity](https://github.com/TargetProcess/TP3MashupLibrary/blob/master/Capacity%20Mode%20for%20PI%20Planning%20Board/capacity-mode.png)
+![Capacity](https://github.com/TargetProcess/TP3MashupLibrary/blob/master/Capacity%20Mode%20for%20PI%20Planning%20Board/capacity-mode.png?raw=true)
