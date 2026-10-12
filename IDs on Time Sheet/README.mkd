@@ -1,6 +1,0 @@
-IDs on Time Sheet
-=====================
-
-This mashup will add IDs to the work items listed in your time sheet.
-
-![Extra Time Sheet Info](https://github.com/TargetProcess/TP3MashupLibrary/raw/master/IDs%20on%20Time%20Sheet/IDsonTimeSheet.png)
