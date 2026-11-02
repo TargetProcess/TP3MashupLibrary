@@ -216,6 +216,457 @@ tau
             addCSSRule('.tau-board-body-wrapper .tau-board-grid-view .tau-cellholder.tau-cellholder_dndcrossing_true,' +
                 '.tau-board-body-wrapper .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cellholder.tau-cellholder_dndcrossing_true .first-row,' +
                 '.tau-board-body-wrapper .tau-board-body-single-level-grid .tau-board-single-level-grid .tau-cellholder.tau-cellholder_dndcrossing_true', 'background: #525866 !important;');
+
+            // Top bar and left menu text/icons.
+            // The host now styles these chrome areas like the light theme does: dark text and dark
+            // icons driven by CSS custom properties. The mashup already paints their background dark,
+            // so the foreground tokens have to be flipped to light here, otherwise dark-on-dark.
+            // Tokens are flipped in pairs (foreground together with the surfaces that read them as a
+            // background) so inputs, active rows and hover rows do not become light-on-light.
+            addCSSRule('.apptio-styles.dark-TPtheme .app-header',
+                '--FontColorDefault: ' + gFontColorDefaultRevert + ';' +
+                '--FontColorGray: ' + gFontColorSecondaryRevert + ';' +
+                '--IconsGeneralColor: ' + gFontColorDefaultRevert + ';' +
+                '--PlaceholderColorDefault: ' + gFontColorSecondaryRevert + ';' +
+                '--BackgroundDefault: ' + gBoardPanelBackgroundDarker + ';' +
+                '--ControlBorderColorDefault: ' + gBorderColorTertiaryRevert + ';');
+            addCSSRule('.apptio-styles.dark-TPtheme .tau-app-secondary-pane,' +
+                '.apptio-styles.dark-TPtheme .system-menu',
+                '--FontColorDefault: ' + gFontColorDefaultRevert + ';' +
+                '--FontColorGray: ' + gFontColorSecondaryRevert + ';' +
+                '--FontColorLightGray: ' + gFontColorTertiaryRevert + ';' +
+                '--IconsGeneralColor: ' + gFontColorDefaultRevert + ';' +
+                '--LeftMenuIconColor: ' + gFontColorDefaultRevert + ';' +
+                '--PlaceholderColorDefault: ' + gFontColorSecondaryRevert + ';' +
+                '--BackgroundDefault: #232428;' +
+                '--BoardPanelBackgroundDarker: ' + gBoardPanelBackgroundDarker + ';' +
+                '--BoardPanelBackgroundLighter: ' + gBoardPanelBackgroundLighter + ';' +
+                '--BoardPanelBackgroundLighterHover: ' + gBoardPanelBackgroundLighterHover + ';' +
+                '--Second50: ' + gBoardPanelBackgroundDarker + ';' +
+                '--Second100: ' + gBoardPanelBackgroundLighterHover + ';' +
+                '--HighlightBlockBorderColor: ' + gBoardPanelBackgroundDarkerBorder + ';' +
+                '--ControlBorderColorDefault: ' + gBorderColorTertiaryRevert + ';' +
+                '--ActionBackgroundHover: ' + gBoardPanelBackgroundLighterHover + ';' +
+                // Selected item in the settings menu: same dark highlight as the active view row.
+                '--ActionBackgroundSelected: ' + gBoardPanelBackgroundLighterHover + ';' +
+                // The pane's drop shadow is a hard-coded light halo (#d6dbe1); invert it to a dark shadow.
+                '--BoxShadowS: 0 8px 16px rgba(0, 0, 0, 0.45);' +
+                // Lift the blue accent (Create, links) one step so it reads on the dark pane instead of 2.3:1.
+                '--LinkColor: #5585e9;' +
+                '--ActionColorAdd: #5585e9;' +
+                '--ActionColorAddLightTP: #5585e9;');
+            // The access/visibility lock glyph is filled with the Lighter surface token, which now equals
+            // the row it sits on; pin it to a muted light tint so it stays a subtle but visible marker.
+            addCSSRule('.apptio-styles.dark-TPtheme .t3-access-icon svg,' +
+                '.apptio-styles.dark-TPtheme .t3-access-icon svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+            // The APPTIO wordmark is a dark text path; recolour the lettering only.
+            addCSSRule('.apptio-styles.dark-TPtheme .apptio-text-logo path',
+                'fill: ' + gFontColorDefaultRevert + ';');
+            // The global (top) search magnifier is full-opacity white; the left-menu one is dimmed to 0.7.
+            // Match the top one to the left so both read the same in dark mode.
+            addCSSRule('.apptio-styles.dark-TPtheme .app-header .tau-search--global .tau-search__left-icon',
+                'opacity: 0.7;');
+
+            // Popups opened from the left menu (recent searches, the Create view list, a view's "..." menu)
+            // render inside the menu, so they inherit its dark tokens. They stay light, like the top-bar
+            // dropdowns and the quick-filter menus: capture the light values on <body>, where TP declares
+            // them, and hand them back to the popups.
+            var gLeftMenuTokens = ['FontColorDefault', 'FontColorGray', 'FontColorLightGray', 'IconsGeneralColor',
+                'LeftMenuIconColor', 'PlaceholderColorDefault', 'BackgroundDefault', 'BoardPanelBackgroundDarker',
+                'BoardPanelBackgroundLighter', 'BoardPanelBackgroundLighterHover', 'Second50', 'Second100',
+                'HighlightBlockBorderColor', 'ControlBorderColorDefault', 'ActionBackgroundHover',
+                'ActionBackgroundSelected', 'BoxShadowS', 'LinkColor', 'ActionColorAdd', 'ActionColorAddLightTP'];
+            addCSSRule('.apptio-styles.dark-TPtheme', gLeftMenuTokens.map(function(token) {
+                return '--LightTheme' + token + ': var(--' + token + ');';
+            }).join(''));
+            addCSSRule('.apptio-styles.dark-TPtheme .tau-app-secondary-pane .recent-search__container,' +
+                '.apptio-styles.dark-TPtheme .tau-app-secondary-pane .t3-add-list,' +
+                '.apptio-styles.dark-TPtheme .tau-app-secondary-pane .t3-navigator-bubble',
+                gLeftMenuTokens.map(function(token) {
+                    return '--' + token + ': var(--LightTheme' + token + ');';
+                }).join(''));
+
+            // Classic (apptioStyling off) top bar: the global search keeps a white field with black text and
+            // a black magnifier on the dark header. Apptio mode already handles this through tokens, so limit
+            // these rules to the non-Apptio body.
+            addCSSRule('.dark-TPtheme:not(.apptio-styles) .tau-search--global,' +
+                '.dark-TPtheme:not(.apptio-styles) .tau-search--global .tau-search__wrap,' +
+                '.dark-TPtheme:not(.apptio-styles) .tau-search--global .tau-search__left-icon,' +
+                '.dark-TPtheme:not(.apptio-styles) .tau-search--global .tau-search__input',
+                'background: ' + gBoardPanelBackgroundDarker + ' !important; color: ' + gFontColorDefaultRevert + ' !important; border-color: ' + gBorderColorTertiaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme:not(.apptio-styles) .tau-search--global .tau-search__input::placeholder',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme:not(.apptio-styles) .tau-search--global .tau-search__left-icon svg,' +
+                '.dark-TPtheme:not(.apptio-styles) .tau-search--global .tau-search__left-icon path',
+                'fill: rgba(255, 255, 255, 0.7) !important;');
+
+            // Left-menu filter button (funnel) and the "Jump to" search magnifier render the light theme's
+            // dark ink on the dark panel: lift the label and the glyph fill to the panel's light tints.
+            addCSSRule('.dark-TPtheme .tau-app-secondary-pane .filter-menu__button',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .tau-app-secondary-pane .filter-menu__button svg,' +
+                '.dark-TPtheme .tau-app-secondary-pane .filter-menu__button svg path,' +
+                '.dark-TPtheme .tau-app-secondary-pane .tau-btn-filter-menu svg,' +
+                '.dark-TPtheme .tau-app-secondary-pane .tau-btn-filter-menu svg path,' +
+                '.dark-TPtheme .tau-app-secondary-pane .tau-search--jump .tau-search__left-icon svg,' +
+                '.dark-TPtheme .tau-app-secondary-pane .tau-search--jump .tau-search__left-icon path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // View header (info, pin, favourite, refresh, date range, filter help): the icons use the
+            // light theme's dark icon token on the dark header; give them the same light tint as the
+            // left-menu icons. Both looks resolve this token, so it applies with and without Apptio.
+            addCSSRule('.dark-TPtheme .tau-board-header',
+                '--IconsGeneralColor: rgba(255, 255, 255, 0.7);');
+            // The card filter field stays a light island, so it keeps its default icons. The view-context
+            // controls are held back from the tint as well: the quick filters colour their own indicators
+            // below, and the dashboard action buttons keep their light surface.
+            addCSSRule('.dark-TPtheme .tau-board-header .boardsettings-filter__input,' +
+                '.dark-TPtheme .tau-board-header .boardsettings-filter__more,' +
+                '.dark-TPtheme .tau-board-header [class*="view-context-ui"]',
+                '--IconsGeneralColor: initial;');
+            // With Apptio the default is the theme's own icon colour rather than the classic fallback.
+            addCSSRule('.apptio-styles.dark-TPtheme .tau-board-header .boardsettings-filter__input,' +
+                '.apptio-styles.dark-TPtheme .tau-board-header .boardsettings-filter__more,' +
+                '.apptio-styles.dark-TPtheme .tau-board-header [class*="view-context-ui"]',
+                '--IconsGeneralColor: #212224;');
+
+            // The mashup paints every input in the view header dark, which also hits the text field inside
+            // the quick filter selects, so typed text shows in a dark box; let that field take the colours
+            // of the control around it.
+            addCSSRule('.dark-TPtheme .tau-board-header [class*="dropdown__control"] input',
+                'background: transparent !important; color: inherit !important; font-size: inherit !important;');
+
+            // View-context quick filters (Any Team / User / Project ...) are react-select controls with a
+            // white surface wherever they appear (view headers, dashboards, widgets); match them to the dark
+            // card surface. They carry the view-context-ui "user-filter-selector" module class, which the
+            // setup-page filter editor does not use, so editing a filter in setup keeps its light drawer.
+            // The opened menu is portaled to <body> and keeps its light surface on purpose.
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector__control"]',
+                'background: ' + gBoardCard + ' !important; color: ' + gFontColorDefaultRevert + ' !important; border-color: ' + gBorderColorTertiaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__single-value,' +
+                '.dark-TPtheme [class*="user-filter-selector"] .dropdown__multi-value__label,' +
+                '.dark-TPtheme [class*="user-filter-selector"] .dropdown__input,' +
+                '.dark-TPtheme [class*="user-filter-selector"] .dropdown__input input',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__placeholder',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            // While the menu is open the field shows a "Search..." placeholder in the light theme's dark ink.
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector__control"] input::placeholder',
+                'color: ' + gFontColorSecondaryRevert + ' !important; opacity: 1;');
+            // Chosen values sit in chips. The light theme sets them one step off the white control; on the
+            // dark control that step has to go lighter, or the chip melts into the control.
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__multi-value',
+                'background: #60626a !important;');
+            // The chip's remove cross is the light theme's dark glyph at a quarter opacity, which vanishes on
+            // a dark chip; draw it light and keep the hover step brighter.
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__multi-value__remove',
+                'opacity: 0.6 !important;');
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__multi-value__remove:hover',
+                'opacity: 1 !important;');
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__multi-value__remove path',
+                'fill: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__indicator-separator',
+                'background-color: ' + gBorderColorTertiaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__indicator',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Page navigator at the bottom of a list: the "1 - 50 of 81" counter and the prev/next arrows.
+            addCSSRule('.dark-TPtheme .tau-pages-navigator,' +
+                '.dark-TPtheme .tau-pages-navigator .i-role-cell-paging-link',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .tau-pages-navigator__icon svg,' +
+                '.dark-TPtheme .tau-pages-navigator__icon svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Board grid and roadmap timeline keep the native light scrollbar on their dark surface; theme
+            // the thumb and track to match. Scoped to the main board view and the timeline canvas so the
+            // light dashboard widgets and the view setup drawer keep their native bars.
+            addCSSRule('.dark-TPtheme .tau-board-view .tau-grid',
+                'scrollbar-color: #60626a ' + gBoardPanelBackgroundLighter + ';');
+            addCSSRule('.dark-TPtheme .tau-timeline-canvas',
+                'scrollbar-color: #60626a ' + gBoardPanelBackgroundLighter + ';');
+
+            // Left-menu filter button, pressed state: when active the button takes a light-blue surface on
+            // which the funnel (set light for the idle dark panel) washes out. Pin the active icon to TP's
+            // accent blue (#2b66e3, the shade of the applied-filters count) so it reads on the light-blue.
+            // The ancestor chain plus the --active class outweighs the base icon rule's specificity.
+            addCSSRule('.dark-TPtheme .tau-app-secondary-pane .filter-menu__button .tau-btn-filter-menu--active svg,' +
+                '.dark-TPtheme .tau-app-secondary-pane .filter-menu__button .tau-btn-filter-menu--active svg path',
+                'fill: #2b66e3 !important;');
+
+            // Dashboard "show / hide quick filters" button: TP gives it a light active surface and a bright
+            // persistent border that stand out from the neighbouring Add widget and Actions buttons. Match
+            // those buttons exactly - same dark surface, the same faint border at rest that brightens only on
+            // hover / press - and mark the hidden state only by striking the funnel through.
+            addCSSRule('.dark-TPtheme [class*="dashboard-actions__button"]',
+                'background: ' + gBoardCard + ' !important; border-color: ' + gBorderColorTertiaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme [class*="dashboard-actions__button"]:hover,' +
+                '.dark-TPtheme [class*="dashboard-actions__button"]:active',
+                'border-color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme [class*="dashboard-actions__button"] svg,' +
+                '.dark-TPtheme [class*="dashboard-actions__button"] svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+            // Filters hidden (--off): strike the funnel through with a diagonal line, outlined in the button
+            // surface colour so it stays legible over the funnel glyph.
+            addCSSRule('.dark-TPtheme .dashboard-actions__button--off',
+                'position: relative;');
+            addCSSRule('.dark-TPtheme .dashboard-actions__button--off:after',
+                "content: ''; position: absolute; left: 50%; top: 50%; width: 20px; height: 2px;" +
+                'background: ' + gFontColorDefaultRevert + '; box-shadow: 0 0 0 1.5px ' + gBoardCard + ';' +
+                'transform: translate(-50%, -50%) rotate(-45deg); pointer-events: none;');
+
+            // Project abbreviation badge ("ZER", "PP-"): default projects set it black inline
+            // (color:#000000), which is weak on the dark card. Lighten only those, scoped to the dark
+            // board/list body - the container the mashup paints dark, so it covers cards and row headers
+            // on board and list views and excludes the still-light dashboard widgets. The inline-black
+            // match skips projects that carry their own abbreviation colour, leaving custom palettes alone.
+            // TP gives a selected or context-menu-targeted card a light highlight, and entity-colour encoding
+            // gives a card its own, usually light, fill. Text on such a card has to keep the light theme's dark
+            // ink, so the card rules below skip these states the same way the mashup's own card rules do:
+            // gPlainCard on the card element itself, gSkipLightCards on anything inside it.
+            var gPlainCard = ':not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected):not(.i-role-permanent-context-menu-action-activated)';
+            var gSkipLightCards = ':not(.i-role-card.tau-selected *):not(.i-role-card.i-role-encoded *)' +
+                ':not(.i-role-card.tau-context-menu-selected *):not(.i-role-card.i-role-permanent-context-menu-action-activated *)';
+            var gDarkCardBadge = '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .tau-project-abbreviation';
+            addCSSRule(gDarkCardBadge + '[style*="color:#000000"]' + gSkipLightCards + ',' +
+                gDarkCardBadge + '[style*="color: #000000"]' + gSkipLightCards,
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+
+            // Inline edit pencil on card unit cells, and custom-unit glyphs (including ones other mashups
+            // render) which carry fill="#000" on the element itself: both keep the light theme's dark ink
+            // on the dark card. Same dark board/list card scope as the badge above.
+            var gDarkCards = '.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) .i-role-card' + gPlainCard + ' ';
+            addCSSRule(gDarkCards + '.tau-board-unit__edit-value__button',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule(gDarkCards + '.tau-board-unit__edit-value__button svg,' +
+                gDarkCards + '.tau-board-unit__edit-value__button svg path,' +
+                gDarkCards + 'svg[class*="CustomUnit"],' +
+                gDarkCards + 'svg[class*="CustomUnit"] path,' +
+                gDarkCards + '[class*="CustomUnit"] svg,' +
+                gDarkCards + '[class*="CustomUnit"] svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // View-context quick-filter dropdown arrow: the chevron is an SVG whose path carries a dark
+            // fill (#212224) that the earlier colour rule does not reach, so it stays dark whether the
+            // dropdown is closed or open. Flip the path fill to the light muted tint in both states.
+            addCSSRule('.dark-TPtheme [class*="user-filter-selector"] [class*="dropdown__indicator"] svg,' +
+                '.dark-TPtheme [class*="user-filter-selector"] [class*="dropdown__indicator"] svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // MLL / flexible list uses the same list component as a normal list, but its view type
+            // (flexiblelist) wraps the grid in .flexible-list-view / list-wrapper instead of
+            // .tau-board-body-wrapper, so the mashup's dark-list rules (anchored to that wrapper) miss it
+            // and its rows stay white. Mirror the dark-list treatment onto the flexible-list wrapper so MLL
+            // reads like a normal dark list. The :not(.tau-board-composite-view) guard keeps dashboard-widget
+            // lists out, just as it does for the normal-list rules.
+            var gMll = '.dark-TPtheme .flexible-list-view .tau-board-body > div:not(.tau-board-composite-view) ';
+            addCSSRule(gMll + '.tau-card-v2:not(.tau-selected):not(.tau-context-menu-selected):not(.i-role-permanent-context-menu-action-activated),' +
+                gMll + '.tau-list-entity',
+                'background: ' + gBoardCard + ';');
+            addCSSRule(gMll + '.tau-list-entity .tau-elems-cell',
+                'border-right-color: ' + gFontColorTertiary + ';');
+            addCSSRule(gMll + '.tau-list-entity:not(.i-role-encoded) .tau-elems-cell',
+                'border-right-color: ' + gBoardPanelBackgroundDarker + ';');
+            addCSSRule(gMll + '.tau-list-entity .tau-list-line',
+                'border-top-color: ' + gFontColorTertiary + ';');
+            addCSSRule(gMll + '.tau-list-entity:not(.i-role-encoded) .tau-list-line',
+                'border-top-color: ' + gBoardPanelBackgroundDarker + ';');
+            addCSSRule(gMll + '.tau-list-caption',
+                'background-color: ' + gBoardPanelBackgroundDarker + '; color: ' + gFontColorSecondaryRevert + ';');
+            addCSSRule(gMll + '.tau-list-caption .tau-cap',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule(gMll + '.i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected):not(.i-role-permanent-context-menu-action-activated) .tau-elems-table > .tau-elems-cell > .tau-board-unit',
+                'color: ' + gFontColorDefaultRevert + ';');
+            addCSSRule(gMll + '.i-role-card:not(.tau-selected):not(.i-role-encoded):not(.tau-context-menu-selected):not(.i-role-permanent-context-menu-action-activated) .tau-elems-cell_unit-empty-text',
+                'color: ' + gFontColorSecondaryRevert + ';');
+            addCSSRule(gMll + '.tau-list-entity.tau-list-entity_final-state,' +
+                gMll + '.tau-list-entity.tau-list-entity_isInPast',
+                'background-color: inherit; opacity: 0.5;');
+            addCSSRule(gMll + '.tau-page-items,' +
+                gMll + '.tau-page-items .tau-count',
+                'color: ' + gFontColorSecondaryRevert + ';');
+            addCSSRule(gMll + '.tau-paging-info',
+                'color: ' + gFontColorDefaultRevert + ';');
+            // Card badge, edit pencil and custom-unit glyphs inside MLL rows, same as on normal cards.
+            var gMllCard = gMll + '.i-role-card' + gPlainCard + ' ';
+            addCSSRule(gMllCard + '.tau-project-abbreviation[style*="color:#000000"],' +
+                gMllCard + '.tau-project-abbreviation[style*="color: #000000"]',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule(gMllCard + '.tau-board-unit__edit-value__button',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule(gMllCard + '.tau-board-unit__edit-value__button svg,' +
+                gMllCard + '.tau-board-unit__edit-value__button svg path,' +
+                gMllCard + 'svg[class*="CustomUnit"],' +
+                gMllCard + 'svg[class*="CustomUnit"] path,' +
+                gMllCard + '[class*="CustomUnit"] svg,' +
+                gMllCard + '[class*="CustomUnit"] svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Timeline / roadmap histogram refresh button (bottom-right): its icon SVG keeps fill #000 on
+            // the dark button, so the glyph reads near-black on dark. Lift the fill to the light muted tint.
+            addCSSRule('.dark-TPtheme [class*="refresh-histogram"] svg,' +
+                '.dark-TPtheme [class*="refresh-histogram"] svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Dashboard widgets: the mashup leaves each widget's shell and inner list/roadmap light (the
+            // dark-list anchor needs .tau-board-body-wrapper, which the widget nesting does not provide), so
+            // every widget is a white island on the dark dashboard. Darken the shell, header and body so all
+            // widget types - including report / Vizydrop widgets that have no dark theme - at least sit in a
+            // dark surround, and mirror the dark-list treatment onto list widgets so they read like a
+            // standalone dark list.
+            var gWg = '.dark-TPtheme .tau-dashboard-widget ';
+            addCSSRule('.dark-TPtheme .tau-dashboard-widget,' +
+                gWg + '.tau-dashboard-widget-content,' +
+                gWg + '.tau-dashboard-widget-content-wrapper,' +
+                gWg + '.tau-list-view-widget-adapter,' +
+                gWg + '.tau-board',
+                'background-color: ' + gBoardPanelBackgroundDarker + ' !important;');
+            addCSSRule(gWg + '.tau-dashboard-widget-header',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule(gWg + '.tau-dashboard-widget-header svg,' +
+                gWg + '.tau-dashboard-widget-header svg path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+            // Selected, context-menu-targeted and entity-coloured rows keep TP's own fill, so a selection stays
+            // visible and entity colours survive.
+            addCSSRule(gWg + '.tau-list-entity' + gPlainCard + ',' +
+                gWg + '.tau-card-v2' + gPlainCard,
+                'background: ' + gBoardCard + ' !important;');
+            addCSSRule(gWg + '.tau-list-entity .tau-list-line',
+                'border-top-color: ' + gBoardPanelBackgroundDarker + ' !important;');
+            addCSSRule(gWg + '.tau-list-entity .tau-elems-cell',
+                'border-right-color: ' + gBoardPanelBackgroundDarker + ' !important;');
+            addCSSRule(gWg + '.tau-list-caption',
+                'background-color: ' + gBoardPanelBackgroundDarker + ' !important; color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule(gWg + '.tau-list-caption .tau-cap',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            var gWgCard = gWg + '.i-role-card' + gPlainCard + ' ';
+            addCSSRule(gWgCard + '.tau-board-unit,' +
+                gWgCard + '.tau-elems-cell',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule(gWg + '.tau-page-items,' +
+                gWg + '.tau-page-items .tau-count,' +
+                gWg + '.tau-paging-info',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule(gWgCard + '.tau-project-abbreviation[style*="color:#000000"],' +
+                gWgCard + '.tau-project-abbreviation[style*="color: #000000"]',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule(gWgCard + '.tau-board-unit__edit-value__button svg,' +
+                gWgCard + '.tau-board-unit__edit-value__button svg path,' +
+                gWgCard + 'svg[class*="CustomUnit"],' +
+                gWgCard + 'svg[class*="CustomUnit"] path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule(gWg + '.tau-timeline-canvas',
+                'scrollbar-color: #60626a ' + gBoardPanelBackgroundLighter + ' !important;');
+            // Roadmap widget: the timeline container keeps a white background the base darkens only on the
+            // standalone roadmap; match it so the timeline sits on a dark surface inside the widget too.
+            addCSSRule(gWg + '.timeline-container,' +
+                gWg + '.i-role-timeline-container',
+                'background-color: ' + gBoardPanelBackgroundLighter + ' !important;');
+
+            // Widget and flexible-list text keeps the light theme's dark ink wherever the base lightens it on a
+            // normal board or list: group / entity titles, entity links, ID cells, lane counters, effort points
+            // and the "click to edit" hint. The base reaches these through the board-body-wrapper anchor, which
+            // neither a widget nor a flexible list provides, so mirror the colours of a standalone list onto both
+            // contexts. Every target skips light cards (see gSkipLightCards). The release badge is left out on
+            // purpose: it is a light chip of its own (#ebebeb) whose dark letter already reads.
+            var gWidgetAndFlexLists = ['.dark-TPtheme .tau-dashboard-widget ', '.dark-TPtheme .flexible-list-view '];
+            var plainCardText = function(targets) {
+                var selectors = [];
+                gWidgetAndFlexLists.forEach(function(context) {
+                    targets.forEach(function(target) {
+                        selectors.push(context + target + gSkipLightCards);
+                    });
+                });
+                return selectors.join(',');
+            };
+            addCSSRule(plainCardText(['.tau-entity-full-name', '.click-edit__link-text',
+                '.tau-board-unit_type_entity-name .tau-board-unit__value',
+                '.tau-board-unit_type_entity-name-extended .tau-board-unit__value']),
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule(plainCardText(['.tau-id', '.tau-board-unit_type_id a', '.tau-counter']),
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule(plainCardText(['.tau-board-unit__points', '.tau-board-unit__value-remain']),
+                'color: ' + gFontColorTertiaryRevert + ' !important;');
+            addCSSRule(plainCardText(['.tau-elems-cell_unit-empty-text']),
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Flexible-list standalone: its board body keeps the light #F4F7FA fill a normal list only shows
+            // as transparent over a dark wrapper; darken it so the view is dark around the rows too.
+            addCSSRule('.dark-TPtheme .flexible-list-view .tau-board-body',
+                'background-color: ' + gBoardPanelBackgroundLighter + ' !important;');
+            // Page-size picker below a flexible list: the active size keeps a white chip under light text.
+            addCSSRule(gMll + '.tau-count.tau-active',
+                'color: ' + gFontColorDefaultRevert + ' !important; background-color: ' + gBoardPanelBackgroundLighterHover + ' !important;');
+            addCSSRule(gMll + '.tau-page-items .tau-count:hover',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+
+            // Flexible-list header: the view header is its own component (.tau-flexible-list-header) rather
+            // than .tau-board-header, so the header rules miss it and it stays a white bar with a white title
+            // field, a white "Filter levels" button, a light "Actions" button and dark icons. Give it the look
+            // of a normal view header. The list icon and the header icons draw with --IconsGeneralColor.
+            addCSSRule('.dark-TPtheme .tau-flexible-list-header',
+                'background: ' + gBoardPanelBackgroundLighter + ' !important; border-bottom-color: ' + gBoardPanelBackgroundDarkerBorder + ' !important;' +
+                '--IconsGeneralColor: rgba(255, 255, 255, 0.7);');
+            addCSSRule('.dark-TPtheme .tau-flexible-list-header .title [class*="field__field"]',
+                'background: transparent !important; color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .tau-flexible-list-header .tau-btn,' +
+                '.dark-TPtheme .tau-flexible-list-header .tau-board-header__control',
+                'background: ' + gBoardCard + ' !important; border-color: ' + gBorderColorTertiaryRevert + ' !important;' +
+                'color: ' + gFontColorSecondaryRevert + ' !important; font-size: 12px !important;');
+            addCSSRule('.dark-TPtheme .tau-flexible-list-header .tau-btn:hover,' +
+                '.dark-TPtheme .tau-flexible-list-header .tau-board-header__control:hover',
+                'border-color: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Flexible-list setup: the panel under the header ("Setup", the description link, the quick-filter
+            // chips) is light-themed content with a transparent background, so on the dark page its title and
+            // captions read dark-on-dark. Give it the light surface the old list's setup drawer has. In setup
+            // mode the view-icon button next to the title turns light too, so its icon takes back the light
+            // theme's dark ink.
+            addCSSRule('.dark-TPtheme .flexible-list-view .levels-setup-header',
+                'background-color: var(--LightThemeBackgroundDefault, #fff) !important;');
+            addCSSRule('.dark-TPtheme .tau-flexible-list-header .title button:not(.btn-non-edit-mode)',
+                '--IconsGeneralColor: var(--LightThemeIconsGeneralColor, #66686D);');
+
+            // Column header row of widget and flexible-list lists: the column resizers keep the light theme's
+            // #edeef0 fill and draw light dividers between the column titles, and sortable titles keep a dark
+            // underline. Match the standalone list.
+            gWidgetAndFlexLists.forEach(function(context) {
+                addCSSRule(context + '.tau-board-list-cell-resizer--inner',
+                    'background-color: ' + gBoardPanelBackgroundDarker + ' !important;');
+                addCSSRule(context + '.tau-sorting__title',
+                    'border-bottom-color: ' + gFontColorTertiaryRevert + ' !important;');
+                addCSSRule(context + '.tau-sorting__title:hover',
+                    'border-bottom-color: transparent !important; color: ' + gFontColorSecondaryRevert + ' !important;');
+            });
+
+            // Level expanders on every list (standalone, widgets, flexible lists): the per-row and the
+            // column-header "expand level" chevrons, and the spinner shown in them while a level loads, keep
+            // the light theme's dark glyph. Draw them in the muted light grey; light-highlighted rows keep the
+            // dark glyph.
+            addCSSRule('.dark-TPtheme .tau-board-list-view .tau-v-collapser svg' + gSkipLightCards + ',' +
+                '.dark-TPtheme .tau-board-list-view .tau-v-collapser svg path' + gSkipLightCards,
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Widget loading state: while a widget loads, TP shows a light placeholder block under a
+            // semi-opaque light overlay with a black spinner. Use a dark block, and invert the spinner, which
+            // keeps its per-spoke opacity animation. Only the colour is set, so placeholder illustrations
+            // (report, burn-down) stay, and the green "success" placeholder keeps its own fill.
+            addCSSRule(gWg + '.tau-dashboard-widget-placeholder:not(.tau-dashboard-widget-placeholder--success),' +
+                gWg + '.tau-loader,' +
+                gWg + '.i-role-loader-hover',
+                'background-color: ' + gBoardPanelBackgroundLighter + ' !important;');
+            addCSSRule(gWg + '.tau-loader:after',
+                'filter: invert(1);');
+            addCSSRule(gWg + '.tau-dashboard-widget-placeholder-text',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+
+            // Dashboard scrollbars: the page's own vertical bar and the horizontal bars of list widgets keep the
+            // native light bar. Theme them like the board and timeline bars, each on the surface it sits on.
+            addCSSRule('.dark-TPtheme .tau-dashboard-flexible-layout',
+                'scrollbar-color: #60626a ' + gBoardPanelBackgroundLighter + ';');
+            addCSSRule(gWg + '.tau-board-list-view__inner',
+                'scrollbar-color: #60626a ' + gBoardPanelBackgroundDarker + ';');
         };
 
         topMenu.addItem('TV').onClick(function() {
