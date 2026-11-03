@@ -335,12 +335,23 @@ tau
             addCSSRule('.dark-TPtheme [class*="user-filter-selector"] .dropdown__indicator',
                 'color: ' + gFontColorSecondaryRevert + ' !important;');
 
+            // Dark list scopes
+            var gDarkLists = ['.dark-TPtheme .tau-board-body-wrapper > .tau-board-body > div:not(.tau-board-composite-view) ',
+                '.dark-TPtheme .flexible-list-view ', '.dark-TPtheme .tau-dashboard-widget '];
+            var inDarkLists = function(targets) {
+                var selectors = [];
+                gDarkLists.forEach(function(context) {
+                    targets.forEach(function(target) {
+                        selectors.push(context + target);
+                    });
+                });
+                return selectors.join(',');
+            };
+
             // List paging
-            addCSSRule('.dark-TPtheme .tau-pages-navigator,' +
-                '.dark-TPtheme .tau-pages-navigator .i-role-cell-paging-link',
+            addCSSRule(inDarkLists(['.tau-pages-navigator', '.tau-pages-navigator .i-role-cell-paging-link']),
                 'color: ' + gFontColorSecondaryRevert + ' !important;');
-            addCSSRule('.dark-TPtheme .tau-pages-navigator__icon svg,' +
-                '.dark-TPtheme .tau-pages-navigator__icon svg path',
+            addCSSRule(inDarkLists(['.tau-pages-navigator__icon svg', '.tau-pages-navigator__icon svg path']),
                 'fill: ' + gFontColorSecondaryRevert + ' !important;');
 
             // Board and timeline scrollbars
@@ -492,6 +503,10 @@ tau
             addCSSRule(gWg + '.timeline-container,' +
                 gWg + '.i-role-timeline-container',
                 'background-color: ' + gBoardPanelBackgroundLighter + ' !important;');
+            // Report widgets
+            var gNotInReport = ':not(.tau-custom-report-widget-adapter *)';
+            addCSSRule(gWg + '.tau-custom-report-widget-adapter',
+                'background-color: var(--LightThemeBackgroundDefault, #fff) !important;');
 
             // Widget and flexible list text
             var gWidgetAndFlexLists = ['.dark-TPtheme .tau-dashboard-widget ', '.dark-TPtheme .flexible-list-view '];
@@ -510,6 +525,8 @@ tau
                 'color: ' + gFontColorDefaultRevert + ' !important;');
             addCSSRule(plainCardText(['.tau-id', '.tau-board-unit_type_id a', '.tau-counter']),
                 'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .flexible-list-view .tau-board-list-view__counter .tau-counter' + gSkipLightCards,
+                'color: ' + gFontColorDefaultRevert + ' !important; border-color: ' + gFontColorTertiaryRevert + ' !important;');
             addCSSRule(plainCardText(['.tau-board-unit__points', '.tau-board-unit__value-remain']),
                 'color: ' + gFontColorTertiaryRevert + ' !important;');
             addCSSRule(plainCardText(['.tau-elems-cell_unit-empty-text']),
@@ -522,6 +539,13 @@ tau
                 'color: ' + gFontColorDefaultRevert + ' !important; background-color: ' + gBoardPanelBackgroundLighterHover + ' !important;');
             addCSSRule(gMll + '.tau-page-items .tau-count:hover',
                 'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .flexible-list-view .empty-list-placeholder__title,' +
+                '.dark-TPtheme .flexible-list-view .preview-unavailable-list-placeholder__title',
+                'color: ' + gFontColorDefaultRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .flexible-list-view .preview-unavailable-list-placeholder__subtitle',
+                'color: ' + gFontColorSecondaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .flexible-list-view .preview-unavailable-list-placeholder path',
+                'fill: ' + gFontColorSecondaryRevert + ' !important;');
 
             // Flexible list header
             addCSSRule('.dark-TPtheme .tau-flexible-list-header',
@@ -540,8 +564,12 @@ tau
             // Flexible list setup
             addCSSRule('.dark-TPtheme .flexible-list-view .levels-setup-header',
                 'background-color: var(--LightThemeBackgroundDefault, #fff) !important;');
+            addCSSRule('.dark-TPtheme .flexible-list-view .levels-setup-area .boardsettings-filter__status--off',
+                'color: var(--LightThemeFontColorLightGray, rgba(33, 34, 36, 0.4)) !important;');
             addCSSRule('.dark-TPtheme .tau-flexible-list-header .title button:not(.btn-non-edit-mode)',
-                '--IconsGeneralColor: var(--LightThemeIconsGeneralColor, #66686D);');
+                'background: ' + gBoardCard + ' !important; border-color: ' + gBorderColorTertiaryRevert + ' !important;');
+            addCSSRule('.dark-TPtheme .tau-flexible-list-header .title button:not(.btn-non-edit-mode):hover',
+                'border-color: ' + gFontColorSecondaryRevert + ' !important;');
 
             // Column header dividers
             gWidgetAndFlexLists.forEach(function(context) {
@@ -554,18 +582,18 @@ tau
             });
 
             // Level expanders
-            addCSSRule('.dark-TPtheme .tau-board-list-view .tau-v-collapser svg' + gSkipLightCards + ',' +
-                '.dark-TPtheme .tau-board-list-view .tau-v-collapser svg path' + gSkipLightCards,
+            addCSSRule(inDarkLists(['.i-role-card-collapser svg' + gSkipLightCards, '.i-role-card-collapser svg path' + gSkipLightCards,
+                '.i-role-header-collapser svg' + gSkipLightCards, '.i-role-header-collapser svg path' + gSkipLightCards]),
                 'fill: ' + gFontColorSecondaryRevert + ' !important;');
 
             // Widget loading state
-            addCSSRule(gWg + '.tau-dashboard-widget-placeholder:not(.tau-dashboard-widget-placeholder--success),' +
-                gWg + '.tau-loader,' +
-                gWg + '.i-role-loader-hover',
+            addCSSRule(gWg + '.tau-dashboard-widget-placeholder:not(.tau-dashboard-widget-placeholder--success)' + gNotInReport + ',' +
+                gWg + '.tau-loader' + gNotInReport + ',' +
+                gWg + '.i-role-loader-hover' + gNotInReport,
                 'background-color: ' + gBoardPanelBackgroundLighter + ' !important;');
-            addCSSRule(gWg + '.tau-loader:after',
+            addCSSRule(gWg + '.tau-loader' + gNotInReport + ':after',
                 'filter: invert(1);');
-            addCSSRule(gWg + '.tau-dashboard-widget-placeholder-text',
+            addCSSRule(gWg + '.tau-dashboard-widget-placeholder-text' + gNotInReport,
                 'color: ' + gFontColorSecondaryRevert + ' !important;');
 
             // Dashboard scrollbars
