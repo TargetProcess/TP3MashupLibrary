@@ -103,16 +103,37 @@ tau
             // try to open menu, to access the slider
             openActionMenuOrKeep( was_open );
 
-            // set zoom of board by controlling slider inside the menu
-            $(zoom_slider_id).slider('value', zoom);
+            // the menu content is created asynchronously now, so wait for the slider
+            whenSliderReady(function( $slider ) {
 
-            // mark the clicked button as active
-            setZoomHighlight( zoom );
+                if ( $slider ) {
+                    // set zoom of board by controlling slider inside the menu
+                    $slider.slider('value', parseInt( zoom, 10 ));
 
-            // restore remembered state
-            closeActionMenuOrKeep( was_open );
+                    // mark the clicked button as active
+                    setZoomHighlight( zoom );
+                }
+
+                // restore remembered state
+                closeActionMenuOrKeep( was_open );
+            });
 
         });
+
+        // poll until the slider is in the DOM (max ~2s), then call back with it (or null)
+        var whenSliderReady = function( callback ) {
+            var attempts = 40;
+            (function poll() {
+                var $slider = $(zoom_slider_id);
+                if ( $slider.length !== 0 && $slider.slider('instance') ) {
+                    callback( $slider );
+                } else if ( --attempts > 0 ) {
+                    setTimeout( poll, 50 );
+                } else {
+                    callback( null );
+                }
+            })();
+        };
 
         var checkZoomButton = function(){
 
