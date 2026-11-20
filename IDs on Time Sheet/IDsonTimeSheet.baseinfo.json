@@ -1,6 +1,0 @@
-{
-  "ShortDescription": "This mashup will add IDs to the work items listed in your time sheet.",
-  "CompatibleTpVersion": {
-    "Minimum": "2.24.4"
-  }
-}
